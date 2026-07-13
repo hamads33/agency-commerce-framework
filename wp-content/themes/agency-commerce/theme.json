@@ -1,0 +1,109 @@
+{
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "color": {
+      "custom": false,
+      "palette": [
+        { "slug": "primary", "name": "Primary", "color": "#115e59" },
+        { "slug": "secondary", "name": "Secondary", "color": "#1f2937" },
+        { "slug": "accent", "name": "Accent", "color": "#f59e0b" },
+        { "slug": "text", "name": "Text", "color": "#111827" },
+        { "slug": "muted", "name": "Muted Text", "color": "#6b7280" },
+        { "slug": "background", "name": "Background", "color": "#ffffff" },
+        { "slug": "surface", "name": "Surface", "color": "#f9fafb" },
+        { "slug": "border", "name": "Border", "color": "#d1d5db" },
+        { "slug": "success", "name": "Success", "color": "#047857" },
+        { "slug": "error", "name": "Error", "color": "#b91c1c" }
+      ]
+    },
+    "custom": {
+      "container": {
+        "width": "1200px",
+        "narrowWidth": "760px"
+      },
+      "radius": {
+        "base": "4px",
+        "button": "4px",
+        "card": "8px"
+      },
+      "shadow": {
+        "sm": "0 1px 2px rgb(17 24 39 / 0.08)",
+        "md": "0 8px 24px rgb(17 24 39 / 0.10)"
+      },
+      "header": {
+        "height": "72px"
+      },
+      "product": {
+        "imageRatio": "1 / 1"
+      }
+    },
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1200px"
+    },
+    "spacing": {
+      "spacingScale": {
+        "operator": "*",
+        "increment": 1.5,
+        "steps": 7,
+        "mediumStep": 1.5,
+        "unit": "rem"
+      },
+      "units": [ "px", "rem", "em", "%", "vh", "vw" ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+          "name": "System Sans",
+          "slug": "system-sans"
+        }
+      ],
+      "fontSizes": [
+        { "slug": "small", "name": "Small", "size": "0.875rem" },
+        { "slug": "base", "name": "Base", "size": "1rem" },
+        { "slug": "large", "name": "Large", "size": "1.125rem" },
+        { "slug": "x-large", "name": "Extra Large", "size": "1.5rem" }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|background",
+      "text": "var:preset|color|text"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|system-sans",
+      "fontSize": "var:preset|font-size|base"
+    },
+    "elements": {
+      "button": {
+        "border": {
+          "radius": "var:custom|radius|button"
+        },
+        "color": {
+          "background": "var:preset|color|primary",
+          "text": "var:preset|color|background"
+        }
+      },
+      "link": {
+        "color": {
+          "text": "var:preset|color|primary"
+        }
+      }
+    },
+    "blocks": {
+      "woocommerce/cart": {
+        "spacing": {
+          "blockGap": "1rem"
+        }
+      },
+      "woocommerce/checkout": {
+        "spacing": {
+          "blockGap": "1rem"
+        }
+      }
+    }
+  }
+}

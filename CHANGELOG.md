@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0 - CP1
+
+- Added activation-safe parent theme, child theme, and companion plugin foundations.
+- Added parent theme support declarations, `theme.json` design tokens, mirrored CSS custom properties, and minimal classic templates.
+- Added namespaced plugin bootstrap, PSR-4 loading, version constants, default settings, and public settings helpers.
+- Added theme fallback settings helpers so the parent works when the plugin is inactive.
+- Documented the initial public API contract in `HOOKS.md`.
+
 ## 0.0.0 - CP0
 
 - Established repository-level tooling for `wp-env`, Composer, PHPCS/WPCS, PHP syntax checks, npm, and `@wordpress/scripts`.

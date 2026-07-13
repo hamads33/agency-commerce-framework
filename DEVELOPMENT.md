@@ -232,3 +232,58 @@ npm audit --audit-level=high
 ```
 
 The audit command failed with 28 transitive development dependency advisories: 22 moderate and 6 high. The high-severity paths are under `@wordpress/scripts` dependencies including `linkify-it`, `minimatch`, and `serialize-javascript`; npm also reports moderate paths including `@opentelemetry/core` and `uuid`. npm's suggested force fix would install a breaking older `@wordpress/scripts` release for some paths. No production runtime code exists in CP0.
+
+## CP1 Foundation
+
+CP1 introduces only the framework foundation:
+
+- Parent theme: `wp-content/themes/agency-commerce`
+- Companion plugin: `wp-content/plugins/agency-commerce-core`
+- Example child theme: `wp-content/themes/agency-commerce-child`
+
+The parent theme is a classic PHP theme with `theme.json`. It includes minimal templates for activation safety, required theme supports, mirrored CSS custom properties, and fallback settings helpers. The companion plugin includes a namespaced bootstrap, PSR-4 loading, defaults, and public helper functions. The child theme proves parent inheritance and child stylesheet loading.
+
+CP1 intentionally does not implement headers, footers, catalog layouts, settings screens, checkout modes, homepage blocks, or storefront features.
+
+## CP1 Test Evidence
+
+Passed:
+
+```sh
+npm run env:start
+npm run env:setup
+npm run env:cli -- wp plugin activate agency-commerce-core
+npm run env:cli -- wp theme activate agency-commerce
+curl -I -L --max-time 20 http://localhost:8888/
+npm run env:cli -- wp plugin deactivate agency-commerce-core
+curl -I -L --max-time 20 http://localhost:8888/
+npm run env:cli -- wp theme activate agency-commerce-child
+curl -I -L --max-time 20 http://localhost:8888/
+npm run env:cli -- wp plugin deactivate woocommerce
+npm run env:cli -- wp theme activate agency-commerce
+npm run env:cli -- wp eval 'echo "theme=" . wp_get_theme()->get( "Name" );'
+curl -I -L --max-time 20 http://localhost:8888/
+npm run env:cli -- wp plugin activate woocommerce
+composer dump-autoload
+composer lint:php
+composer lint
+npm run build
+npm test
+```
+
+Observed results:
+
+- `agency-commerce-core` activates with the stock Twenty Twenty-Five theme active.
+- `agency-commerce` activates without fatal errors.
+- `agency-commerce-child` activates and lists `agency-commerce` as its parent.
+- The parent theme serves `200 OK` while the plugin is inactive.
+- The parent theme and plugin serve `200 OK` while WooCommerce is inactive.
+- WooCommerce was restored active after the inactive compatibility test.
+- PHP syntax checks and PHPCS pass.
+- `@wordpress/scripts` build and npm test pass.
+
+Known CP1 limits:
+
+- The PHPCS config excludes the `WordPress.Files.FileName` sniff because CP1 uses Composer-style PSR-4 class file paths for the namespaced plugin.
+- The theme screenshot is not provided in CP1.
+- `npm audit --audit-level=high` remains a CP0-known development-tool audit failure.

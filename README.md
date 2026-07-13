@@ -8,6 +8,14 @@ Reusable WooCommerce framework for agency-built stores. The finished framework w
 
 CP0 establishes only the repository, tooling, and local WordPress/WooCommerce environment. Theme and plugin features begin in CP1.
 
+CP1 adds the activation-safe foundation:
+
+- Parent theme: `wp-content/themes/agency-commerce`
+- Companion plugin: `wp-content/plugins/agency-commerce-core`
+- Example child theme: `wp-content/themes/agency-commerce-child`
+
+The parent theme and plugin are intentionally minimal at this checkpoint. Storefront chrome, catalog layouts, settings screens, and checkout behavior begin in later checkpoints.
+
 ## Requirements
 
 - Git
@@ -24,10 +32,13 @@ composer install
 npm run env:start
 npm run env:setup
 npm run env:cli -- wp core version
+npm run env:cli -- wp plugin activate agency-commerce-core
+npm run env:cli -- wp theme activate agency-commerce
+npm run env:cli -- wp theme activate agency-commerce-child
 npm run env:stop
 npm run build
 composer lint:php
 composer lint
 ```
 
-See `DEVELOPMENT.md` for pinned versions, WP-CLI commands, reset commands, and CP0 test evidence.
+See `DEVELOPMENT.md` for pinned versions, WP-CLI commands, reset commands, and checkpoint test evidence. See `HOOKS.md` for the public API contract introduced so far.

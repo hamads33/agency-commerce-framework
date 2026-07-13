@@ -1,0 +1,77 @@
+/*
+Theme Name: Agency Commerce
+Theme URI: https://example.com/agency-commerce
+Author: Agency Commerce
+Author URI: https://example.com
+Description: Reusable classic parent theme foundation for WooCommerce storefronts.
+Version: 0.1.0
+Requires at least: 7.0
+Tested up to: 7.0
+Requires PHP: 8.2
+Text Domain: agency-commerce
+Domain Path: /languages
+Tags: e-commerce, custom-logo, editor-style, featured-images, wide-blocks
+*/
+
+:root {
+	--ac-color-primary: #115e59;
+	--ac-color-secondary: #1f2937;
+	--ac-color-accent: #f59e0b;
+	--ac-color-text: #111827;
+	--ac-color-muted: #6b7280;
+	--ac-color-background: #ffffff;
+	--ac-color-surface: #f9fafb;
+	--ac-color-border: #d1d5db;
+	--ac-color-success: #047857;
+	--ac-color-error: #b91c1c;
+	--ac-container-width: 1200px;
+	--ac-container-narrow-width: 760px;
+	--ac-font-heading: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--ac-font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--ac-font-size-base: 1rem;
+	--ac-font-size-small: 0.875rem;
+	--ac-font-size-large: 1.125rem;
+	--ac-radius-base: 4px;
+	--ac-radius-button: 4px;
+	--ac-radius-card: 8px;
+	--ac-spacing-1: 0.25rem;
+	--ac-spacing-2: 0.5rem;
+	--ac-spacing-3: 0.75rem;
+	--ac-spacing-4: 1rem;
+	--ac-spacing-6: 1.5rem;
+	--ac-spacing-8: 2rem;
+	--ac-shadow-sm: 0 1px 2px rgb(17 24 39 / 0.08);
+	--ac-shadow-md: 0 8px 24px rgb(17 24 39 / 0.10);
+	--ac-header-height: 72px;
+	--ac-product-image-ratio: 1 / 1;
+}
+
+body {
+	background: var(--ac-color-background);
+	color: var(--ac-color-text);
+	font-family: var(--ac-font-body);
+	font-size: var(--ac-font-size-base);
+	margin: 0;
+}
+
+a {
+	color: var(--ac-color-primary);
+}
+
+.site {
+	min-height: 100vh;
+}
+
+.site-main {
+	margin-inline: auto;
+	max-width: var(--ac-container-width);
+	padding: var(--ac-spacing-8) var(--ac-spacing-4);
+}
+
+.screen-reader-text {
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	width: 1px;
+}

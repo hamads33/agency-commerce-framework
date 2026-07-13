@@ -13,7 +13,9 @@
 	<arg name="extensions" value="php"/>
 	<arg name="parallel" value="4"/>
 
-	<rule ref="WordPress"/>
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
 	<rule ref="WordPress-Extra"/>
 	<rule ref="WordPress-Docs"/>
 	<rule ref="PHPCompatibility"/>

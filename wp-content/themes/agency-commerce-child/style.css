@@ -1,0 +1,18 @@
+/*
+Theme Name: Agency Commerce Child
+Theme URI: https://example.com/agency-commerce-child
+Author: Agency Commerce
+Author URI: https://example.com
+Description: Minimal child theme foundation for Agency Commerce client storefronts.
+Version: 0.1.0
+Requires at least: 7.0
+Requires PHP: 8.2
+Template: agency-commerce
+Text Domain: agency-commerce-child
+Domain Path: /languages
+*/
+
+:root {
+	--ac-color-primary: #0f766e;
+	--ac-radius-button: 6px;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "agency-commerce/core",
+  "description": "Companion plugin for the Agency Commerce framework.",
+  "type": "wordpress-plugin",
+  "license": "proprietary",
+  "autoload": {
+    "psr-4": {
+      "AgencyCommerceCore\\": "includes/"
+    }
+  },
+  "require": {
+    "php": ">=8.2"
+  }
+}
