@@ -16,6 +16,13 @@ CP1 adds the activation-safe foundation:
 
 The parent theme and plugin are intentionally minimal at this checkpoint. Storefront chrome, catalog layouts, settings screens, and checkout behavior begin in later checkpoints.
 
+CP2 adds storefront chrome:
+
+- `header-default` and `header-centered`
+- `footer-columns` and `footer-minimal`
+- Primary and footer menus
+- Announcement bar, search, account, cart count, responsive mobile menu, and sticky header support
+
 ## Requirements
 
 - Git
@@ -35,6 +42,8 @@ npm run env:cli -- wp core version
 npm run env:cli -- wp plugin activate agency-commerce-core
 npm run env:cli -- wp theme activate agency-commerce
 npm run env:cli -- wp theme activate agency-commerce-child
+npm run env:cli -- wp menu location assign "CP2 Primary" primary
+npm run env:cli -- wp menu location assign "CP2 Footer" footer
 npm run env:stop
 npm run build
 composer lint:php

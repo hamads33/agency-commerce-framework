@@ -19,8 +19,16 @@ add_action( 'wp_enqueue_scripts', 'agency_commerce_enqueue_assets' );
 function agency_commerce_enqueue_assets(): void {
 	wp_enqueue_style(
 		'agency-commerce',
-		get_stylesheet_uri(),
+		AGENCY_COMMERCE_THEME_URI . 'style.css',
 		array(),
 		AGENCY_COMMERCE_VERSION
+	);
+
+	wp_enqueue_script(
+		'agency-commerce-navigation',
+		AGENCY_COMMERCE_THEME_URI . 'assets/js/navigation.js',
+		array(),
+		AGENCY_COMMERCE_VERSION,
+		true
 	);
 }

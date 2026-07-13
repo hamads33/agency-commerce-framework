@@ -61,4 +61,11 @@ function agency_commerce_setup(): void {
 	);
 
 	add_editor_style( 'style.css' );
+
+	register_nav_menus(
+		array(
+			'primary' => esc_html__( 'Primary Menu', 'agency-commerce' ),
+			'footer'  => esc_html__( 'Footer Menu', 'agency-commerce' ),
+		)
+	);
 }

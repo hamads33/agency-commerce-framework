@@ -19,6 +19,7 @@ $agency_commerce_files = array(
 	'inc/settings.php',
 	'inc/setup.php',
 	'inc/assets.php',
+	'inc/navigation.php',
 	'inc/woocommerce.php',
 );
 

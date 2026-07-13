@@ -13,12 +13,13 @@
 	<arg name="extensions" value="php"/>
 	<arg name="parallel" value="4"/>
 
-	<rule ref="WordPress">
-		<exclude name="WordPress.Files.FileName"/>
-	</rule>
+	<rule ref="WordPress"/>
 	<rule ref="WordPress-Extra"/>
 	<rule ref="WordPress-Docs"/>
 	<rule ref="PHPCompatibility"/>
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>*/wp-content/plugins/agency-commerce-core/includes/*</exclude-pattern>
+	</rule>
 
 	<config name="testVersion" value="8.2-"/>
 </ruleset>

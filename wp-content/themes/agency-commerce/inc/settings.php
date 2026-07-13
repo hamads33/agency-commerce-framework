@@ -19,7 +19,12 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 	 */
 	function agency_commerce_default_settings(): array {
 		$defaults = array(
-			'design'       => array(
+			'store_identity' => array(
+				'contact_email' => '',
+				'contact_phone' => '',
+				'address'       => '',
+			),
+			'design'         => array(
 				'primary_color'       => '#115e59',
 				'secondary_color'     => '#1f2937',
 				'accent_color'        => '#f59e0b',
@@ -29,20 +34,29 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'card_radius'         => '8px',
 				'product_image_ratio' => '1 / 1',
 			),
-			'header'       => array(
-				'variant' => 'header-default',
-				'sticky'  => false,
+			'header'         => array(
+				'variant'           => 'header-default',
+				'sticky'            => false,
+				'show_search'       => true,
+				'show_account'      => true,
+				'show_cart'         => true,
+				'show_cart_count'   => true,
+				'announcement_bar'  => false,
+				'announcement'      => '',
+				'announcement_link' => '',
 			),
-			'footer'       => array(
-				'variant' => 'footer-columns',
+			'footer'         => array(
+				'variant'    => 'footer-columns',
+				'trust_text' => '',
 			),
-			'shop'         => array(
+			'social'         => array(),
+			'shop'           => array(
 				'card_variant' => 'product-card-classic',
 			),
-			'product_page' => array(
+			'product_page'   => array(
 				'layout' => 'product-layout-standard',
 			),
-			'checkout'     => array(
+			'checkout'       => array(
 				'mode' => 'block',
 			),
 		);

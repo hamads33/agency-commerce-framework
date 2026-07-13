@@ -284,6 +284,90 @@ Observed results:
 
 Known CP1 limits:
 
-- The PHPCS config excludes the `WordPress.Files.FileName` sniff because CP1 uses Composer-style PSR-4 class file paths for the namespaced plugin.
+- The PHPCS config has a narrow `WordPress.Files.FileName` exclusion for the plugin PSR-4 class file path only.
 - The theme screenshot is not provided in CP1.
 - `npm audit --audit-level=high` remains a CP0-known development-tool audit failure.
+
+## CP2 Storefront Chrome
+
+CP2 introduces only storefront chrome:
+
+- `header-default`
+- `header-centered`
+- `footer-columns`
+- `footer-minimal`
+- Primary and footer menu locations
+- Optional announcement bar
+- Logo fallback, search, account, and cart controls
+- WooCommerce cart count via `woocommerce_add_to_cart_fragments`
+- Accessible mobile menu with focus movement, focus trap, focus restoration, and Escape-to-close
+- Sticky header setting integration
+- Global containers, base typography, buttons, forms, layout primitives, and responsive CSS
+
+Variant selection still uses the CP1-safe helper layer:
+
+```php
+agency_commerce_get_setting( 'header.variant', 'header-default' );
+agency_commerce_get_setting( 'footer.variant', 'footer-columns' );
+```
+
+Until the admin settings UI exists, variants can be selected through plugin defaults, theme fallback defaults, filters, or WP-CLI-managed `agency_commerce_core_settings` test values.
+
+CP2 intentionally does not implement product-card variants, shop archive customization, product-page layouts, product search suggestions, filters, admin settings screens, presets, WhatsApp enquiry, badges, homepage blocks, cart drawer, checkout customization, or My Account customization.
+
+The PHPCS `WordPress.Files.FileName` exclusion is now scoped only to `wp-content/plugins/agency-commerce-core/includes/*` for PSR-4 plugin class files. It is not excluded for theme files or non-PSR-4 project files.
+
+## CP2 Test Evidence
+
+Passed:
+
+```sh
+composer dump-autoload
+composer lint:php
+composer lint
+npm run build
+npm test
+npm run env:start
+npm run env:setup
+npm run env:cli -- wp theme activate agency-commerce
+npm run env:cli -- wp theme activate agency-commerce-child
+npm run env:cli -- wp plugin activate agency-commerce-core woocommerce
+npm run env:cli -- wp plugin deactivate agency-commerce-core
+npm run env:cli -- wp plugin deactivate woocommerce
+curl -I -L --max-time 20 http://localhost:8888/
+curl -I -L --max-time 20 http://localhost:8888/wp-admin/
+```
+
+Browser checks passed with Playwright:
+
+- `header-default` rendered.
+- `header-centered` rendered.
+- `footer-columns` rendered.
+- `footer-minimal` rendered.
+- Non-sticky and sticky header modes rendered expected attributes/classes.
+- Desktop navigation is visible at desktop width.
+- Desktop navigation is hidden at mobile width.
+- Mobile menu opens by pointer input.
+- Focus moves into the mobile menu on open.
+- Tab focus remains inside the mobile menu.
+- Escape closes the mobile menu.
+- Focus restores to the menu trigger after close.
+- Responsive passes ran at mobile `390px`, tablet `768px`, and desktop `1440px`.
+- Browser console produced no errors during the CP2 flow.
+- Cart count rendered `0` in a fresh browser context and increased after adding a simple WooCommerce test product.
+
+Compatibility checks passed:
+
+- Parent theme served `200 OK` with the companion plugin inactive.
+- Parent theme and companion plugin served `200 OK` with WooCommerce inactive.
+- Child theme activated and served `200 OK` with WooCommerce restored active.
+- `wp-admin` redirected to login and login returned `200 OK`.
+- A fresh `debug.log` check after compatibility requests showed no PHP warnings.
+
+Failed or warning-only:
+
+```sh
+npm audit --audit-level=high
+```
+
+The audit command still fails with the known transitive development dependency advisories under `@wordpress/scripts`: 28 total findings, 22 moderate and 6 high. No production runtime dependency was added in CP2.

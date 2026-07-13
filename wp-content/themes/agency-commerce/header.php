@@ -17,3 +17,7 @@ declare( strict_types=1 );
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <div id="page" class="site">
+	<?php
+	$agency_commerce_header_data = agency_commerce_get_header_data();
+	require agency_commerce_component_path( 'components/header/header.php' );
+	?>

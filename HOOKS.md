@@ -24,6 +24,31 @@ $variant = agency_commerce_get_setting( 'header.variant', 'header-default' );
 
 Returns the parent theme fallback settings used when the plugin is inactive.
 
+### `agency_commerce_get_header_data(): array`
+
+Returns sanitized shared data for header variants.
+
+### `agency_commerce_get_footer_data(): array`
+
+Returns sanitized shared data for footer variants.
+
+### `agency_commerce_component_path( string $template ): string`
+
+Resolves component template paths and allows child-theme overrides through `locate_template()`.
+
+### `agency_commerce_get_cart_count(): int`
+
+Returns the WooCommerce cart count when WooCommerce is active and the cart object exists; otherwise returns `0`.
+
+### `agency_commerce_cart_count_markup(): string`
+
+Returns escaped cart-count markup used by the header and WooCommerce fragments.
+
+## Menu Locations
+
+- `primary`: desktop and mobile primary navigation.
+- `footer`: footer navigation.
+
 ## Plugin Functions
 
 ### `agency_commerce_core_get_setting( string $key, mixed $fallback = null ): mixed`
@@ -57,3 +82,9 @@ Filters the canonical plugin defaults before they are exposed through helper fun
 ### `agency_commerce_core_default_settings`
 
 Filters the public plugin defaults array.
+
+## WooCommerce Filters Used
+
+### `woocommerce_add_to_cart_fragments`
+
+The parent theme uses this supported WooCommerce filter to refresh `span.ac-cart-count` after add-to-cart events. It does not implement custom AJAX or custom cart state.
