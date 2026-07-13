@@ -1,0 +1,26 @@
+{
+  "name": "agency-commerce-framework",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repository tooling for the agency-commerce reusable WooCommerce framework.",
+  "packageManager": "npm@11.9.0",
+  "engines": {
+    "node": "24.14.x",
+    "npm": "11.9.x"
+  },
+  "scripts": {
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "env:destroy": "wp-env destroy",
+    "env:clean": "wp-env clean all",
+    "env:cli": "wp-env run cli --",
+    "env:setup": "wp-env run cli -- sh -c 'wp plugin is-installed woocommerce && wp plugin activate woocommerce || wp plugin install https://downloads.wordpress.org/plugin/woocommerce.10.9.4.zip --activate'",
+    "build": "wp-scripts build --webpack-src-dir=tooling/assets --output-path=build",
+    "lint:js": "wp-scripts lint-js tooling/assets",
+    "test": "npm run build"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^11.10.0",
+    "@wordpress/scripts": "^32.6.0"
+  }
+}

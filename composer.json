@@ -1,0 +1,31 @@
+{
+  "name": "agency-commerce/framework",
+  "description": "Development tooling for the agency-commerce reusable WooCommerce framework.",
+  "type": "project",
+  "license": "proprietary",
+  "require": {},
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "wp-coding-standards/wpcs": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "AgencyCommerceCore\\": "wp-content/plugins/agency-commerce-core/includes/"
+    }
+  },
+  "scripts": {
+    "lint": "phpcs --standard=phpcs.xml.dist",
+    "lint:php": "find wp-content -type f -name '*.php' -print0 | xargs -0 -r -n1 php -l",
+    "test": [
+      "@lint:php",
+      "@lint"
+    ]
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  }
+}
