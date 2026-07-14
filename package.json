@@ -16,11 +16,16 @@
     "env:cli": "wp-env run cli --",
     "env:setup": "wp-env run cli -- sh -c 'wp plugin is-installed woocommerce && wp plugin activate woocommerce || wp plugin install https://downloads.wordpress.org/plugin/woocommerce.10.9.4.zip --activate'",
     "build": "wp-scripts build --webpack-src-dir=tooling/assets --output-path=build",
-    "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright",
+    "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright tests/visual",
     "test:admin": "node tooling/playwright/admin-settings.js",
+    "test:visual": "playwright test --config=tests/visual/playwright.config.js",
+    "test:visual:update": "playwright test --config=tests/visual/playwright.config.js --update-snapshots",
+    "visual:baseline": "npm run test:visual:update",
+    "visual:compare": "npm run test:visual",
     "test": "npm run build"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@wordpress/env": "^11.10.0",
     "@wordpress/scripts": "^32.6.0"
   }

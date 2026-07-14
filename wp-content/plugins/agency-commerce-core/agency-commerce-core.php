@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'AGENCY_COMMERCE_CORE_VERSION', '0.1.0' );
+define( 'AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION', 1 );
 define( 'AGENCY_COMMERCE_CORE_FILE', __FILE__ );
 define( 'AGENCY_COMMERCE_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'AGENCY_COMMERCE_CORE_URL', plugin_dir_url( __FILE__ ) );

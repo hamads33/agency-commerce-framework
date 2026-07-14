@@ -5,17 +5,83 @@ const baseUrl = process.env.WP_BASE_URL || 'http://localhost:8888';
 const username = process.env.WP_USERNAME || 'admin';
 const password = process.env.WP_PASSWORD || 'password';
 
-const tabs = [
-	'store_identity',
-	'header',
-	'shop',
-	'product_page',
-	'footer',
-	'social',
-	'design',
-	'performance',
-	'developer',
+const shopUrl = `${ baseUrl }/shop/`;
+const productUrl = `${ baseUrl }/product/cp3-simple-product/`;
+const settingsUrl = ( tab ) =>
+	`${ baseUrl }/wp-admin/admin.php?page=agency-commerce-framework&tab=${ tab }`;
+
+const variantRuns = [
+	{
+		tab: 'header',
+		field: '#agency-commerce-core-header-variant',
+		value: 'header-default',
+		frontendUrl: shopUrl,
+		expectation: { headerClass: 'ac-site-header--default' },
+	},
+	{
+		tab: 'header',
+		field: '#agency-commerce-core-header-variant',
+		value: 'header-centered',
+		frontendUrl: shopUrl,
+		expectation: { headerClass: 'ac-site-header--centered' },
+	},
+	{
+		tab: 'footer',
+		field: '#agency-commerce-core-footer-variant',
+		value: 'footer-columns',
+		frontendUrl: shopUrl,
+		expectation: { footerClass: 'ac-site-footer--columns' },
+	},
+	{
+		tab: 'footer',
+		field: '#agency-commerce-core-footer-variant',
+		value: 'footer-minimal',
+		frontendUrl: shopUrl,
+		expectation: { footerClass: 'ac-site-footer--minimal' },
+	},
+	{
+		tab: 'shop',
+		field: '#agency-commerce-core-shop-card_variant',
+		value: 'product-card-classic',
+		frontendUrl: shopUrl,
+		expectation: { cardClass: 'ac-product-card--classic' },
+	},
+	{
+		tab: 'shop',
+		field: '#agency-commerce-core-shop-card_variant',
+		value: 'product-card-minimal',
+		frontendUrl: shopUrl,
+		expectation: { cardClass: 'ac-product-card--minimal' },
+	},
+	{
+		tab: 'shop',
+		field: '#agency-commerce-core-shop-card_variant',
+		value: 'product-card-compact',
+		frontendUrl: shopUrl,
+		expectation: { cardClass: 'ac-product-card--compact' },
+	},
+	{
+		tab: 'product_page',
+		field: '#agency-commerce-core-product_page-layout',
+		value: 'product-layout-standard',
+		frontendUrl: productUrl,
+		expectation: { layoutClass: 'ac-product-layout--standard' },
+	},
+	{
+		tab: 'product_page',
+		field: '#agency-commerce-core-product_page-layout',
+		value: 'product-layout-sticky',
+		frontendUrl: productUrl,
+		expectation: { layoutClass: 'ac-product-layout--sticky' },
+	},
 ];
+
+const finalValues = {
+	header: 'header-centered',
+	footer: 'footer-minimal',
+	shop: 'product-card-compact',
+	product_page: 'product-layout-sticky',
+};
 
 async function login( page ) {
 	await page.goto( `${ baseUrl }/wp-login.php`, {
@@ -24,59 +90,53 @@ async function login( page ) {
 	await page.fill( '#user_login', username );
 	await page.fill( '#user_pass', password );
 	await Promise.all( [
-		page.waitForNavigation( { waitUntil: 'networkidle' } ),
+		page.waitForSelector( '#wpadminbar' ),
 		page.click( '#wp-submit' ),
 	] );
 }
 
-async function saveTab( page, tab ) {
-	await page.goto(
-		`${ baseUrl }/wp-admin/admin.php?page=agency-commerce-framework&tab=${ tab }`,
-		{ waitUntil: 'networkidle' }
-	);
+async function logout( page ) {
+	await page.goto( `${ baseUrl }/wp-login.php?action=logout`, {
+		waitUntil: 'networkidle',
+	} );
+	const logoutUrl = await page
+		.locator( 'a[href*="action=logout"]' )
+		.first()
+		.getAttribute( 'href' );
 
-	await page.waitForSelector( '.agency-commerce-core-settings form' );
-	await submitSettingsForm( page );
+	if ( ! logoutUrl ) {
+		throw new Error( 'Could not resolve the logout URL.' );
+	}
 
-	const formReturned = await page
-		.locator( '.agency-commerce-core-settings form' )
-		.count();
-	const errors = await page.locator( '.notice-error, .error' ).count();
+	await page.goto( logoutUrl, { waitUntil: 'networkidle' } );
+	await page.waitForURL( /wp-login\.php/ );
+}
 
-	if ( ! formReturned || errors ) {
+async function assertNoPhpWarnings( page, context ) {
+	const bodyText = await page.locator( 'body' ).innerText();
+	const html = await page.content();
+	const combined = `${ bodyText }\n${ html }`;
+
+	if (
+		/(?:^|[^a-z])(Warning|Notice|Deprecated|Fatal error)\b/i.test(
+			combined
+		)
+	) {
 		throw new Error(
-			`Settings save did not complete cleanly for ${ tab }.`
+			`PHP warning text found while checking ${ context }.`
 		);
 	}
 }
 
-async function verifyInvalidHeaderVariantRejected( page ) {
-	await page.goto(
-		`${ baseUrl }/wp-admin/admin.php?page=agency-commerce-framework&tab=header`,
-		{ waitUntil: 'networkidle' }
+async function assertHasClass( locator, className, label ) {
+	const classList = await locator.evaluate(
+		( element ) => element.className
 	);
 
-	await page.evaluate( () => {
-		const select = document.querySelector(
-			'#agency-commerce-core-header-variant'
+	if ( ! String( classList ).split( /\s+/ ).includes( className ) ) {
+		throw new Error(
+			`Expected ${ label } to include class ${ className }, got: ${ classList }`
 		);
-		const option = document.createElement( 'option' );
-
-		option.value = 'invalid-header';
-		option.textContent = 'Invalid Header';
-		select.appendChild( option );
-		select.value = 'invalid-header';
-	} );
-
-	await submitSettingsForm( page );
-
-	const selected = await page.$eval(
-		'#agency-commerce-core-header-variant',
-		( select ) => select.value
-	);
-
-	if ( selected === 'invalid-header' ) {
-		throw new Error( 'Invalid header variant was not rejected.' );
 	}
 }
 
@@ -94,6 +154,80 @@ async function submitSettingsForm( page ) {
 	await page.waitForSelector( '.agency-commerce-core-settings form' );
 }
 
+async function saveVariant( page, run ) {
+	await page.goto( settingsUrl( run.tab ), {
+		waitUntil: 'networkidle',
+	} );
+
+	await page.waitForSelector( run.field );
+	await page.selectOption( run.field, run.value );
+	await submitSettingsForm( page );
+
+	const selected = await page.$eval( run.field, ( select ) => select.value );
+
+	if ( selected !== run.value ) {
+		throw new Error( `Failed to persist ${ run.value } on ${ run.tab }.` );
+	}
+
+	console.log( `Saved ${ run.tab } -> ${ run.value }` );
+}
+
+async function verifyFrontend( page, run ) {
+	await page.goto( run.frontendUrl, {
+		waitUntil: 'networkidle',
+	} );
+	await assertNoPhpWarnings( page, run.value );
+
+	if ( run.expectation.headerClass ) {
+		await assertHasClass(
+			page.locator( 'header.ac-site-header' ).first(),
+			run.expectation.headerClass,
+			'header'
+		);
+	}
+
+	if ( run.expectation.footerClass ) {
+		await assertHasClass(
+			page.locator( 'footer.ac-site-footer' ).first(),
+			run.expectation.footerClass,
+			'footer'
+		);
+	}
+
+	if ( run.expectation.cardClass ) {
+		await assertHasClass(
+			page.locator( 'article.ac-product-card' ).first(),
+			run.expectation.cardClass,
+			'product card'
+		);
+	}
+
+	if ( run.expectation.layoutClass ) {
+		await assertHasClass(
+			page.locator( 'div.ac-product-layout' ).first(),
+			run.expectation.layoutClass,
+			'product layout'
+		);
+	}
+
+	console.log( `Verified frontend for ${ run.value }` );
+}
+
+async function verifySavedSelection( page, tab, field, value ) {
+	await page.goto( settingsUrl( tab ), {
+		waitUntil: 'networkidle',
+	} );
+
+	await page.waitForSelector( field );
+	const selected = await page.$eval( field, ( select ) => select.value );
+
+	if ( selected !== value ) {
+		throw new Error(
+			`Expected ${ tab } to persist ${ value } after login, got ${ selected }.`
+		);
+	}
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const page = await browser.newPage();
@@ -101,12 +235,76 @@ async function submitSettingsForm( page ) {
 	try {
 		await login( page );
 
-		for ( const tab of tabs ) {
-			await saveTab( page, tab );
+		for ( const run of variantRuns ) {
+			await saveVariant( page, run );
+			await verifyFrontend( page, run );
 		}
 
-		await verifyInvalidHeaderVariantRejected( page );
-		console.log( 'Admin settings Playwright checks passed.' );
+		await logout( page );
+		await page.close();
+
+		const reloginPage = await browser.newPage();
+		await login( reloginPage );
+
+		await verifySavedSelection(
+			reloginPage,
+			'header',
+			'#agency-commerce-core-header-variant',
+			finalValues.header
+		);
+		await verifySavedSelection(
+			reloginPage,
+			'footer',
+			'#agency-commerce-core-footer-variant',
+			finalValues.footer
+		);
+		await verifySavedSelection(
+			reloginPage,
+			'shop',
+			'#agency-commerce-core-shop-card_variant',
+			finalValues.shop
+		);
+		await verifySavedSelection(
+			reloginPage,
+			'product_page',
+			'#agency-commerce-core-product_page-layout',
+			finalValues.product_page
+		);
+
+		await reloginPage.goto( shopUrl, {
+			waitUntil: 'networkidle',
+		} );
+		await assertNoPhpWarnings( reloginPage, 'persisted frontend review' );
+		await assertHasClass(
+			reloginPage.locator( 'header.ac-site-header' ).first(),
+			'ac-site-header--centered',
+			'header'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'footer.ac-site-footer' ).first(),
+			'ac-site-footer--minimal',
+			'footer'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'article.ac-product-card' ).first(),
+			'ac-product-card--compact',
+			'product card'
+		);
+
+		await reloginPage.goto( productUrl, {
+			waitUntil: 'networkidle',
+		} );
+		await assertNoPhpWarnings(
+			reloginPage,
+			'persisted product layout review'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'div.ac-product-layout' ).first(),
+			'ac-product-layout--sticky',
+			'product layout'
+		);
+
+		console.log( 'Admin settings variant checks passed.' );
 	} finally {
 		await browser.close();
 	}

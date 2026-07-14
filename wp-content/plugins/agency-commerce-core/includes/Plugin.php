@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace AgencyCommerceCore;
 
 use AgencyCommerceCore\Admin\SettingsPage;
+use AgencyCommerceCore\Migrations\SettingsMigrationManager;
 use AgencyCommerceCore\Settings\Defaults;
 
 /**
@@ -41,6 +42,7 @@ final class Plugin {
 		load_plugin_textdomain( 'agency-commerce-core', false, dirname( plugin_basename( AGENCY_COMMERCE_CORE_FILE ) ) . '/languages' );
 
 		add_filter( 'agency_commerce_core_default_settings', array( Defaults::class, 'filter_defaults' ) );
+		( new SettingsMigrationManager() )->maybe_migrate();
 		( new SettingsPage() )->register();
 
 		/**

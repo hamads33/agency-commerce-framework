@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1 - Framework quality checkpoint
+
+- Added settings schema versioning with `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION`.
+- Added the stored `agency_commerce_core_settings_schema_version` option.
+- Added a settings migration manager and no-op version 1 migration that preserves existing settings.
+- Added Playwright visual baseline capture and comparison infrastructure under `tests/visual-baseline/`.
+- Added visual baseline and comparison npm scripts.
+- Added a sidebar compatibility template for classic theme sidebar lookups.
+- Documented future settings migration and visual regression workflows.
+
 ## 0.4.0 - CP4A
 
 - Added the `Commerce Framework` admin menu and tabbed Settings API interface.

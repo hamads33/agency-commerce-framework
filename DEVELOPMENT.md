@@ -121,12 +121,16 @@ composer lint
 npm run lint:js
 npm test
 npm run test:admin
+npm run visual:baseline
+npm run visual:compare
 npm audit --audit-level=high
 ```
 
 `composer lint:php` runs `php -l` across `wp-content`. `composer lint` runs PHPCS with WordPress Coding Standards.
 
 `npm run test:admin` runs the CP4A Playwright admin settings smoke test against the local `wp-env` site at `http://localhost:8888`. Override `WP_BASE_URL`, `WP_USERNAME`, or `WP_PASSWORD` if the local admin differs from the default `admin` / `password`.
+
+`npm run visual:baseline` captures Playwright visual baselines under `tests/visual-baseline/`. `npm run visual:compare` compares the current site against those baselines. Override page URLs with `VISUAL_HOME_URL`, `VISUAL_SHOP_URL`, `VISUAL_CATEGORY_URL`, `VISUAL_SIMPLE_PRODUCT_URL`, `VISUAL_VARIABLE_PRODUCT_URL`, `VISUAL_CART_URL`, `VISUAL_CHECKOUT_URL`, and `VISUAL_MY_ACCOUNT_URL` when local slugs differ. Override the allowed diff ratio with `VISUAL_DIFF_THRESHOLD`; the default is `0.01`.
 
 `npm audit --audit-level=high` currently reports transitive development dependency advisories under `@wordpress/scripts`. Do not claim the audit passes unless those findings are actually resolved.
 
@@ -517,3 +521,89 @@ npm audit --audit-level=high
 ```
 
 The audit command is still expected to fail with the known transitive development dependency advisories under `@wordpress/scripts` until the toolchain advisories are intentionally resolved.
+
+## Settings Schema Migrations
+
+The current settings schema version is declared by `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION` in `agency-commerce-core.php`. The installed schema version is stored separately from the settings blob in the `agency_commerce_core_settings_schema_version` option.
+
+`AgencyCommerceCore\Migrations\SettingsMigrationManager` runs migrations in ascending order. Each migration updates the stored schema version only after its `run()` method completes. The first migration, `Version1`, is intentionally a no-op marker so CP4A settings survive the introduction of versioning without changes.
+
+Future checkpoints must use migrations when they add, remove, rename, split, combine, or transform saved settings. The required process is:
+
+1. Add a new migration class under `wp-content/plugins/agency-commerce-core/includes/Migrations/`.
+2. Implement `SettingsMigrationInterface`.
+3. Return a new integer from `version()`.
+4. Register the migration in `SettingsMigrationManager::migrations()`.
+5. Increment `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION`.
+6. Preserve old settings values unless the migration explicitly transforms them.
+7. Document the migration and test evidence here and in `CHANGELOG.md`.
+
+Never change existing setting names or values outside a migration.
+
+## Visual Regression Workflow
+
+The visual suite is configured in `tests/visual/playwright.config.js` and implemented in `tests/visual/visual.spec.js`.
+
+Capture or refresh baselines:
+
+```sh
+npm run visual:baseline
+```
+
+Compare the current site against committed baselines:
+
+```sh
+npm run visual:compare
+```
+
+Baselines are committed under `tests/visual-baseline/desktop`, `tests/visual-baseline/tablet`, and `tests/visual-baseline/mobile`. The suite captures:
+
+- Homepage
+- Shop
+- Product category
+- Simple product
+- Variable product
+- Cart
+- Checkout
+- My Account
+
+The default diff threshold is `0.01`. Set `VISUAL_DIFF_THRESHOLD=0` for exact comparison or a higher value for controlled, documented rendering noise.
+
+## Framework Quality Checkpoint
+
+This checkpoint is not CP4B and does not add commerce features. It introduces:
+
+- Settings schema versioning.
+- A no-op first settings migration.
+- Playwright visual baseline capture and comparison.
+- A compatibility `sidebar.php` template to avoid classic theme sidebar lookup noise.
+- Documentation for future migration and visual workflows.
+
+Use this verification set:
+
+```sh
+git status --short
+composer dump-autoload
+composer lint:php
+composer lint
+npm run lint:js
+npm run build
+npm test
+npm run env:start
+npm run env:setup
+npm run env:cli -- wp plugin activate agency-commerce-core woocommerce
+npm run env:cli -- wp theme activate agency-commerce
+npm run test:admin
+npm run visual:baseline
+npm run visual:compare
+npm run env:cli -- wp option get agency_commerce_core_settings_schema_version
+npm run env:cli -- wp option get agency_commerce_core_settings --format=json
+```
+
+Also verify that existing settings survive deleting/recreating the schema-version option:
+
+```sh
+npm run env:cli -- wp option delete agency_commerce_core_settings_schema_version
+npm run env:cli -- wp option get agency_commerce_core_settings_schema_version
+npm run env:cli -- wp option get agency_commerce_core_settings --format=json
+```

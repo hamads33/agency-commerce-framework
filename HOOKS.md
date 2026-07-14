@@ -6,7 +6,13 @@ This file records public extension points introduced by the framework. Keep thes
 
 - `AGENCY_COMMERCE_VERSION`: parent theme version.
 - `AGENCY_COMMERCE_CORE_VERSION`: companion plugin version.
+- `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION`: target companion-plugin settings schema version.
 - `AGENCY_COMMERCE_CHILD_VERSION`: example child theme version.
+
+## Plugin Options
+
+- `agency_commerce_core_settings`: sanitized settings blob.
+- `agency_commerce_core_settings_schema_version`: installed settings schema version.
 
 ## Theme Functions
 

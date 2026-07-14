@@ -8,6 +8,8 @@ Thumbs.db
 # Build output.
 /build/
 /coverage/
+/test-results/
+/playwright-report/
 
 # Local WordPress environment.
 /.wp-env/

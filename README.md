@@ -38,6 +38,13 @@ CP4A adds Commerce Framework settings infrastructure:
 - Settings-backed selectors for header, footer, product-card, and product-layout variants
 - Settings-backed sticky header, products-per-row, products-per-page, color tokens, font tokens, social links, and store identity values
 
+The framework quality checkpoint after CP4A adds:
+
+- Settings schema versioning with a stored schema version and migration manager
+- A no-op first migration that preserves existing CP4A settings unchanged
+- Playwright visual baseline capture and comparison under `tests/visual-baseline/`
+- Visual coverage for homepage, shop, product category, simple product, variable product, cart, checkout, and My Account across desktop, tablet, and mobile
+
 ## Requirements
 
 - Git
@@ -63,10 +70,14 @@ npm run env:stop
 npm run build
 npm run lint:js
 npm run test:admin
+npm run visual:baseline
+npm run visual:compare
 npm test
 composer lint:php
 composer lint
 ```
+
+Use `npm run visual:baseline` to refresh committed screenshots and `npm run visual:compare` to fail on visual differences above the configured threshold. The default threshold is `0.01`; override it with `VISUAL_DIFF_THRESHOLD`.
 
 See `DEVELOPMENT.md` for pinned versions, WP-CLI commands, reset commands, and checkpoint test evidence. See `HOOKS.md` for the public API contract introduced so far.
 

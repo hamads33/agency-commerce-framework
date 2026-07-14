@@ -21,6 +21,8 @@ The plugin owns the Commerce Framework admin settings infrastructure and does no
 
 Settings definitions live in `AgencyCommerceCore\Settings\Registry`. Sanitization and validation live in `AgencyCommerceCore\Settings\Sanitizer`. Public reads use `agency_commerce_core_get_settings()` and `agency_commerce_core_get_setting()`, which merge saved values with defaults and memoize the sanitized result for the request.
 
+Settings schema versioning is separate from the settings blob. `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION` declares the target schema version and `AgencyCommerceCore\Migrations\SettingsMigrationManager` stores the installed version in `agency_commerce_core_settings_schema_version`. Migrations run in ascending version order and update the stored schema version only after each migration succeeds. Version 1 is a no-op marker so existing CP4A installations keep all option values unchanged when versioning is introduced.
+
 The parent theme continues to call `agency_commerce_get_setting()`. When the plugin is active, that helper reads the plugin settings. When the plugin is inactive, it reads the parent fallback defaults in `inc/settings.php`.
 
 CP4A settings cover store identity, header, shop, product page, footer, social links, color/font tokens, performance, and developer toggles. Later feature areas such as WhatsApp, product badges, delivery estimates, checkout controls, cart drawer, presets, recently viewed, size guide, and product enquiries are intentionally not implemented in CP4A.
@@ -90,3 +92,24 @@ Child themes should prefer component overrides and CSS variable changes over cop
 ## Asset Loading Flow
 
 The parent stylesheet is always enqueued. Header/mobile navigation JavaScript is always enqueued because header chrome appears globally. Catalog drawer JavaScript is conditionally enqueued only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`. The `performance.load_assets_conditionally` setting can disable conditional catalog loading for debugging or compatibility.
+
+## Visual Regression Flow
+
+Playwright visual regression tests live in `tests/visual/`. Baselines are stored under `tests/visual-baseline/` by viewport project:
+
+- `desktop`
+- `tablet`
+- `mobile`
+
+The visual suite captures homepage, shop, product category, simple product, variable product, cart, checkout, and My Account. `npm run visual:baseline` updates baseline screenshots. `npm run visual:compare` compares the current render against those baselines and fails when differences exceed `VISUAL_DIFF_THRESHOLD` (`0.01` by default).
+
+## Migration Policy
+
+Future checkpoints that need to alter the settings schema must:
+
+1. Add a migration class in `AgencyCommerceCore\Migrations`.
+2. Return the new integer schema version from `version()`.
+3. Register the migration in `SettingsMigrationManager::migrations()`.
+4. Increment `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION`.
+5. Preserve existing option keys and values unless the migration explicitly and safely transforms them.
+6. Document the migration in `DEVELOPMENT.md` and `CHANGELOG.md`.
