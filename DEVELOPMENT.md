@@ -615,6 +615,42 @@ Baselines are committed under `tests/visual-baseline/desktop`, `tests/visual-bas
 
 The default diff threshold is `0.01`. Set `VISUAL_DIFF_THRESHOLD=0` for exact comparison or a higher value for controlled, documented rendering noise.
 
+CP4D reviewed and updated all 24 visual baselines after CP4C. The approved baseline changes are limited to:
+
+- corrected WooCommerce product-card grid widths after overriding core product-loop float, margin, and width rules;
+- CP4B reusable product badges and product summary extension content on catalog/product screenshots;
+- CP4C runtime asset output from the production build pipeline;
+- default footer-column rendering after the visual suite was made deterministic.
+
+The visual suite now resets mutable framework options, active presets, preset snapshots, active theme/plugin state, and CP4B product badge/delivery metadata before screenshots. This prevents `npm run test:admin` or `npm run test:storefront` from changing visual results through persistent local database state.
+
+Baselines updated in CP4D:
+
+- `tests/visual-baseline/desktop/homepage.png`
+- `tests/visual-baseline/desktop/shop.png`
+- `tests/visual-baseline/desktop/product-category.png`
+- `tests/visual-baseline/desktop/simple-product.png`
+- `tests/visual-baseline/desktop/variable-product.png`
+- `tests/visual-baseline/desktop/cart.png`
+- `tests/visual-baseline/desktop/checkout.png`
+- `tests/visual-baseline/desktop/my-account.png`
+- `tests/visual-baseline/tablet/homepage.png`
+- `tests/visual-baseline/tablet/shop.png`
+- `tests/visual-baseline/tablet/product-category.png`
+- `tests/visual-baseline/tablet/simple-product.png`
+- `tests/visual-baseline/tablet/variable-product.png`
+- `tests/visual-baseline/tablet/cart.png`
+- `tests/visual-baseline/tablet/checkout.png`
+- `tests/visual-baseline/tablet/my-account.png`
+- `tests/visual-baseline/mobile/homepage.png`
+- `tests/visual-baseline/mobile/shop.png`
+- `tests/visual-baseline/mobile/product-category.png`
+- `tests/visual-baseline/mobile/simple-product.png`
+- `tests/visual-baseline/mobile/variable-product.png`
+- `tests/visual-baseline/mobile/cart.png`
+- `tests/visual-baseline/mobile/checkout.png`
+- `tests/visual-baseline/mobile/my-account.png`
+
 ## Framework Quality Checkpoint
 
 This earlier checkpoint introduced the schema and visual quality infrastructure:

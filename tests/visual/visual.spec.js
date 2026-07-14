@@ -1,4 +1,8 @@
 const { expect, test } = require( '@playwright/test' );
+const { execFileSync } = require( 'child_process' );
+const path = require( 'path' );
+
+const repoRoot = path.resolve( __dirname, '..', '..' );
 
 const pages = [
 	{
@@ -47,6 +51,58 @@ const pages = [
 		path: process.env.VISUAL_MY_ACCOUNT_URL || '/my-account/',
 	},
 ];
+
+function runWp( args ) {
+	execFileSync( 'npm', [ 'run', 'env:cli', '--', 'wp', ...args ], {
+		cwd: repoRoot,
+		encoding: 'utf8',
+		maxBuffer: 10 * 1024 * 1024,
+		stdio: 'pipe',
+	} );
+}
+
+test.beforeAll( () => {
+	runWp( [
+		'eval',
+		`
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			activate_plugin( 'woocommerce/woocommerce.php' );
+		}
+		if ( ! is_plugin_active( 'agency-commerce-core/agency-commerce-core.php' ) ) {
+			activate_plugin( 'agency-commerce-core/agency-commerce-core.php' );
+		}
+		switch_theme( 'agency-commerce' );
+		delete_option( 'agency_commerce_core_settings' );
+		delete_option( 'agency_commerce_core_active_preset' );
+		delete_option( 'agency_commerce_core_preset_snapshot' );
+
+		$badge_keys = array(
+			'_agency_commerce_badge_new',
+			'_agency_commerce_badge_best_seller',
+			'_agency_commerce_badge_limited',
+			'_agency_commerce_badge_custom_labels',
+			'_agency_commerce_delivery_message',
+		);
+		$products = get_posts(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+
+		foreach ( $products as $product_id ) {
+			foreach ( $badge_keys as $badge_key ) {
+				delete_post_meta( (int) $product_id, $badge_key );
+			}
+		}
+		`,
+	] );
+} );
 
 for ( const visualPage of pages ) {
 	test( visualPage.name, async ( { page } ) => {

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - CP4D Visual Regression Review
+
+- Reviewed all 24 visual regression failures across homepage, shop, product category, simple product, variable product, cart, checkout, and My Account at desktop, tablet, and mobile viewports.
+- Fixed the unexpected WooCommerce product-loop width regression by overriding core float, margin, and width rules at equivalent specificity so framework product cards render at usable grid widths.
+- Made visual regression tests reset mutable framework settings, presets, theme/plugin state, and CP4B product badge metadata before screenshots.
+- Made storefront Playwright setup self-contained when the framework settings option row is absent and explicitly seeded the card/layout variants it verifies.
+- Updated only the 24 affected visual baselines after approving expected CP4B/CP4C/CP4D changes: reusable badges, product summary extensions, runtime CSS output, restored default footer rendering, and corrected product-card grid layout.
+
 ## 0.4.3 - CP4C Audit Remediation
 
 - Fixed custom badge metadata storage by migrating legacy array values to canonical newline text while preserving runtime compatibility for both shapes.

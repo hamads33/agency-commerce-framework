@@ -55,9 +55,22 @@ function deepMerge( target, patch ) {
 }
 
 function readOption( name ) {
-	return parseJsonOutput(
-		runWp( [ 'option', 'get', name, '--format=json' ] )
-	);
+	try {
+		return parseJsonOutput(
+			runWp( [ 'option', 'get', name, '--format=json' ] )
+		);
+	} catch ( error ) {
+		if (
+			error.stderr &&
+			String( error.stderr ).includes(
+				`Could not get '${ name }' option`
+			)
+		) {
+			return {};
+		}
+
+		throw error;
+	}
 }
 
 function updateOption( name, patch ) {
@@ -215,7 +228,11 @@ function setSettingsPatch( patch ) {
 
 function seedCommerceFeatures() {
 	setSettingsPatch( {
+		shop: {
+			card_variant: 'product-card-compact',
+		},
 		product_page: {
+			layout: 'product-layout-sticky',
 			show_delivery_message: true,
 			delivery_message: 'Standard delivery in 5-7 business days.',
 			show_whatsapp_enquiry: true,

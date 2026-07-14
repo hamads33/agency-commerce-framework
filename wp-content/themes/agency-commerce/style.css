@@ -606,6 +606,13 @@ ul.products {
 	padding: 0;
 }
 
+.woocommerce ul.products li.product,
+ul.products li.product {
+	float: none;
+	margin: 0;
+	width: auto;
+}
+
 .woocommerce ul.products::before,
 .woocommerce ul.products::after {
 	content: none;
