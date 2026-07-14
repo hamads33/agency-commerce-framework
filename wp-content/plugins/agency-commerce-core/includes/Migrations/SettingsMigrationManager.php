@@ -59,6 +59,7 @@ final class SettingsMigrationManager {
 			new Version1(),
 			new Version2(),
 			new Version3(),
+			new Version4(),
 		);
 
 		usort(

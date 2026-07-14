@@ -1,0 +1,16 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/newsletter",
+	"title": "Agency Newsletter",
+	"category": "widgets",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"heading": { "type": "string", "default": "Join the list" },
+		"text": { "type": "string", "default": "" },
+		"buttonText": { "type": "string", "default": "" },
+		"url": { "type": "string", "default": "" }
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide" ] }
+}

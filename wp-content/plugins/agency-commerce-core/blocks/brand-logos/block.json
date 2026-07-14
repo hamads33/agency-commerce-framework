@@ -1,0 +1,14 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/brand-logos",
+	"title": "Agency Brand Logos",
+	"category": "widgets",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"heading": { "type": "string", "default": "Brands we carry" },
+		"text": { "type": "string", "default": "" }
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide" ] }
+}

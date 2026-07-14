@@ -4,6 +4,7 @@ const { execFileSync } = require( 'child_process' );
 const path = require( 'path' );
 
 const repoRoot = path.resolve( __dirname, '..', '..' );
+const fallbackComposeFile = process.env.WP_ENV_COMPOSE_FILE || '';
 
 const baseUrl = process.env.WP_BASE_URL || 'http://localhost:8888';
 const username = process.env.WP_USERNAME || 'admin';
@@ -184,6 +185,29 @@ async function assertImagePresent( page, selector, label ) {
 }
 
 function runWpEval( code ) {
+	if ( fallbackComposeFile ) {
+		execFileSync(
+			'docker',
+			[
+				'compose',
+				'-f',
+				fallbackComposeFile,
+				'exec',
+				'-T',
+				'cli',
+				'wp',
+				'eval',
+				code,
+			],
+			{
+				cwd: repoRoot,
+				encoding: 'utf8',
+				maxBuffer: 10 * 1024 * 1024,
+			}
+		);
+		return;
+	}
+
 	execFileSync( 'npm', [ 'run', 'env:cli', '--', 'wp', 'eval', code ], {
 		cwd: repoRoot,
 		encoding: 'utf8',

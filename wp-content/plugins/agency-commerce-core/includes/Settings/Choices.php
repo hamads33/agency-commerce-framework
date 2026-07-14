@@ -63,6 +63,18 @@ final class Choices {
 	}
 
 	/**
+	 * Returns checkout modes.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function checkout_modes(): array {
+		return array(
+			'block'   => __( 'Block checkout (default)', 'agency-commerce-core' ),
+			'classic' => __( 'Classic shortcode checkout', 'agency-commerce-core' ),
+		);
+	}
+
+	/**
 	 * Returns social link fields.
 	 *
 	 * @return array<string, array<string, mixed>>

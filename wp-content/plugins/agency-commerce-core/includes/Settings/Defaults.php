@@ -20,7 +20,7 @@ final class Defaults {
 	 */
 	public static function all(): array {
 		$defaults = array(
-			'store_identity' => array(
+			'store_identity'  => array(
 				'logo_id'        => 0,
 				'mobile_logo_id' => 0,
 				'contact_email'  => '',
@@ -28,7 +28,7 @@ final class Defaults {
 				'address'        => '',
 				'support_hours'  => '',
 			),
-			'design'         => array(
+			'design'          => array(
 				'primary_color'          => '#115e59',
 				'secondary_color'        => '#1f2937',
 				'accent_color'           => '#f59e0b',
@@ -49,7 +49,7 @@ final class Defaults {
 				'card_radius'            => '8px',
 				'product_image_ratio'    => '1 / 1',
 			),
-			'header'         => array(
+			'header'          => array(
 				'variant'           => 'header-default',
 				'sticky'            => false,
 				'show_search'       => true,
@@ -60,7 +60,7 @@ final class Defaults {
 				'announcement'      => '',
 				'announcement_link' => '',
 			),
-			'shop'           => array(
+			'shop'            => array(
 				'card_variant'        => 'product-card-classic',
 				'products_per_row'    => 4,
 				'products_per_page'   => 12,
@@ -73,7 +73,7 @@ final class Defaults {
 				'show_featured_badge' => true,
 				'show_product_cat'    => true,
 			),
-			'product_page'   => array(
+			'product_page'    => array(
 				'layout'                => 'product-layout-standard',
 				'sticky_summary'        => false,
 				'show_delivery_message' => true,
@@ -84,16 +84,38 @@ final class Defaults {
 				'show_tags'             => true,
 				'related_count'         => 4,
 			),
-			'footer'         => array(
+			'footer'          => array(
 				'variant'    => 'footer-columns',
 				'trust_text' => '',
 			),
-			'whatsapp'       => array(
+			'cart'            => array(
+				'enable_mini_cart'       => true,
+				'mini_cart_label'        => 'Cart',
+				'show_continue_shopping' => true,
+			),
+			'checkout'        => array(
+				'mode'                 => 'block',
+				'support_text'         => '',
+				'trust_text'           => '',
+				'optional_company'     => false,
+				'optional_address_2'   => true,
+				'optional_order_notes' => true,
+				'optional_postcode'    => false,
+				'minimum_order_amount' => 0,
+				'enable_cod_controls'  => false,
+				'cod_enabled'          => true,
+				'cod_instructions'     => '',
+			),
+			'recently_viewed' => array(
+				'enabled' => true,
+				'count'   => 4,
+			),
+			'whatsapp'        => array(
 				'phone_number'     => '',
 				'button_text'      => 'WhatsApp enquiry',
 				'message_template' => "Hello, I am interested in {product_name}.\nProduct: {product_url}\nSKU: {sku}\nVariation: {variation}",
 			),
-			'social'         => array(
+			'social'          => array(
 				'facebook'  => '',
 				'instagram' => '',
 				'tiktok'    => '',
@@ -102,10 +124,10 @@ final class Defaults {
 				'x'         => '',
 				'pinterest' => '',
 			),
-			'performance'    => array(
+			'performance'     => array(
 				'load_assets_conditionally' => true,
 			),
-			'developer'      => array(
+			'developer'       => array(
 				'debug_labels'         => false,
 				'force_product_search' => false,
 			),

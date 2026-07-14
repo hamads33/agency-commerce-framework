@@ -4,6 +4,7 @@ const { execFileSync } = require( 'child_process' );
 const path = require( 'path' );
 
 const repoRoot = path.resolve( __dirname, '..', '..' );
+const fallbackComposeFile = process.env.WP_ENV_COMPOSE_FILE || '';
 const baseUrl = process.env.WP_BASE_URL || 'http://localhost:8888';
 const shopUrl = `${ baseUrl }/shop/`;
 const simpleProductUrl = `${ baseUrl }/product/cp3-simple-product/`;
@@ -11,15 +12,30 @@ const variableProductUrl = `${ baseUrl }/product/cp3-variable-product/`;
 const homeUrl = `${ baseUrl }/`;
 
 function runWp( args ) {
-	const output = execFileSync(
-		'npm',
-		[ 'run', 'env:cli', '--', 'wp', ...args ],
-		{
-			cwd: repoRoot,
-			encoding: 'utf8',
-			maxBuffer: 10 * 1024 * 1024,
-		}
-	);
+	const output = fallbackComposeFile
+		? execFileSync(
+				'docker',
+				[
+					'compose',
+					'-f',
+					fallbackComposeFile,
+					'exec',
+					'-T',
+					'cli',
+					'wp',
+					...args,
+				],
+				{
+					cwd: repoRoot,
+					encoding: 'utf8',
+					maxBuffer: 10 * 1024 * 1024,
+				}
+		  )
+		: execFileSync( 'npm', [ 'run', 'env:cli', '--', 'wp', ...args ], {
+				cwd: repoRoot,
+				encoding: 'utf8',
+				maxBuffer: 10 * 1024 * 1024,
+		  } );
 
 	return String( output );
 }

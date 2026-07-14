@@ -70,6 +70,45 @@ Selected by `product_page.layout`.
 
 Both layouts preserve WooCommerce single-product hooks for gallery, title, rating, price, excerpt, variations, quantity, add-to-cart, meta, tabs, and related products.
 
+## Homepage Blocks
+
+Custom CP5 blocks are registered by `AgencyCommerceCore\Homepage\BlockRegistrar` and use `block.json` plus the plugin `blocks.js` editor entry.
+
+- `agency-commerce/hero`
+- `agency-commerce/category-grid`
+- `agency-commerce/promo-banner`
+- `agency-commerce/image-text`
+- `agency-commerce/trust-bar`
+- `agency-commerce/testimonials`
+- `agency-commerce/brand-logos`
+- `agency-commerce/faq`
+- `agency-commerce/newsletter`
+- `agency-commerce/recently-viewed-products`
+
+These blocks are server-rendered and escaped on output. They should remain presentation-focused. Do not add custom product query logic to them when a WooCommerce product block can provide the data.
+
+## Homepage Patterns
+
+Registered pattern slugs:
+
+- `agency-commerce/fashion-homepage`
+- `agency-commerce/electronics-homepage`
+- `agency-commerce/minimal-homepage`
+
+Patterns are insertable content only. They do not overwrite existing pages or automatically replace the active homepage.
+
+## Cart, Checkout, And Account Components
+
+WooCommerce owns Cart, Checkout, Mini-Cart, Store API state, payment methods, shipping methods, coupons, validation, notices, and My Account endpoints. The framework styles these surfaces through scoped CSS and adds only documented settings integrations.
+
+Mini-Cart uses `woocommerce/mini-cart` when registered. The fallback is the existing `ac-cart-link` with CP2 cart-count fragments.
+
+Classic cart and checkout use `[woocommerce_cart]` and `[woocommerce_checkout]` shortcodes in Classic mode.
+
+## Recently Viewed
+
+Recently viewed product IDs are stored in browser `localStorage` under `agencyCommerceRecentlyViewed`. The plugin REST endpoint renders current visible products from submitted IDs and ignores deleted, unavailable, or invisible products.
+
 ## Child Overrides
 
 Child themes can override component templates by matching the parent path. Example:

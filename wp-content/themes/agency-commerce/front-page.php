@@ -2,11 +2,26 @@
 /**
  * Front page template.
  *
- * CP1 keeps this editable through normal page content.
+ * Keeps homepage content fully editable through Gutenberg.
  *
  * @package AgencyCommerce
  */
 
 declare( strict_types=1 );
 
-get_template_part( 'index' );
+get_header();
+?>
+
+<main id="primary" class="site-main ac-front-page">
+	<?php
+	if ( have_posts() ) {
+		while ( have_posts() ) {
+			the_post();
+			the_content();
+		}
+	}
+	?>
+</main>
+
+<?php
+get_footer();

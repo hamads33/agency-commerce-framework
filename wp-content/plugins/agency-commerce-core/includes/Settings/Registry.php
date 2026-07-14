@@ -30,17 +30,20 @@ final class Registry {
 	 */
 	public static function tabs(): array {
 		return array(
-			'store_identity' => __( 'Store Identity', 'agency-commerce-core' ),
-			'presets'        => __( 'Presets', 'agency-commerce-core' ),
-			'header'         => __( 'Header', 'agency-commerce-core' ),
-			'shop'           => __( 'Shop', 'agency-commerce-core' ),
-			'product_page'   => __( 'Product Page', 'agency-commerce-core' ),
-			'whatsapp'       => __( 'WhatsApp & Enquiries', 'agency-commerce-core' ),
-			'footer'         => __( 'Footer', 'agency-commerce-core' ),
-			'social'         => __( 'Social Links', 'agency-commerce-core' ),
-			'design'         => __( 'Design Tokens', 'agency-commerce-core' ),
-			'performance'    => __( 'Performance', 'agency-commerce-core' ),
-			'developer'      => __( 'Developer', 'agency-commerce-core' ),
+			'store_identity'  => __( 'Store Identity', 'agency-commerce-core' ),
+			'presets'         => __( 'Presets', 'agency-commerce-core' ),
+			'header'          => __( 'Header', 'agency-commerce-core' ),
+			'shop'            => __( 'Shop', 'agency-commerce-core' ),
+			'product_page'    => __( 'Product Page', 'agency-commerce-core' ),
+			'cart'            => __( 'Cart', 'agency-commerce-core' ),
+			'checkout'        => __( 'Checkout', 'agency-commerce-core' ),
+			'whatsapp'        => __( 'WhatsApp & Enquiries', 'agency-commerce-core' ),
+			'recently_viewed' => __( 'Recently Viewed', 'agency-commerce-core' ),
+			'footer'          => __( 'Footer', 'agency-commerce-core' ),
+			'social'          => __( 'Social Links', 'agency-commerce-core' ),
+			'design'          => __( 'Design Tokens', 'agency-commerce-core' ),
+			'performance'     => __( 'Performance', 'agency-commerce-core' ),
+			'developer'       => __( 'Developer', 'agency-commerce-core' ),
 		);
 	}
 
@@ -51,7 +54,7 @@ final class Registry {
 	 */
 	public static function sections(): array {
 		return array(
-			'store_identity' => array(
+			'store_identity'  => array(
 				'identity' => array(
 					'title'  => __( 'Store Identity', 'agency-commerce-core' ),
 					'fields' => array(
@@ -88,7 +91,7 @@ final class Registry {
 					),
 				),
 			),
-			'header'         => array(
+			'header'          => array(
 				'header' => array(
 					'title'  => __( 'Header', 'agency-commerce-core' ),
 					'fields' => array(
@@ -133,7 +136,7 @@ final class Registry {
 					),
 				),
 			),
-			'shop'           => array(
+			'shop'            => array(
 				'shop' => array(
 					'title'  => __( 'Shop', 'agency-commerce-core' ),
 					'fields' => array(
@@ -194,7 +197,7 @@ final class Registry {
 					),
 				),
 			),
-			'product_page'   => array(
+			'product_page'    => array(
 				'product_page' => array(
 					'title'  => __( 'Product Page', 'agency-commerce-core' ),
 					'fields' => array(
@@ -242,7 +245,7 @@ final class Registry {
 					),
 				),
 			),
-			'footer'         => array(
+			'footer'          => array(
 				'footer' => array(
 					'title'  => __( 'Footer', 'agency-commerce-core' ),
 					'fields' => array(
@@ -259,7 +262,122 @@ final class Registry {
 					),
 				),
 			),
-			'whatsapp'       => array(
+			'cart'            => array(
+				'cart' => array(
+					'title'  => __( 'Cart and Mini-Cart', 'agency-commerce-core' ),
+					'fields' => array(
+						'cart.enable_mini_cart'       => array(
+							'label'       => __( 'Enable mini-cart drawer', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Uses the WooCommerce Mini-Cart block where available and keeps cart state controlled by WooCommerce.', 'agency-commerce-core' ),
+						),
+						'cart.mini_cart_label'        => array(
+							'label' => __( 'Mini-cart trigger label', 'agency-commerce-core' ),
+							'type'  => 'text',
+						),
+						'cart.show_continue_shopping' => array(
+							'label' => __( 'Show continue-shopping link', 'agency-commerce-core' ),
+							'type'  => 'checkbox',
+						),
+					),
+				),
+			),
+			'checkout'        => array(
+				'checkout_mode'     => array(
+					'title'  => __( 'Checkout Mode', 'agency-commerce-core' ),
+					'fields' => array(
+						'checkout.mode' => array(
+							'label'       => __( 'Checkout mode', 'agency-commerce-core' ),
+							'type'        => 'select',
+							'options'     => Choices::checkout_modes(),
+							'description' => __( 'Block is the default. Classic safely swaps Cart and Checkout page content to WooCommerce shortcodes and keeps a restoration backup.', 'agency-commerce-core' ),
+						),
+					),
+				),
+				'checkout_content'  => array(
+					'title'  => __( 'Support Messaging', 'agency-commerce-core' ),
+					'fields' => array(
+						'checkout.support_text' => array(
+							'label'       => __( 'Support text', 'agency-commerce-core' ),
+							'type'        => 'textarea',
+							'description' => __( 'Displayed near checkout through supported block integration data and classic hooks.', 'agency-commerce-core' ),
+						),
+						'checkout.trust_text'   => array(
+							'label' => __( 'Trust text', 'agency-commerce-core' ),
+							'type'  => 'textarea',
+						),
+					),
+				),
+				'checkout_fields'   => array(
+					'title'  => __( 'Checkout Fields', 'agency-commerce-core' ),
+					'fields' => array(
+						'checkout.optional_company'     => array(
+							'label'       => __( 'Make company optional', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Do not enable when B2B invoicing, tax, gateway, or shipping rules require company data.', 'agency-commerce-core' ),
+						),
+						'checkout.optional_address_2'   => array(
+							'label'       => __( 'Make address line 2 optional', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Address line 2 is optional by default in most WooCommerce stores.', 'agency-commerce-core' ),
+						),
+						'checkout.optional_order_notes' => array(
+							'label'       => __( 'Enable optional order notes', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Disabling hides order notes where the active checkout mode supports it.', 'agency-commerce-core' ),
+						),
+						'checkout.optional_postcode'    => array(
+							'label'       => __( 'Make postcode optional', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'High risk: shipping, tax, and payment providers often require postcode. Leave disabled unless the store has been verified.', 'agency-commerce-core' ),
+						),
+					),
+				),
+				'checkout_controls' => array(
+					'title'  => __( 'Order and Payment Controls', 'agency-commerce-core' ),
+					'fields' => array(
+						'checkout.minimum_order_amount' => array(
+							'label'       => __( 'Minimum order amount', 'agency-commerce-core' ),
+							'type'        => 'number',
+							'min'         => 0,
+							'max'         => 999999,
+							'description' => __( 'Set to 0 to disable. Enforced server-side for block and classic checkout.', 'agency-commerce-core' ),
+						),
+						'checkout.enable_cod_controls'  => array(
+							'label'       => __( 'Enable COD controls', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Controls the built-in WooCommerce Cash on Delivery gateway when it is installed.', 'agency-commerce-core' ),
+						),
+						'checkout.cod_enabled'          => array(
+							'label' => __( 'Allow Cash on Delivery', 'agency-commerce-core' ),
+							'type'  => 'checkbox',
+						),
+						'checkout.cod_instructions'     => array(
+							'label' => __( 'COD instructions', 'agency-commerce-core' ),
+							'type'  => 'textarea',
+						),
+					),
+				),
+			),
+			'recently_viewed' => array(
+				'recently_viewed' => array(
+					'title'  => __( 'Recently Viewed Products', 'agency-commerce-core' ),
+					'fields' => array(
+						'recently_viewed.enabled' => array(
+							'label'       => __( 'Enable recently viewed products', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Stores product IDs in localStorage only. No customer browsing history is saved to the database.', 'agency-commerce-core' ),
+						),
+						'recently_viewed.count'   => array(
+							'label' => __( 'Maximum products', 'agency-commerce-core' ),
+							'type'  => 'number',
+							'min'   => 1,
+							'max'   => 12,
+						),
+					),
+				),
+			),
+			'whatsapp'        => array(
 				'whatsapp' => array(
 					'title'  => __( 'WhatsApp Enquiry', 'agency-commerce-core' ),
 					'fields' => array(
@@ -280,13 +398,13 @@ final class Registry {
 					),
 				),
 			),
-			'social'         => array(
+			'social'          => array(
 				'social' => array(
 					'title'  => __( 'Social Links', 'agency-commerce-core' ),
 					'fields' => Choices::social_fields(),
 				),
 			),
-			'design'         => array(
+			'design'          => array(
 				'colors' => array(
 					'title'  => __( 'Color Tokens', 'agency-commerce-core' ),
 					'fields' => Choices::color_fields(),
@@ -353,7 +471,7 @@ final class Registry {
 					),
 				),
 			),
-			'performance'    => array(
+			'performance'     => array(
 				'performance' => array(
 					'title'  => __( 'Performance', 'agency-commerce-core' ),
 					'fields' => array(
@@ -364,7 +482,7 @@ final class Registry {
 					),
 				),
 			),
-			'developer'      => array(
+			'developer'       => array(
 				'developer' => array(
 					'title'  => __( 'Developer', 'agency-commerce-core' ),
 					'fields' => array(

@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/hero",
+	"title": "Agency Hero",
+	"category": "design",
+	"description": "Editable storefront hero section.",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"eyebrow": { "type": "string", "default": "" },
+		"heading": { "type": "string", "default": "Build a better store" },
+		"description": { "type": "string", "default": "" },
+		"primaryText": { "type": "string", "default": "Shop now" },
+		"primaryUrl": { "type": "string", "default": "/shop/" },
+		"secondaryText": { "type": "string", "default": "" },
+		"secondaryUrl": { "type": "string", "default": "" },
+		"layout": { "type": "string", "default": "split" }
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide", "full" ] }
+}

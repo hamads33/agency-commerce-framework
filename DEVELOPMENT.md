@@ -112,6 +112,11 @@ npm run build
 
 The CP0 build verifies `@wordpress/scripts` executes. Feature block and asset builds are added in later checkpoints.
 
+CP5 builds parent theme runtime assets and plugin admin/block/checkout/recently-viewed entries:
+
+- Parent theme: `frontend`, `catalog`, `index`
+- Plugin: `admin`, `blocks`, `checkout`, `recently-viewed`
+
 ## Lint And Test
 
 ```sh
@@ -121,6 +126,11 @@ composer lint
 npm run lint:js
 npm test
 npm run test:admin
+npm run test:homepage
+npm run test:cart-flow
+npm run test:checkout-block
+npm run test:checkout-classic
+npm run test:account
 npm run visual:baseline
 npm run visual:compare
 npm audit --audit-level=high
@@ -132,7 +142,25 @@ npm audit --audit-level=high
 
 `npm run test:storefront` runs the CP4B/CP4C storefront Playwright smoke test against the same local environment. It covers badges, badge metadata migration, legacy badge array compatibility, delivery messaging, WhatsApp enquiries, social links, built runtime asset loading, normal WordPress search, product search, WooCommerce hook compatibility helpers, responsive breakpoints, and inactive-state fallbacks.
 
+CP5 test scripts seed development-only fixtures through WP-CLI before browser checks. They create or normalize WooCommerce pages, shipping fallback, COD/BACS settings, one coupon, and a test homepage page. The plugin and theme do not auto-create this content on activation.
+
+- `npm run test:homepage`: verifies custom block/pattern registration and frontend rendering.
+- `npm run test:cart-flow`: verifies empty/populated cart surfaces and quantity controls.
+- `npm run test:checkout-block`: verifies Block Checkout mode and checkout support/trust messaging.
+- `npm run test:checkout-classic`: verifies shortcode switching, backup metadata, and classic cart/checkout surfaces.
+- `npm run test:account`: verifies the native WooCommerce My Account surface.
+
+If `wp-env run cli` reports an initialized-container state issue while the generated Docker Compose services are already running, Playwright helpers support `WP_ENV_COMPOSE_FILE=/path/to/docker-compose.yml` as an explicit local fallback. Normal development should continue using `npm run env:cli`.
+
 `npm run visual:baseline` captures Playwright visual baselines under `tests/visual-baseline/`. `npm run visual:compare` compares the current site against those baselines. Override page URLs with `VISUAL_HOME_URL`, `VISUAL_SHOP_URL`, `VISUAL_CATEGORY_URL`, `VISUAL_SIMPLE_PRODUCT_URL`, `VISUAL_VARIABLE_PRODUCT_URL`, `VISUAL_CART_URL`, `VISUAL_CHECKOUT_URL`, and `VISUAL_MY_ACCOUNT_URL` when local slugs differ. Override the allowed diff ratio with `VISUAL_DIFF_THRESHOLD`; the default is `0.01`.
+
+CP5 approved visual baseline updates only for:
+
+- Homepage: now renders an editable Gutenberg homepage pattern instead of the earlier generic page shell.
+- Cart and Checkout: now include CP5 block-cart styling and the optional Mini-Cart header control; empty checkout redirects to the WooCommerce cart surface as expected.
+- My Account: now includes scoped WooCommerce account/login styling.
+
+Shop, category, simple product, and variable product baselines did not change in CP5.
 
 `npm audit --audit-level=high` currently reports transitive development dependency advisories under `@wordpress/scripts`. Do not claim the audit passes unless those findings are actually resolved.
 

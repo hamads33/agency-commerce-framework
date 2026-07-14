@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/recently-viewed-products",
+	"title": "Agency Recently Viewed Products",
+	"category": "woocommerce",
+	"description": "Displays recently viewed products from local browser storage.",
+	"textdomain": "agency-commerce-core",
+	"attributes": {},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide" ] }
+}

@@ -1,0 +1,15 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/category-grid",
+	"title": "Agency Category Grid",
+	"category": "widgets",
+	"description": "Presentation grid for WooCommerce product categories.",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"heading": { "type": "string", "default": "Shop by category" },
+		"count": { "type": "number", "default": 4 }
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide" ] }
+}

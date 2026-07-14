@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0 - CP5 Homepage And Commerce Flow
+
+- Added Gutenberg-editable homepage architecture with custom dynamic blocks for hero, category grid, promotional banner, image/text, trust bar, testimonials, brand logos, FAQ, newsletter wrapper, and recently viewed products.
+- Added reusable Fashion, Electronics, and Minimal homepage block patterns that insert content without overwriting existing homepage content.
+- Added WooCommerce block-first cart and checkout styling while preserving Store API behavior and WooCommerce cart/checkout state.
+- Added optional WooCommerce Mini-Cart block rendering in the header with the existing cart link/count fallback when disabled or unavailable.
+- Added safe Block/Classic checkout mode switching with non-destructive Cart and Checkout page content backups and restoration.
+- Added checkout controls for support text, trust text, optional fields where WooCommerce allows them, minimum order amount, and COD availability/instructions.
+- Added privacy-conscious recently viewed products using localStorage plus a public render endpoint; no personal browsing history is stored in the database.
+- Added scoped My Account styling while preserving native WooCommerce endpoints.
+- Added CP5 Playwright smoke suites for homepage, cart, block checkout, classic checkout, and My Account flows.
+- Updated only the 12 affected visual baselines for homepage, cart, checkout, and My Account across desktop, tablet, and mobile after reviewing the intentional CP5 layout changes.
+- Updated framework version metadata to `0.5.0`.
+
 ## Unreleased - CP4D Visual Regression Review
 
 - Reviewed all 24 visual regression failures across homepage, shop, product category, simple product, variable product, cart, checkout, and My Account at desktop, tablet, and mobile viewports.

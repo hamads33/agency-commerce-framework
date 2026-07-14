@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/trust-bar",
+	"title": "Agency Trust Bar",
+	"category": "widgets",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"items": { "type": "array", "default": [ "Secure checkout", "Fast dispatch", "Easy returns" ] }
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide", "full" ] }
+}

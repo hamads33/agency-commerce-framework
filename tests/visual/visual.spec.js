@@ -3,6 +3,7 @@ const { execFileSync } = require( 'child_process' );
 const path = require( 'path' );
 
 const repoRoot = path.resolve( __dirname, '..', '..' );
+const fallbackComposeFile = process.env.WP_ENV_COMPOSE_FILE || '';
 
 const pages = [
 	{
@@ -53,6 +54,29 @@ const pages = [
 ];
 
 function runWp( args ) {
+	if ( fallbackComposeFile ) {
+		execFileSync(
+			'docker',
+			[
+				'compose',
+				'-f',
+				fallbackComposeFile,
+				'exec',
+				'-T',
+				'cli',
+				'wp',
+				...args,
+			],
+			{
+				cwd: repoRoot,
+				encoding: 'utf8',
+				maxBuffer: 10 * 1024 * 1024,
+				stdio: 'pipe',
+			}
+		);
+		return;
+	}
+
 	execFileSync( 'npm', [ 'run', 'env:cli', '--', 'wp', ...args ], {
 		cwd: repoRoot,
 		encoding: 'utf8',
@@ -67,6 +91,13 @@ test.beforeAll( () => {
 		`
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		$htaccess = ABSPATH . '.htaccess';
+		if ( ! file_exists( $htaccess ) ) {
+			file_put_contents(
+				$htaccess,
+				"# BEGIN WordPress\\n<IfModule mod_rewrite.c>\\nRewriteEngine On\\nRewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]\\nRewriteBase /\\nRewriteRule ^index\\\\.php$ - [L]\\nRewriteCond %{REQUEST_FILENAME} !-f\\nRewriteCond %{REQUEST_FILENAME} !-d\\nRewriteRule . /index.php [L]\\n</IfModule>\\n# END WordPress\\n"
+			);
 		}
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			activate_plugin( 'woocommerce/woocommerce.php' );

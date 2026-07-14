@@ -64,6 +64,16 @@ CP4C resolves the high-priority architectural audit findings before CP5:
 - Normal WordPress search is preserved; product search remains available through `post_type=product`.
 - Framework version metadata is synchronized at `0.4.3`.
 
+CP5 adds homepage and purchase-flow architecture:
+
+- Gutenberg-editable homepage blocks and block patterns for Fashion, Electronics, and Minimal store starts
+- WooCommerce block Cart and Checkout as the default purchase path
+- Optional WooCommerce Mini-Cart block in the header with the existing cart link fallback
+- Safe checkout mode switching between Block and Classic shortcode flows
+- Checkout support/trust messaging, optional-field controls, minimum order, and COD controls
+- Privacy-conscious recently viewed products stored in the visitor browser only
+- Scoped Cart, Checkout, Mini-Cart, My Account, and homepage-section styling
+
 ## Requirements
 
 - Git
@@ -89,6 +99,11 @@ npm run env:stop
 npm run build
 npm run lint:js
 npm run test:admin
+npm run test:homepage
+npm run test:cart-flow
+npm run test:checkout-block
+npm run test:checkout-classic
+npm run test:account
 npm run visual:baseline
 npm run visual:compare
 npm test

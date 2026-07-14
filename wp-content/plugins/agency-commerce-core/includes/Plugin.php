@@ -11,6 +11,11 @@ namespace AgencyCommerceCore;
 
 use AgencyCommerceCore\Admin\PresetActions;
 use AgencyCommerceCore\Admin\SettingsPage;
+use AgencyCommerceCore\Checkout\BlockIntegrationRegistrar;
+use AgencyCommerceCore\Checkout\Controls as CheckoutControls;
+use AgencyCommerceCore\Checkout\ModeManager as CheckoutModeManager;
+use AgencyCommerceCore\Homepage\BlockRegistrar;
+use AgencyCommerceCore\RecentlyViewed\Manager as RecentlyViewedManager;
 use AgencyCommerceCore\Migrations\SettingsMigrationManager;
 use AgencyCommerceCore\Products\FeatureManager;
 use AgencyCommerceCore\Settings\Defaults;
@@ -48,6 +53,11 @@ final class Plugin {
 		( new SettingsPage() )->register();
 		( new PresetActions() )->register();
 		( new FeatureManager() )->register();
+		( new CheckoutModeManager() )->register();
+		( new CheckoutControls() )->register();
+		( new BlockIntegrationRegistrar() )->register();
+		( new BlockRegistrar() )->register();
+		( new RecentlyViewedManager() )->register();
 
 		/**
 		 * Fires after the core plugin foundation has loaded.

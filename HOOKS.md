@@ -78,6 +78,10 @@ Renders the registered WooCommerce filter widget area for sidebar or drawer cont
 
 Renders configured social links and hides empty URLs automatically.
 
+### `agency_commerce_render_cart_control( array $header ): void`
+
+Renders the WooCommerce Mini-Cart block when enabled and available, otherwise renders the standard cart link/count fallback.
+
 ### `agency_commerce_design_token_css(): string`
 
 Returns sanitized inline CSS custom-property overrides for CP4A color and font token settings.
@@ -206,6 +210,20 @@ CP4A exposes these public setting paths through `agency_commerce_get_setting()` 
 - `product_page.related_count`
 - `footer.variant`
 - `footer.trust_text`
+- `cart.enable_mini_cart`
+- `cart.mini_cart_label`
+- `cart.show_continue_shopping`
+- `checkout.mode`
+- `checkout.support_text`
+- `checkout.trust_text`
+- `checkout.optional_company`
+- `checkout.optional_address_2`
+- `checkout.optional_order_notes`
+- `checkout.optional_postcode`
+- `checkout.minimum_order_amount`
+- `checkout.enable_cod_controls`
+- `checkout.cod_enabled`
+- `checkout.cod_instructions`
 - `social.facebook`
 - `social.instagram`
 - `social.tiktok`
@@ -235,6 +253,8 @@ CP4A exposes these public setting paths through `agency_commerce_get_setting()` 
 - `performance.load_assets_conditionally`
 - `developer.debug_labels`
 - `developer.force_product_search`
+- `recently_viewed.enabled`
+- `recently_viewed.count`
 
 ## Actions
 
@@ -248,7 +268,7 @@ Fires after WooCommerce's native single-product summary hook inside the selected
 
 ### `agency_commerce_after_single_product_summary_extensions`
 
-Fires after WooCommerce's native after-summary hook inside the selected product layout. Reserved for later recently-viewed and related presentation extensions.
+Fires after WooCommerce's native after-summary hook inside the selected product layout. CP5 uses this hook for the recently viewed products placeholder.
 
 ### `admin_post_agency_commerce_core_apply_preset`
 
@@ -257,6 +277,47 @@ Handles preset application requests from the admin presets tab.
 ### `admin_post_agency_commerce_core_restore_preset`
 
 Handles preset rollback requests from the admin presets tab.
+
+### `woocommerce_blocks_checkout_block_registration`
+
+WooCommerce Blocks hook used by CP5 to register `AgencyCommerceCore\Checkout\BlockIntegration`.
+
+### `woocommerce_store_api_checkout_update_order_from_request`
+
+Used by CP5 checkout controls to validate the minimum order amount during block checkout.
+
+### `woocommerce_store_api_checkout_update_order_meta`
+
+Used by CP5 checkout controls to persist private support/trust context on the order.
+
+### `woocommerce_available_payment_gateways`
+
+Used by CP5 checkout controls to apply COD availability and instruction settings.
+
+## REST Routes
+
+### `POST /wp-json/agency-commerce-core/v1/recently-viewed`
+
+Accepts an `ids` array of product IDs and returns rendered product-card HTML for visible products only. It does not store visitor history server-side.
+
+## Blocks
+
+- `agency-commerce/hero`
+- `agency-commerce/category-grid`
+- `agency-commerce/promo-banner`
+- `agency-commerce/image-text`
+- `agency-commerce/trust-bar`
+- `agency-commerce/testimonials`
+- `agency-commerce/brand-logos`
+- `agency-commerce/faq`
+- `agency-commerce/newsletter`
+- `agency-commerce/recently-viewed-products`
+
+## Patterns
+
+- `agency-commerce/fashion-homepage`
+- `agency-commerce/electronics-homepage`
+- `agency-commerce/minimal-homepage`
 
 ### `agency_commerce_core_preset_applied`
 

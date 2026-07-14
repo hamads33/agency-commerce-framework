@@ -193,20 +193,43 @@ function agency_commerce_render_header_controls( array $header ): void {
 		<?php endif; ?>
 
 		<?php if ( ! empty( $header['show_cart'] ) && ! empty( $header['cart_url'] ) ) : ?>
-			<a class="ac-icon-button ac-cart-link" href="<?php echo esc_url( (string) $header['cart_url'] ); ?>">
-				<span><?php esc_html_e( 'Cart', 'agency-commerce' ); ?></span>
-				<?php
-				if ( ! empty( $header['show_cart_count'] ) && function_exists( 'agency_commerce_cart_count_markup' ) ) {
-					echo agency_commerce_cart_count_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped in helper.
-				}
-				?>
-			</a>
+			<?php agency_commerce_render_cart_control( $header ); ?>
 		<?php endif; ?>
 
 		<button class="ac-icon-button ac-menu-toggle" type="button" aria-expanded="false" aria-controls="ac-mobile-menu">
 			<span><?php esc_html_e( 'Menu', 'agency-commerce' ); ?></span>
 		</button>
 	</div>
+	<?php
+}
+
+/**
+ * Renders the WooCommerce Mini-Cart block when enabled, with a link fallback.
+ *
+ * @param array<string, mixed> $header Header data.
+ */
+function agency_commerce_render_cart_control( array $header ): void {
+	$use_mini_cart = (bool) agency_commerce_get_setting( 'cart.enable_mini_cart', true );
+	$has_block     = class_exists( 'WP_Block_Type_Registry' ) && WP_Block_Type_Registry::get_instance()->is_registered( 'woocommerce/mini-cart' );
+
+	if ( $use_mini_cart && $has_block && function_exists( 'do_blocks' ) ) {
+		?>
+		<div class="ac-mini-cart-block" aria-label="<?php esc_attr_e( 'Shopping cart', 'agency-commerce' ); ?>">
+			<?php echo do_blocks( '<!-- wp:woocommerce/mini-cart /-->' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce renders and escapes block output. ?>
+		</div>
+		<?php
+		return;
+	}
+
+	?>
+	<a class="ac-icon-button ac-cart-link" href="<?php echo esc_url( (string) $header['cart_url'] ); ?>">
+		<span><?php esc_html_e( 'Cart', 'agency-commerce' ); ?></span>
+		<?php
+		if ( ! empty( $header['show_cart_count'] ) && function_exists( 'agency_commerce_cart_count_markup' ) ) {
+			echo agency_commerce_cart_count_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped in helper.
+		}
+		?>
+	</a>
 	<?php
 }
 

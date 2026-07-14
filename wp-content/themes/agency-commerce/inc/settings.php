@@ -19,7 +19,7 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 	 */
 	function agency_commerce_default_settings(): array {
 		$defaults = array(
-			'store_identity' => array(
+			'store_identity'  => array(
 				'logo_id'        => 0,
 				'mobile_logo_id' => 0,
 				'contact_email'  => '',
@@ -27,7 +27,7 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'address'        => '',
 				'support_hours'  => '',
 			),
-			'design'         => array(
+			'design'          => array(
 				'primary_color'          => '#115e59',
 				'secondary_color'        => '#1f2937',
 				'accent_color'           => '#f59e0b',
@@ -48,7 +48,7 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'card_radius'            => '8px',
 				'product_image_ratio'    => '1 / 1',
 			),
-			'header'         => array(
+			'header'          => array(
 				'variant'           => 'header-default',
 				'sticky'            => false,
 				'show_search'       => true,
@@ -59,11 +59,33 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'announcement'      => '',
 				'announcement_link' => '',
 			),
-			'footer'         => array(
+			'footer'          => array(
 				'variant'    => 'footer-columns',
 				'trust_text' => '',
 			),
-			'shop'           => array(
+			'cart'            => array(
+				'enable_mini_cart'       => true,
+				'mini_cart_label'        => 'Cart',
+				'show_continue_shopping' => true,
+			),
+			'checkout'        => array(
+				'mode'                 => 'block',
+				'support_text'         => '',
+				'trust_text'           => '',
+				'optional_company'     => false,
+				'optional_address_2'   => true,
+				'optional_order_notes' => true,
+				'optional_postcode'    => false,
+				'minimum_order_amount' => 0,
+				'enable_cod_controls'  => false,
+				'cod_enabled'          => true,
+				'cod_instructions'     => '',
+			),
+			'recently_viewed' => array(
+				'enabled' => true,
+				'count'   => 4,
+			),
+			'shop'            => array(
 				'card_variant'        => 'product-card-classic',
 				'products_per_row'    => 4,
 				'products_per_page'   => 12,
@@ -76,7 +98,7 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'show_featured_badge' => true,
 				'show_product_cat'    => true,
 			),
-			'product_page'   => array(
+			'product_page'    => array(
 				'layout'                => 'product-layout-standard',
 				'show_sku'              => true,
 				'show_categories'       => true,
@@ -87,7 +109,7 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'delivery_message'      => '',
 				'show_whatsapp_enquiry' => true,
 			),
-			'social'         => array(
+			'social'          => array(
 				'facebook'  => '',
 				'instagram' => '',
 				'tiktok'    => '',
@@ -96,14 +118,14 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'x'         => '',
 				'pinterest' => '',
 			),
-			'performance'    => array(
+			'performance'     => array(
 				'load_assets_conditionally' => true,
 			),
-			'developer'      => array(
+			'developer'       => array(
 				'debug_labels'         => false,
 				'force_product_search' => false,
 			),
-			'whatsapp'       => array(
+			'whatsapp'        => array(
 				'phone_number'     => '',
 				'button_text'      => 'WhatsApp enquiry',
 				'message_template' => "Hello, I am interested in {product_name}.\nProduct: {product_url}\nSKU: {sku}\nVariation: {variation}",

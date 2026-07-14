@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AGENCY_COMMERCE_CHILD_VERSION', '0.4.3' );
+define( 'AGENCY_COMMERCE_CHILD_VERSION', '0.5.0' );
 
 add_action( 'wp_enqueue_scripts', 'agency_commerce_child_enqueue_assets' );
 

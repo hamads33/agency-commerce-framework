@@ -1,0 +1,17 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/faq",
+	"title": "Agency FAQ",
+	"category": "widgets",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"heading": { "type": "string", "default": "Questions" },
+		"items": {
+			"type": "array",
+			"default": [ { "question": "How fast do you ship?", "answer": "Most orders dispatch within 1-2 business days." } ]
+		}
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide" ] }
+}

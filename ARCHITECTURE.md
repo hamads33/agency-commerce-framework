@@ -27,6 +27,8 @@ Settings schema versioning is separate from the settings blob. `AGENCY_COMMERCE_
 
 CP4C raises the schema to version 3. `AgencyCommerceCore\Migrations\Version3` migrates CP4B custom badge metadata from legacy array storage to canonical newline text. Runtime badge reads continue to accept both legacy arrays and canonical text so existing stores do not produce PHP warnings during or before migration.
 
+CP5 raises the schema to version 4 as a settings-schema marker for cart, checkout, and recently viewed defaults. `AgencyCommerceCore\Migrations\Version4` does not mutate existing installations; new defaults are merged at read time so existing settings remain intact.
+
 The parent theme continues to call `agency_commerce_get_setting()`. When the plugin is active, that helper reads the plugin settings. When the plugin is inactive, it reads the parent fallback defaults in `inc/settings.php`.
 
 CP4A settings cover store identity, header, shop, product page, footer, social links, color/font tokens, performance, and developer toggles. Later feature areas such as WhatsApp, product badges, delivery estimates, checkout controls, cart drawer, presets, recently viewed, size guide, and product enquiries are intentionally not implemented in CP4A.
@@ -39,6 +41,15 @@ CP4B adds the commerce features that sit on top of the settings infrastructure:
 - WhatsApp enquiry URLs are generated from sanitized phone and template settings, with variable-product support handled through the selected variation.
 - Social links continue to render through the theme footer component with empty links filtered out.
 - Static admin preview thumbnails are used only in the settings UI and never in live storefront rendering.
+
+CP5 adds homepage and purchase-flow features without replacing WooCommerce commerce logic:
+
+- Homepage sections are Gutenberg blocks registered from `blocks/*/block.json`. Blocks are dynamic PHP renders with escaped output and editor previews from the built `blocks.js` entry.
+- Product sections in patterns use supported WooCommerce blocks such as Product Collection, Best Sellers, New, On Sale, and Hand-picked Products instead of duplicating WooCommerce query logic.
+- Cart and Checkout remain WooCommerce block-first. The framework styles block output and registers a lightweight checkout block integration for support/trust messaging data.
+- Classic mode switches Cart and Checkout pages to `[woocommerce_cart]` and `[woocommerce_checkout]` while storing the previous page content in `_agency_commerce_core_block_content_backup` for rollback.
+- The header renders the WooCommerce Mini-Cart block when enabled and available. If disabled, unavailable, or WooCommerce is inactive, the existing CP2 cart link/count fallback remains in place.
+- Recently viewed products are stored in `localStorage`; the plugin exposes a render-only REST endpoint that accepts product IDs and returns available product card markup.
 
 ## Public Hooks And Filters
 
@@ -121,6 +132,33 @@ CP4B extends the token flow with container width, spacing density, radius, shado
 Runtime assets are built with `wp-scripts` from `tooling/assets/*`. Storefront entries are emitted to `wp-content/themes/agency-commerce/build`; admin entries are emitted to `wp-content/plugins/agency-commerce-core/build`. The parent theme reads generated `.asset.php` metadata for `frontend` and `catalog` entries and falls back to source CSS/JS when build artifacts are missing. Header/mobile navigation JavaScript is globally bundled in `frontend.js`. Catalog drawer and WhatsApp variation JavaScript are conditionally enqueued from `catalog.js` only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`. The `performance.load_assets_conditionally` setting can disable conditional catalog loading for debugging or compatibility.
 
 The admin settings screen reads generated metadata for the `admin` entry and falls back to `assets/admin/settings.css`. Static SVG preview thumbnails remain admin-only and do not affect storefront runtime.
+
+CP5 adds plugin build entries:
+
+- `blocks.js`: custom block editor previews.
+- `checkout.js`: WooCommerce Checkout block support/trust message placement.
+- `recently-viewed.js`: localStorage tracking and render endpoint hydration.
+
+These entries are emitted to `wp-content/plugins/agency-commerce-core/build` with `.asset.php` metadata and are conditionally loaded by the plugin or block registration.
+
+## Checkout Architecture
+
+Default checkout mode is `block`. Block mode preserves WooCommerce Store API, validation, shipping, payment, coupon, and order processing. The framework extension surface is limited to documented Store API hooks and `Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface`.
+
+Classic mode is an explicit compatibility fallback. The mode manager backs up existing Cart and Checkout page content before writing WooCommerce shortcodes and restores the backup when returning to Block mode. It does not delete page content or create duplicate orders/settings.
+
+Checkout controls are best-effort by mode:
+
+- Optional company, address line 2, order notes, and postcode use WooCommerce field filters where WooCommerce supports them.
+- Minimum order uses classic checkout validation and Store API checkout validation.
+- COD controls filter the available COD gateway and update its instructions when the gateway is present.
+- The framework does not override shipping, taxes, payment-gateway legal requirements, or jurisdictional validation.
+
+## Homepage Editing Architecture
+
+`front-page.php` renders only Gutenberg page content. It does not hard-code storefront sections. Clients can insert one of the framework homepage patterns into any page and assign that page as the homepage through WordPress settings.
+
+Custom blocks are presentation blocks only, except for category grid and recently viewed where limited framework behavior is required. Product business queries remain delegated to WooCommerce product blocks.
 
 ## Visual Regression Flow
 

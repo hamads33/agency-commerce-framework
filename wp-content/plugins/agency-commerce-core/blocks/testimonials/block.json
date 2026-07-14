@@ -1,0 +1,14 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "agency-commerce/testimonials",
+	"title": "Agency Testimonials",
+	"category": "widgets",
+	"textdomain": "agency-commerce-core",
+	"attributes": {
+		"heading": { "type": "string", "default": "Loved by customers" },
+		"text": { "type": "string", "default": "" }
+	},
+	"editorScript": "file:../../build/blocks.js",
+	"supports": { "align": [ "wide" ] }
+}
