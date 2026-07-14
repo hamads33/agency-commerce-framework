@@ -17,32 +17,86 @@ add_action( 'wp_enqueue_scripts', 'agency_commerce_enqueue_assets' );
  * Enqueues the foundational parent stylesheet.
  */
 function agency_commerce_enqueue_assets(): void {
-	wp_enqueue_style(
-		'agency-commerce',
-		AGENCY_COMMERCE_THEME_URI . 'style.css',
-		array(),
-		AGENCY_COMMERCE_VERSION
-	);
+	$frontend_asset = agency_commerce_build_asset( 'frontend' );
+	$catalog_asset  = agency_commerce_build_asset( 'catalog' );
+	$style_src      = ! empty( $frontend_asset['style_url'] ) ? (string) $frontend_asset['style_url'] : AGENCY_COMMERCE_THEME_URI . 'style.css';
+	$style_version  = ! empty( $frontend_asset['version'] ) ? (string) $frontend_asset['version'] : AGENCY_COMMERCE_VERSION;
+
+	wp_enqueue_style( 'agency-commerce', $style_src, array(), $style_version );
 
 	wp_add_inline_style( 'agency-commerce', agency_commerce_design_token_css() );
 
-	wp_enqueue_script(
-		'agency-commerce-navigation',
-		AGENCY_COMMERCE_THEME_URI . 'assets/js/navigation.js',
-		array(),
-		AGENCY_COMMERCE_VERSION,
-		true
-	);
-
-	if ( function_exists( 'agency_commerce_should_load_catalog_assets' ) && agency_commerce_should_load_catalog_assets() ) {
+	if ( ! empty( $frontend_asset['script_url'] ) ) {
 		wp_enqueue_script(
-			'agency-commerce-catalog',
-			AGENCY_COMMERCE_THEME_URI . 'assets/js/catalog.js',
+			'agency-commerce-navigation',
+			(string) $frontend_asset['script_url'],
+			(array) $frontend_asset['dependencies'],
+			(string) $frontend_asset['version'],
+			true
+		);
+	} else {
+		wp_enqueue_script(
+			'agency-commerce-navigation',
+			AGENCY_COMMERCE_THEME_URI . 'assets/js/navigation.js',
 			array(),
 			AGENCY_COMMERCE_VERSION,
 			true
 		);
 	}
+
+	if ( function_exists( 'agency_commerce_should_load_catalog_assets' ) && agency_commerce_should_load_catalog_assets() ) {
+		if ( ! empty( $catalog_asset['script_url'] ) ) {
+			wp_enqueue_script(
+				'agency-commerce-catalog',
+				(string) $catalog_asset['script_url'],
+				(array) $catalog_asset['dependencies'],
+				(string) $catalog_asset['version'],
+				true
+			);
+		} else {
+			wp_enqueue_script(
+				'agency-commerce-catalog',
+				AGENCY_COMMERCE_THEME_URI . 'assets/js/catalog.js',
+				array(),
+				AGENCY_COMMERCE_VERSION,
+				true
+			);
+		}
+	}
+}
+
+/**
+ * Returns generated runtime asset metadata.
+ *
+ * @param string $entry Build entry name.
+ * @return array<string, mixed>
+ */
+function agency_commerce_build_asset( string $entry ): array {
+	$entry      = sanitize_key( $entry );
+	$build_dir  = AGENCY_COMMERCE_THEME_DIR . 'build/';
+	$build_url  = AGENCY_COMMERCE_THEME_URI . 'build/';
+	$asset_file = $build_dir . $entry . '.asset.php';
+	$script     = $build_dir . $entry . '.js';
+	$style      = $build_dir . 'style-' . $entry . '.css';
+	$metadata   = array(
+		'dependencies' => array(),
+		'version'      => AGENCY_COMMERCE_VERSION,
+	);
+
+	if ( file_exists( $asset_file ) ) {
+		$loaded = require $asset_file;
+
+		if ( is_array( $loaded ) ) {
+			$metadata = array_replace( $metadata, $loaded );
+		}
+	}
+
+	return array(
+		'dependencies' => is_array( $metadata['dependencies'] ?? null ) ? $metadata['dependencies'] : array(),
+		'version'      => (string) ( $metadata['version'] ?? AGENCY_COMMERCE_VERSION ),
+		'script_url'   => file_exists( $script ) ? $build_url . $entry . '.js' : '',
+		'style_url'    => file_exists( $style ) ? $build_url . 'style-' . $entry . '.css' : '',
+	);
 }
 
 /**

@@ -100,7 +100,8 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'load_assets_conditionally' => true,
 			),
 			'developer'      => array(
-				'debug_labels' => false,
+				'debug_labels'         => false,
+				'force_product_search' => false,
 			),
 			'whatsapp'       => array(
 				'phone_number'     => '',

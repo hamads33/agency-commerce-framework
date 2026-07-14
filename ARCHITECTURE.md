@@ -21,9 +21,11 @@ The plugin owns the Commerce Framework admin settings infrastructure and does no
 
 Settings definitions live in `AgencyCommerceCore\Settings\Registry`. Sanitization and validation live in `AgencyCommerceCore\Settings\Sanitizer`. Public reads use `agency_commerce_core_get_settings()` and `agency_commerce_core_get_setting()`, which merge saved values with defaults and memoize the sanitized result for the request.
 
-CP4B adds `AgencyCommerceCore\Presets\Manager` for framework-only preset application and rollback, `AgencyCommerceCore\Admin\PresetActions` for admin-post handling, and `AgencyCommerceCore\Products\FeatureManager` for reusable product badges, delivery messaging, and WhatsApp enquiry rendering. The plugin boot sequence registers the settings page, preset handlers, and product feature hooks without changing the existing architecture pattern.
+CP4B adds `AgencyCommerceCore\Presets\Manager` for framework-only preset application and rollback, `AgencyCommerceCore\Admin\PresetActions` for admin-post handling, and reusable product badges, delivery messaging, and WhatsApp enquiry rendering. CP4C splits product responsibilities across `Products\BadgeManager`, `Products\DeliveryManager`, `Products\WhatsAppEnquiry`, and `Products\ProductSettings`, leaving `Products\FeatureManager` as the WooCommerce/admin hook coordinator. The plugin product layer reads only plugin-owned settings helpers and does not depend on parent-theme functions.
 
 Settings schema versioning is separate from the settings blob. `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION` declares the target schema version and `AgencyCommerceCore\Migrations\SettingsMigrationManager` stores the installed version in `agency_commerce_core_settings_schema_version`. Migrations run in ascending version order and update the stored schema version only after each migration succeeds. Version 1 is a no-op marker so existing CP4A installations keep all option values unchanged when versioning is introduced.
+
+CP4C raises the schema to version 3. `AgencyCommerceCore\Migrations\Version3` migrates CP4B custom badge metadata from legacy array storage to canonical newline text. Runtime badge reads continue to accept both legacy arrays and canonical text so existing stores do not produce PHP warnings during or before migration.
 
 The parent theme continues to call `agency_commerce_get_setting()`. When the plugin is active, that helper reads the plugin settings. When the plugin is inactive, it reads the parent fallback defaults in `inc/settings.php`.
 
@@ -80,7 +82,9 @@ This keeps the summary contract stable while allowing new commerce features to b
 ## WooCommerce Integration Points
 
 - `loop_shop_columns`: applies configured products per row.
-- `pre_get_posts`: applies configured products per page and product-aware frontend search.
+- `pre_get_posts`: applies configured products per page and product-aware search only when the request explicitly searches products or the compatibility setting is enabled.
+- `woocommerce_before_main_content` and `woocommerce_after_main_content`: fired by the archive override with WooCommerce's default wrapper callbacks temporarily removed so third-party callbacks still run without duplicating the framework shell.
+- `woocommerce_before_shop_loop_item`, `woocommerce_before_shop_loop_item_title`, `woocommerce_shop_loop_item_title`, `woocommerce_after_shop_loop_item_title`, and `woocommerce_after_shop_loop_item`: fired around framework product cards with WooCommerce's default card callbacks temporarily removed so extension callbacks keep standard positions.
 - `woocommerce_before_shop_loop`, `woocommerce_after_shop_loop`, and `woocommerce_no_products_found`: preserve WooCommerce archive loop behavior.
 - `woocommerce_before_single_product_summary`, `woocommerce_single_product_summary`, and `woocommerce_after_single_product_summary`: preserve native gallery, title, rating, price, excerpt, variations, quantity, add-to-cart, meta, tabs, and related products.
 - `woocommerce_add_to_cart_fragments`: refreshes the CP2 cart count.
@@ -114,9 +118,9 @@ CP4B extends the token flow with container width, spacing density, radius, shado
 
 ## Asset Loading Flow
 
-The parent stylesheet is always enqueued. Header/mobile navigation JavaScript is always enqueued because header chrome appears globally. Catalog drawer JavaScript is conditionally enqueued only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`. The `performance.load_assets_conditionally` setting can disable conditional catalog loading for debugging or compatibility.
+Runtime assets are built with `wp-scripts` from `tooling/assets/*`. Storefront entries are emitted to `wp-content/themes/agency-commerce/build`; admin entries are emitted to `wp-content/plugins/agency-commerce-core/build`. The parent theme reads generated `.asset.php` metadata for `frontend` and `catalog` entries and falls back to source CSS/JS when build artifacts are missing. Header/mobile navigation JavaScript is globally bundled in `frontend.js`. Catalog drawer and WhatsApp variation JavaScript are conditionally enqueued from `catalog.js` only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`. The `performance.load_assets_conditionally` setting can disable conditional catalog loading for debugging or compatibility.
 
-The admin settings screen enqueues a dedicated stylesheet and static SVG preview thumbnails for header, footer, product-card, and product-layout variants. Those assets are admin-only and do not affect storefront runtime.
+The admin settings screen reads generated metadata for the `admin` entry and falls back to `assets/admin/settings.css`. Static SVG preview thumbnails remain admin-only and do not affect storefront runtime.
 
 ## Visual Regression Flow
 

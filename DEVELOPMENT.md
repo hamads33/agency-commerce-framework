@@ -130,7 +130,7 @@ npm audit --audit-level=high
 
 `npm run test:admin` runs the CP4A Playwright admin settings smoke test against the local `wp-env` site at `http://localhost:8888`. Override `WP_BASE_URL`, `WP_USERNAME`, or `WP_PASSWORD` if the local admin differs from the default `admin` / `password`.
 
-`npm run test:storefront` runs the CP4B storefront Playwright smoke test against the same local environment. It covers badges, delivery messaging, WhatsApp enquiries, social links, responsive breakpoints, and inactive-state fallbacks.
+`npm run test:storefront` runs the CP4B/CP4C storefront Playwright smoke test against the same local environment. It covers badges, badge metadata migration, legacy badge array compatibility, delivery messaging, WhatsApp enquiries, social links, built runtime asset loading, normal WordPress search, product search, WooCommerce hook compatibility helpers, responsive breakpoints, and inactive-state fallbacks.
 
 `npm run visual:baseline` captures Playwright visual baselines under `tests/visual-baseline/`. `npm run visual:compare` compares the current site against those baselines. Override page URLs with `VISUAL_HOME_URL`, `VISUAL_SHOP_URL`, `VISUAL_CATEGORY_URL`, `VISUAL_SIMPLE_PRODUCT_URL`, `VISUAL_VARIABLE_PRODUCT_URL`, `VISUAL_CART_URL`, `VISUAL_CHECKOUT_URL`, and `VISUAL_MY_ACCOUNT_URL` when local slugs differ. Override the allowed diff ratio with `VISUAL_DIFF_THRESHOLD`; the default is `0.01`.
 
@@ -561,6 +561,18 @@ The audit command is still expected to fail with the known transitive developmen
 The current settings schema version is declared by `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION` in `agency-commerce-core.php`. The installed schema version is stored separately from the settings blob in the `agency_commerce_core_settings_schema_version` option.
 
 `AgencyCommerceCore\Migrations\SettingsMigrationManager` runs migrations in ascending order. Each migration updates the stored schema version only after its `run()` method completes. The first migration, `Version1`, is intentionally a no-op marker so CP4A settings survive the introduction of versioning without changes.
+
+`Version3` is the CP4C badge metadata migration. It converts legacy `_agency_commerce_badge_custom_labels` arrays to canonical newline-separated text. Runtime badge rendering still accepts both arrays and newline text so stores remain compatible even before migration runs.
+
+## Runtime Assets
+
+Runtime assets are built with:
+
+```sh
+npm run build
+```
+
+The build writes `frontend`, `catalog`, and tooling `index` entries to `wp-content/themes/agency-commerce/build`, and the `admin` entry to `wp-content/plugins/agency-commerce-core/build`. Theme and plugin enqueue code read the generated `.asset.php` files for dependencies and cache-busting versions. Source CSS/JS remains as a development fallback when build artifacts are absent.
 
 Future checkpoints must use migrations when they add, remove, rename, split, combine, or transform saved settings. The required process is:
 

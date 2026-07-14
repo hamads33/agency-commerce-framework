@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.3 - CP4C Audit Remediation
+
+- Fixed custom badge metadata storage by migrating legacy array values to canonical newline text while preserving runtime compatibility for both shapes.
+- Removed plugin product-feature reads from parent-theme helpers; plugin commerce features now read plugin-owned settings directly.
+- Split product badge, delivery, WhatsApp, settings-choice, and admin asset-resolution responsibilities out of larger coordinator classes.
+- Restored WooCommerce archive wrapper and product-loop hook names around the framework templates while preserving existing markup.
+- Connected storefront, catalog, and admin runtime assets to the `wp-scripts` production build under `wp-content/build` with asset metadata and cache-busting versions.
+- Synchronized framework version metadata to `0.4.3`.
+- Changed default search behavior so normal WordPress search remains available and product search is selected explicitly with `post_type=product`; added a compatibility setting for the old forced product-search behavior.
+
 ## 0.4.2 - CP4B
 
 - Added a framework preset engine with Minimal, Fashion, and Electronics presets.

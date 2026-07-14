@@ -234,6 +234,7 @@ CP4A exposes these public setting paths through `agency_commerce_get_setting()` 
 - `whatsapp.message_template`
 - `performance.load_assets_conditionally`
 - `developer.debug_labels`
+- `developer.force_product_search`
 
 ## Actions
 
@@ -323,4 +324,12 @@ The parent theme uses this filter to apply the configured product grid column co
 
 ### `pre_get_posts`
 
-The parent theme uses this action to apply product-aware frontend search and configured products-per-page values without replacing WooCommerce query logic.
+The parent theme uses this action to apply configured products-per-page values. Product search applies when the query explicitly requests `post_type=product`, or when `developer.force_product_search` is enabled for CP3 compatibility. Plain WordPress search is otherwise preserved.
+
+### `woocommerce_before_main_content` / `woocommerce_after_main_content`
+
+The archive override fires these standard hooks with WooCommerce's default wrapper callbacks temporarily removed. Third-party callbacks retain their standard hook positions without duplicating the framework archive shell.
+
+### Product Loop Hooks
+
+Product-card variants fire `woocommerce_before_shop_loop_item`, `woocommerce_before_shop_loop_item_title`, `woocommerce_shop_loop_item_title`, `woocommerce_after_shop_loop_item_title`, and `woocommerce_after_shop_loop_item` with WooCommerce's default card callbacks temporarily removed.

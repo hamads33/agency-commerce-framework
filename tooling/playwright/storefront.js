@@ -87,6 +87,10 @@ function setMeta( postId, key, value ) {
 	] );
 }
 
+function runWpEval( code ) {
+	return runWp( [ 'eval', code ] );
+}
+
 function setPostDateNow( postId ) {
 	runWp( [
 		'eval',
@@ -231,6 +235,9 @@ function seedCommerceFeatures() {
 			pinterest: '',
 			youtube: 'https://youtube.com/@agencycommerce',
 		},
+		developer: {
+			force_product_search: false,
+		},
 	} );
 
 	setPostDateNow( 14 );
@@ -241,15 +248,34 @@ function seedCommerceFeatures() {
 	setMeta( 14, '_agency_commerce_badge_new', 'show' );
 	setMeta( 14, '_agency_commerce_badge_best_seller', 'show' );
 	setMeta( 14, '_agency_commerce_badge_limited', 'show' );
-	setMeta(
-		14,
-		'_agency_commerce_badge_custom_labels',
-		'Editor pick\nLimited run'
-	);
+	setMeta( 14, '_agency_commerce_badge_custom_labels', [
+		'Editor pick',
+		'Limited run',
+	] );
 	setMeta(
 		14,
 		'_agency_commerce_delivery_message',
 		'Ships in 2-3 business days.'
+	);
+
+	runWpEval(
+		`$existing = get_posts( array(
+			'post_type' => 'page',
+			'post_status' => 'any',
+			'title' => 'CP4C Search Page',
+			'fields' => 'ids',
+			'posts_per_page' => 1,
+		) );
+		if ( empty( $existing ) ) {
+			wp_insert_post( array(
+				'post_type' => 'page',
+				'post_status' => 'publish',
+				'post_title' => 'CP4C Search Page',
+				'post_content' => 'Normal WordPress search target for CP4C.'
+			) );
+		}
+		update_option( 'agency_commerce_core_settings_schema_version', 2, false );
+		( new AgencyCommerceCore\\Migrations\\SettingsMigrationManager() )->maybe_migrate();`
 	);
 }
 
@@ -347,6 +373,128 @@ async function verifyShopBadges( page ) {
 		'Out of stock',
 		'out of stock badges'
 	);
+}
+
+async function verifyBadgeMigrationAndLegacyCompatibility( page ) {
+	const migrated = runWpEval(
+		`$value = get_post_meta( 14, '_agency_commerce_badge_custom_labels', true );
+		echo wp_json_encode( array( 'is_array' => is_array( $value ), 'value' => $value ) );`
+	);
+	const migratedValue = parseJsonOutput( migrated );
+
+	if (
+		migratedValue.is_array ||
+		! migratedValue.value.includes( 'Editor pick' )
+	) {
+		throw new Error(
+			`Expected migrated custom badge metadata to be newline text, got: ${ migrated }`
+		);
+	}
+
+	setMeta( 14, '_agency_commerce_badge_custom_labels', [
+		'Legacy array badge',
+		'Legacy second badge',
+	] );
+
+	await loadAndCheck( page, shopUrl, 'legacy badge compatibility' );
+	const simpleCard = page.locator( 'article.ac-product-card' ).filter( {
+		has: page.getByRole( 'heading', { name: 'CP3 Simple Product' } ),
+	} );
+	await assertContainsText(
+		simpleCard,
+		'Legacy array badge',
+		'legacy array badge'
+	);
+	await assertContainsText(
+		simpleCard,
+		'Legacy second badge',
+		'legacy array badge'
+	);
+
+	setMeta(
+		14,
+		'_agency_commerce_badge_custom_labels',
+		'Editor pick\nLimited run'
+	);
+}
+
+async function verifyBuiltAssets( page ) {
+	await loadAndCheck( page, shopUrl, 'built asset loading' );
+
+	const frontendStyle = await page
+		.locator(
+			'link[href*="/wp-content/themes/agency-commerce/build/style-frontend.css"]'
+		)
+		.count();
+	const frontendScript = await page
+		.locator(
+			'script[src*="/wp-content/themes/agency-commerce/build/frontend.js"]'
+		)
+		.count();
+	const catalogScript = await page
+		.locator(
+			'script[src*="/wp-content/themes/agency-commerce/build/catalog.js"]'
+		)
+		.count();
+
+	if ( ! frontendStyle || ! frontendScript || ! catalogScript ) {
+		throw new Error(
+			`Expected built frontend assets, got style=${ frontendStyle }, frontend=${ frontendScript }, catalog=${ catalogScript }`
+		);
+	}
+}
+
+async function verifySearchBehaviour( page ) {
+	await loadAndCheck(
+		page,
+		`${ baseUrl }/?s=CP4C%20Search%20Page`,
+		'normal WordPress search'
+	);
+	await assertContainsText(
+		page.locator( '.ac-search-results' ),
+		'CP4C Search Page',
+		'normal search results'
+	);
+
+	if ( await page.locator( 'article.ac-product-card' ).count() ) {
+		throw new Error( 'Normal WordPress search rendered product cards.' );
+	}
+
+	await loadAndCheck(
+		page,
+		`${ baseUrl }/?s=CP3&post_type=product`,
+		'product search'
+	);
+
+	if ( ! ( await page.locator( 'article.ac-product-card' ).count() ) ) {
+		throw new Error( 'Product search did not render product cards.' );
+	}
+}
+
+function verifyWooCompatibilityHelpers() {
+	const output = runWpEval(
+		`ob_start();
+		add_action( 'woocommerce_before_shop_loop_item_title', static function() { echo '<span class="cp4c-loop-hook">loop hook</span>'; }, 99 );
+		agency_commerce_do_product_loop_hook( 'woocommerce_before_shop_loop_item_title' );
+		$loop = ob_get_clean();
+		ob_start();
+		add_action( 'woocommerce_before_main_content', static function() { echo '<span class="cp4c-wrapper-hook">wrapper hook</span>'; }, 99 );
+		agency_commerce_do_archive_wrapper_hook( 'woocommerce_before_main_content' );
+		$wrapper = ob_get_clean();
+		echo wp_json_encode( array( 'loop' => $loop, 'wrapper' => $wrapper ) );`
+	);
+	const result = parseJsonOutput( output );
+
+	if (
+		! result.loop.includes( 'cp4c-loop-hook' ) ||
+		! result.wrapper.includes( 'cp4c-wrapper-hook' ) ||
+		result.loop.includes( 'woocommerce-loop-product__link' ) ||
+		result.wrapper.includes( 'woocommerce-breadcrumb' )
+	) {
+		throw new Error(
+			`WooCommerce compatibility helpers returned unexpected output: ${ output }`
+		);
+	}
 }
 
 async function verifySimpleProductExtensions( page ) {
@@ -546,9 +694,13 @@ let browser;
 	try {
 		await login( page );
 		await verifySocialLinks( page );
+		await verifyBuiltAssets( page );
 		await verifyShopBadges( page );
+		await verifyBadgeMigrationAndLegacyCompatibility( page );
 		await verifySimpleProductExtensions( page );
 		await verifyVariableProductWhatsApp( page );
+		await verifySearchBehaviour( page );
+		verifyWooCompatibilityHelpers();
 		await verifyResponsiveLayouts( page );
 		await verifyInactiveStates();
 		await errors.assertClean( 'Storefront checks' );

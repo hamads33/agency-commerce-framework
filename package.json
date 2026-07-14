@@ -1,6 +1,6 @@
 {
   "name": "agency-commerce-framework",
-  "version": "0.0.0",
+  "version": "0.4.3",
   "private": true,
   "description": "Repository tooling for the agency-commerce reusable WooCommerce framework.",
   "packageManager": "npm@11.9.0",
@@ -15,7 +15,7 @@
     "env:clean": "wp-env clean all",
     "env:cli": "wp-env run cli --",
     "env:setup": "wp-env run cli -- sh -c 'wp plugin is-installed woocommerce && wp plugin activate woocommerce || wp plugin install https://downloads.wordpress.org/plugin/woocommerce.10.9.4.zip --activate'",
-    "build": "wp-scripts build --webpack-src-dir=tooling/assets --output-path=build",
+    "build": "wp-scripts build tooling/assets/frontend.js tooling/assets/catalog.js tooling/assets/index.js --output-path=wp-content/themes/agency-commerce/build && wp-scripts build tooling/assets/admin.js --output-path=wp-content/plugins/agency-commerce-core/build",
     "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright tests/visual",
     "test:admin": "node tooling/playwright/admin-settings.js",
     "test:storefront": "node tooling/playwright/storefront.js",

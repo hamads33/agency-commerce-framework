@@ -3,7 +3,7 @@
  * Plugin Name: Agency Commerce Core
  * Plugin URI: https://example.com/agency-commerce-core
  * Description: Companion functionality layer for the Agency Commerce framework.
- * Version: 0.1.0
+ * Version: 0.4.3
  * Requires at least: 7.0
  * Requires PHP: 8.2
  * Author: Agency Commerce
@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AGENCY_COMMERCE_CORE_VERSION', '0.1.0' );
-define( 'AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION', 2 );
+define( 'AGENCY_COMMERCE_CORE_VERSION', '0.4.3' );
+define( 'AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION', 3 );
 define( 'AGENCY_COMMERCE_CORE_FILE', __FILE__ );
 define( 'AGENCY_COMMERCE_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'AGENCY_COMMERCE_CORE_URL', plugin_dir_url( __FILE__ ) );

@@ -26,6 +26,8 @@ Selected by `shop.card_variant`.
 
 All product-card variants receive the shared presenter data from `agency_commerce_prepare_product_card_data()`. Variant templates must not recalculate product badges, price, stock, images, rating, category, or add-to-cart behavior.
 
+CP4C restores standard WooCommerce product-loop hook names around the card templates. The framework temporarily removes WooCommerce's default card callbacks while firing those hooks so extension callbacks can run without duplicating the framework card markup.
+
 To add a future variant, add the component template, add the variant to the whitelist in `agency_commerce_get_product_card_variant()`, document it here, and add tests. Do not duplicate presenter logic in the template.
 
 ## Product Extensions

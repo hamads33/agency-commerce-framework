@@ -58,6 +58,7 @@ final class SettingsMigrationManager {
 		$migrations = array(
 			new Version1(),
 			new Version2(),
+			new Version3(),
 		);
 
 		usort(

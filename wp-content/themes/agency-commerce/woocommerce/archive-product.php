@@ -17,6 +17,8 @@ get_header( 'shop' );
 $agency_commerce_filter_layout = (string) agency_commerce_get_setting( 'shop.filter_layout', 'sidebar' );
 ?>
 
+<?php agency_commerce_do_archive_wrapper_hook( 'woocommerce_before_main_content' ); ?>
+
 <main id="primary" class="site-main ac-shop-archive">
 	<?php if ( function_exists( 'woocommerce_breadcrumb' ) ) : ?>
 		<div class="ac-shop-archive__breadcrumbs">
@@ -73,4 +75,5 @@ $agency_commerce_filter_layout = (string) agency_commerce_get_setting( 'shop.fil
 </main>
 
 <?php
+agency_commerce_do_archive_wrapper_hook( 'woocommerce_after_main_content' );
 get_footer( 'shop' );

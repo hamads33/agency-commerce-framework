@@ -106,7 +106,8 @@ final class Defaults {
 				'load_assets_conditionally' => true,
 			),
 			'developer'      => array(
-				'debug_labels' => false,
+				'debug_labels'         => false,
+				'force_product_search' => false,
 			),
 		);
 

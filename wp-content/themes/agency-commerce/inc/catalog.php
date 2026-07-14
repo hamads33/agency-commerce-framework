@@ -171,8 +171,15 @@ function agency_commerce_configure_product_queries( WP_Query $query ): void {
 	}
 
 	if ( $query->is_search() ) {
-		$query->set( 'post_type', 'product' );
-		$query->set( 'posts_per_page', agency_commerce_get_products_per_page() );
+		$post_type            = $query->get( 'post_type' );
+		$is_product_search    = 'product' === $post_type || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) );
+		$force_product_search = (bool) agency_commerce_get_setting( 'developer.force_product_search', false );
+
+		if ( $is_product_search || $force_product_search ) {
+			$query->set( 'post_type', 'product' );
+			$query->set( 'posts_per_page', agency_commerce_get_products_per_page() );
+		}
+
 		return;
 	}
 
@@ -312,6 +319,85 @@ function agency_commerce_render_product_card( ?WC_Product $product = null ): voi
 	}
 
 	require $agency_commerce_product_card_file;
+}
+
+/**
+ * Fires a WooCommerce loop hook while preserving the framework card markup.
+ *
+ * WooCommerce's default callbacks render their own card pieces on these hooks.
+ * The framework temporarily removes those callbacks so third-party extensions
+ * keep their standard hook positions without duplicating core card output.
+ *
+ * @param string $hook Hook name.
+ */
+function agency_commerce_do_product_loop_hook( string $hook ): void {
+	$callbacks = array(
+		'woocommerce_before_shop_loop_item'       => array(
+			array( 'woocommerce_template_loop_product_link_open', 10 ),
+		),
+		'woocommerce_before_shop_loop_item_title' => array(
+			array( 'woocommerce_show_product_loop_sale_flash', 10 ),
+			array( 'woocommerce_template_loop_product_thumbnail', 10 ),
+		),
+		'woocommerce_shop_loop_item_title'        => array(
+			array( 'woocommerce_template_loop_product_title', 10 ),
+		),
+		'woocommerce_after_shop_loop_item_title'  => array(
+			array( 'woocommerce_template_loop_rating', 5 ),
+			array( 'woocommerce_template_loop_price', 10 ),
+		),
+		'woocommerce_after_shop_loop_item'        => array(
+			array( 'woocommerce_template_loop_product_link_close', 5 ),
+			array( 'woocommerce_template_loop_add_to_cart', 10 ),
+		),
+	);
+
+	$removed = array();
+
+	foreach ( $callbacks[ $hook ] ?? array() as $callback ) {
+		if ( has_action( $hook, $callback[0] ) === $callback[1] ) {
+			$removed[] = $callback;
+			remove_action( $hook, $callback[0], $callback[1] );
+		}
+	}
+
+	do_action( $hook );
+
+	foreach ( $removed as $callback ) {
+		add_action( $hook, $callback[0], $callback[1] );
+	}
+}
+
+/**
+ * Fires WooCommerce archive wrapper hooks without duplicating wrappers.
+ *
+ * @param string $hook Hook name.
+ */
+function agency_commerce_do_archive_wrapper_hook( string $hook ): void {
+	$callbacks = array(
+		'woocommerce_before_main_content' => array(
+			array( 'woocommerce_output_content_wrapper', 10 ),
+			array( 'woocommerce_breadcrumb', 20 ),
+		),
+		'woocommerce_after_main_content'  => array(
+			array( 'woocommerce_output_content_wrapper_end', 10 ),
+		),
+	);
+
+	$removed = array();
+
+	foreach ( $callbacks[ $hook ] ?? array() as $callback ) {
+		if ( has_action( $hook, $callback[0] ) === $callback[1] ) {
+			$removed[] = $callback;
+			remove_action( $hook, $callback[0], $callback[1] );
+		}
+	}
+
+	do_action( $hook );
+
+	foreach ( $removed as $callback ) {
+		add_action( $hook, $callback[0], $callback[1] );
+	}
 }
 
 /**
@@ -556,5 +642,7 @@ function agency_commerce_render_product_layout(): void {
  * Returns whether the current request is a product search request.
  */
 function agency_commerce_is_product_search(): bool {
-	return is_search() && agency_commerce_has_woocommerce();
+	$post_type = get_query_var( 'post_type' );
+
+	return is_search() && agency_commerce_has_woocommerce() && ( 'product' === $post_type || ( is_array( $post_type ) && in_array( 'product', $post_type, true ) ) );
 }

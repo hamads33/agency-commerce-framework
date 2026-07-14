@@ -333,11 +333,15 @@ final class SettingsPage {
 			return;
 		}
 
+		$admin_asset = AssetResolver::build_asset( 'admin' );
+		$style_url   = ! empty( $admin_asset['style_url'] ) ? (string) $admin_asset['style_url'] : plugins_url( 'assets/admin/settings.css', AGENCY_COMMERCE_CORE_FILE );
+		$version     = ! empty( $admin_asset['version'] ) ? (string) $admin_asset['version'] : AGENCY_COMMERCE_CORE_VERSION;
+
 		wp_enqueue_style(
 			'agency-commerce-core-admin',
-			plugins_url( 'assets/admin/settings.css', AGENCY_COMMERCE_CORE_FILE ),
+			$style_url,
 			array(),
-			AGENCY_COMMERCE_CORE_VERSION
+			$version
 		);
 	}
 

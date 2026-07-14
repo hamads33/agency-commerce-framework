@@ -55,6 +55,15 @@ CP4B adds reusable commerce features on top of that settings foundation:
 - Static admin preview thumbnails for header, footer, product-card, and product-layout variants
 - Public helper, action, filter, and component-contract documentation in `HOOKS.md`, `ARCHITECTURE.md`, and `COMPONENTS.md`
 
+CP4C resolves the high-priority architectural audit findings before CP5:
+
+- Custom badge metadata migration and legacy compatibility.
+- Plugin product features no longer depend on parent-theme helpers.
+- WooCommerce archive and loop hook compatibility is restored around framework templates.
+- Runtime frontend/catalog assets are built into the parent theme and admin assets into the plugin, each with generated asset metadata.
+- Normal WordPress search is preserved; product search remains available through `post_type=product`.
+- Framework version metadata is synchronized at `0.4.3`.
+
 ## Requirements
 
 - Git

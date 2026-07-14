@@ -95,7 +95,7 @@ final class Registry {
 						'header.variant'           => array(
 							'label'         => __( 'Header variant', 'agency-commerce-core' ),
 							'type'          => 'select',
-							'options'       => self::header_variants(),
+							'options'       => Choices::header_variants(),
 							'preview_group' => 'header',
 						),
 						'header.sticky'            => array(
@@ -140,7 +140,7 @@ final class Registry {
 						'shop.card_variant'        => array(
 							'label'         => __( 'Product-card variant', 'agency-commerce-core' ),
 							'type'          => 'select',
-							'options'       => self::product_card_variants(),
+							'options'       => Choices::product_card_variants(),
 							'preview_group' => 'product-card',
 						),
 						'shop.products_per_row'    => array(
@@ -201,7 +201,7 @@ final class Registry {
 						'product_page.layout'           => array(
 							'label'         => __( 'Product layout', 'agency-commerce-core' ),
 							'type'          => 'select',
-							'options'       => self::product_layout_variants(),
+							'options'       => Choices::product_layout_variants(),
 							'preview_group' => 'product-layout',
 						),
 						'product_page.sticky_summary'   => array(
@@ -249,7 +249,7 @@ final class Registry {
 						'footer.variant'    => array(
 							'label'         => __( 'Footer variant', 'agency-commerce-core' ),
 							'type'          => 'select',
-							'options'       => self::footer_variants(),
+							'options'       => Choices::footer_variants(),
 							'preview_group' => 'footer',
 						),
 						'footer.trust_text' => array(
@@ -283,13 +283,13 @@ final class Registry {
 			'social'         => array(
 				'social' => array(
 					'title'  => __( 'Social Links', 'agency-commerce-core' ),
-					'fields' => self::social_fields(),
+					'fields' => Choices::social_fields(),
 				),
 			),
 			'design'         => array(
 				'colors' => array(
 					'title'  => __( 'Color Tokens', 'agency-commerce-core' ),
-					'fields' => self::color_fields(),
+					'fields' => Choices::color_fields(),
 				),
 				'layout' => array(
 					'title'  => __( 'Layout Tokens', 'agency-commerce-core' ),
@@ -368,9 +368,14 @@ final class Registry {
 				'developer' => array(
 					'title'  => __( 'Developer', 'agency-commerce-core' ),
 					'fields' => array(
-						'developer.debug_labels' => array(
+						'developer.debug_labels'         => array(
 							'label' => __( 'Show debug labels', 'agency-commerce-core' ),
 							'type'  => 'checkbox',
+						),
+						'developer.force_product_search' => array(
+							'label'       => __( 'Force all frontend searches to products', 'agency-commerce-core' ),
+							'type'        => 'checkbox',
+							'description' => __( 'Compatibility option for stores that used the CP3 search behaviour. Leave disabled to preserve normal WordPress search.', 'agency-commerce-core' ),
 						),
 					),
 				),
@@ -426,10 +431,7 @@ final class Registry {
 	 * @return array<string, string>
 	 */
 	public static function header_variants(): array {
-		return array(
-			'header-default'  => __( 'Default', 'agency-commerce-core' ),
-			'header-centered' => __( 'Centered', 'agency-commerce-core' ),
-		);
+		return Choices::header_variants();
 	}
 
 	/**
@@ -438,10 +440,7 @@ final class Registry {
 	 * @return array<string, string>
 	 */
 	public static function footer_variants(): array {
-		return array(
-			'footer-columns' => __( 'Columns', 'agency-commerce-core' ),
-			'footer-minimal' => __( 'Minimal', 'agency-commerce-core' ),
-		);
+		return Choices::footer_variants();
 	}
 
 	/**
@@ -450,11 +449,7 @@ final class Registry {
 	 * @return array<string, string>
 	 */
 	public static function product_card_variants(): array {
-		return array(
-			'product-card-classic' => __( 'Classic', 'agency-commerce-core' ),
-			'product-card-minimal' => __( 'Minimal', 'agency-commerce-core' ),
-			'product-card-compact' => __( 'Compact', 'agency-commerce-core' ),
-		);
+		return Choices::product_card_variants();
 	}
 
 	/**
@@ -463,10 +458,7 @@ final class Registry {
 	 * @return array<string, string>
 	 */
 	public static function product_layout_variants(): array {
-		return array(
-			'product-layout-standard' => __( 'Standard', 'agency-commerce-core' ),
-			'product-layout-sticky'   => __( 'Sticky', 'agency-commerce-core' ),
-		);
+		return Choices::product_layout_variants();
 	}
 
 	/**
@@ -475,25 +467,7 @@ final class Registry {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private static function social_fields(): array {
-		$networks = array(
-			'facebook'  => __( 'Facebook', 'agency-commerce-core' ),
-			'instagram' => __( 'Instagram', 'agency-commerce-core' ),
-			'tiktok'    => __( 'TikTok', 'agency-commerce-core' ),
-			'youtube'   => __( 'YouTube', 'agency-commerce-core' ),
-			'linkedin'  => __( 'LinkedIn', 'agency-commerce-core' ),
-			'x'         => __( 'X', 'agency-commerce-core' ),
-			'pinterest' => __( 'Pinterest', 'agency-commerce-core' ),
-		);
-		$fields   = array();
-
-		foreach ( $networks as $network => $label ) {
-			$fields[ 'social.' . $network ] = array(
-				'label' => $label,
-				'type'  => 'url',
-			);
-		}
-
-		return $fields;
+		return Choices::social_fields();
 	}
 
 	/**
@@ -502,28 +476,7 @@ final class Registry {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private static function color_fields(): array {
-		$colors = array(
-			'primary_color'    => __( 'Primary', 'agency-commerce-core' ),
-			'secondary_color'  => __( 'Secondary', 'agency-commerce-core' ),
-			'accent_color'     => __( 'Accent', 'agency-commerce-core' ),
-			'text_color'       => __( 'Text', 'agency-commerce-core' ),
-			'muted_color'      => __( 'Muted text', 'agency-commerce-core' ),
-			'background_color' => __( 'Background', 'agency-commerce-core' ),
-			'surface_color'    => __( 'Surface', 'agency-commerce-core' ),
-			'border_color'     => __( 'Border', 'agency-commerce-core' ),
-			'success_color'    => __( 'Success', 'agency-commerce-core' ),
-			'error_color'      => __( 'Error', 'agency-commerce-core' ),
-		);
-		$fields = array();
-
-		foreach ( $colors as $token => $label ) {
-			$fields[ 'design.' . $token ] = array(
-				'label' => $label,
-				'type'  => 'color',
-			);
-		}
-
-		return $fields;
+		return Choices::color_fields();
 	}
 
 	/**
