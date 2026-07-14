@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - CP4A
+
+- Added the `Commerce Framework` admin menu and tabbed Settings API interface.
+- Added sanitized, validated, memoized plugin settings retrieval with cache flushing.
+- Added CP4A defaults for store identity, header, shop, product page, footer, social links, design tokens, performance, and developer settings.
+- Added settings-backed selectors for existing header, footer, product-card, and product-layout variants.
+- Added settings-backed sticky header, product grid, product count, filter layout, social link, color token, font token, and performance controls.
+- Added parent-theme fallback defaults and inline design-token overrides so the theme continues working when the plugin is inactive.
+- Added a Playwright admin settings smoke test command.
+
 ## 0.3.0 - CP3
 
 - Added a shared product-card presenter and the `product-card-classic`, `product-card-minimal`, and `product-card-compact` variants.

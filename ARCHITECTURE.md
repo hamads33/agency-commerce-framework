@@ -17,7 +17,13 @@
 
 `agency-commerce-core.php` loads Composer or the fallback PSR-4 autoloader, includes public helper functions, then boots `AgencyCommerceCore\Plugin` on `plugins_loaded`.
 
-The plugin currently provides defaults and setting reads only. It does not own theme presentation and does not require the parent theme.
+The plugin owns the Commerce Framework admin settings infrastructure and does not require the parent theme. `AgencyCommerceCore\Admin\SettingsPage` registers the `Commerce Framework` menu, WordPress Settings API option, tabbed sections, and fields. Settings are stored as one sanitized option blob: `agency_commerce_core_settings`.
+
+Settings definitions live in `AgencyCommerceCore\Settings\Registry`. Sanitization and validation live in `AgencyCommerceCore\Settings\Sanitizer`. Public reads use `agency_commerce_core_get_settings()` and `agency_commerce_core_get_setting()`, which merge saved values with defaults and memoize the sanitized result for the request.
+
+The parent theme continues to call `agency_commerce_get_setting()`. When the plugin is active, that helper reads the plugin settings. When the plugin is inactive, it reads the parent fallback defaults in `inc/settings.php`.
+
+CP4A settings cover store identity, header, shop, product page, footer, social links, color/font tokens, performance, and developer toggles. Later feature areas such as WhatsApp, product badges, delivery estimates, checkout controls, cart drawer, presets, recently viewed, size guide, and product enquiries are intentionally not implemented in CP4A.
 
 ## Public Hooks And Filters
 
@@ -79,8 +85,8 @@ Child themes should prefer component overrides and CSS variable changes over cop
 
 ## CSS Token Flow
 
-`theme.json` defines canonical design tokens. `style.css` mirrors those values as `--ac-*` custom properties for classic PHP templates and WooCommerce markup. Child themes customize storefront presentation by overriding CSS variables.
+`theme.json` defines canonical design tokens. `style.css` mirrors those values as `--ac-*` custom properties for classic PHP templates and WooCommerce markup. CP4A adds settings-backed color and font token overrides emitted by `agency_commerce_design_token_css()` as inline custom properties. Child themes can still customize storefront presentation by overriding CSS variables.
 
 ## Asset Loading Flow
 
-The parent stylesheet is always enqueued. Header/mobile navigation JavaScript is always enqueued because header chrome appears globally. Catalog drawer JavaScript is conditionally enqueued only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`.
+The parent stylesheet is always enqueued. Header/mobile navigation JavaScript is always enqueued because header chrome appears globally. Catalog drawer JavaScript is conditionally enqueued only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`. The `performance.load_assets_conditionally` setting can disable conditional catalog loading for debugging or compatibility.

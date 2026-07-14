@@ -118,11 +118,15 @@ The CP0 build verifies `@wordpress/scripts` executes. Feature block and asset bu
 composer dump-autoload
 composer lint:php
 composer lint
+npm run lint:js
 npm test
+npm run test:admin
 npm audit --audit-level=high
 ```
 
 `composer lint:php` runs `php -l` across `wp-content`. `composer lint` runs PHPCS with WordPress Coding Standards.
+
+`npm run test:admin` runs the CP4A Playwright admin settings smoke test against the local `wp-env` site at `http://localhost:8888`. Override `WP_BASE_URL`, `WP_USERNAME`, or `WP_PASSWORD` if the local admin differs from the default `admin` / `password`.
 
 `npm audit --audit-level=high` currently reports transitive development dependency advisories under `@wordpress/scripts`. Do not claim the audit passes unless those findings are actually resolved.
 
@@ -457,3 +461,59 @@ npm audit --audit-level=high
 ```
 
 The audit command still fails with the known transitive development dependency advisories under `@wordpress/scripts`: 28 total findings, 22 moderate and 6 high. No production runtime dependency was added in CP3.
+
+## CP4A Commerce Framework Settings Infrastructure
+
+CP4A introduces only settings infrastructure:
+
+- `Commerce Framework` admin menu.
+- WordPress Settings API registration for the single `agency_commerce_core_settings` option.
+- Tabbed settings interface for store identity, header, shop, product page, footer, social links, design tokens, performance, and developer options.
+- Tab-scoped saves so one tab does not erase another tab's values.
+- Sanitization and validation for text, textarea, email, URL, checkbox, select, bounded number, color, and font-token inputs.
+- Capability checks and nonce verification for settings saves.
+- Memoized settings retrieval through `agency_commerce_core_get_settings()` and dot-notation reads through `agency_commerce_core_get_setting()`.
+- Parent-theme fallback defaults through `agency_commerce_get_setting()` when the plugin is inactive.
+- Settings-backed selectors for header, footer, product-card, and product-layout variants.
+- Settings-backed sticky header, products-per-row, products-per-page, filter layout, color token overrides, font token overrides, social links, store identity, performance, and developer toggles.
+
+CP4A intentionally does not implement WhatsApp, product badges, delivery estimates, presets, checkout options, homepage blocks, cart drawer, recently viewed products, size guide, or product enquiries.
+
+## CP4A Test Evidence
+
+Use this verification set for CP4A:
+
+```sh
+git status --short
+composer dump-autoload
+composer lint:php
+composer lint
+npm run lint:js
+npm run build
+npm test
+npm run env:start
+npm run env:setup
+npm run env:cli -- wp plugin activate agency-commerce-core woocommerce
+npm run env:cli -- wp theme activate agency-commerce
+npm run test:admin
+npm run env:cli -- wp option get agency_commerce_core_settings --format=json
+npm run env:cli -- wp plugin deactivate agency-commerce-core
+curl -I -L --max-time 20 http://localhost:8888/
+npm run env:cli -- wp plugin activate agency-commerce-core
+npm run env:cli -- wp theme activate twentytwentyfive
+curl -I -L --max-time 20 'http://localhost:8888/wp-admin/admin.php?page=agency-commerce-framework'
+npm run env:cli -- wp theme activate agency-commerce-child
+npm run env:cli -- wp plugin deactivate woocommerce
+curl -I -L --max-time 20 http://localhost:8888/
+npm run env:cli -- wp plugin activate woocommerce
+```
+
+`npm run test:admin` saves every CP4A settings tab through wp-admin and checks that an invalid header variant injected in the browser is rejected by the Settings API sanitizer.
+
+Failed or warning-only:
+
+```sh
+npm audit --audit-level=high
+```
+
+The audit command is still expected to fail with the known transitive development dependency advisories under `@wordpress/scripts` until the toolchain advisories are intentionally resolved.

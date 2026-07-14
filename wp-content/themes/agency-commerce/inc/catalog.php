@@ -97,6 +97,10 @@ function agency_commerce_should_load_catalog_assets(): bool {
 		return false;
 	}
 
+	if ( ! (bool) agency_commerce_get_setting( 'performance.load_assets_conditionally', true ) ) {
+		return true;
+	}
+
 	return is_shop() || is_product_taxonomy() || is_product() || is_search();
 }
 

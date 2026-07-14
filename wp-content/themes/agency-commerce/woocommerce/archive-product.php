@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 get_header( 'shop' );
+
+$agency_commerce_filter_layout = (string) agency_commerce_get_setting( 'shop.filter_layout', 'sidebar' );
 ?>
 
 <main id="primary" class="site-main ac-shop-archive">
@@ -33,9 +35,11 @@ get_header( 'shop' );
 	<?php agency_commerce_render_filter_drawer(); ?>
 
 	<div class="ac-shop-archive__layout">
-		<aside class="ac-shop-archive__sidebar" aria-label="<?php esc_attr_e( 'Product filters', 'agency-commerce' ); ?>">
-			<?php agency_commerce_render_shop_filters( 'sidebar' ); ?>
-		</aside>
+		<?php if ( 'drawer' !== $agency_commerce_filter_layout ) : ?>
+			<aside class="ac-shop-archive__sidebar" aria-label="<?php esc_attr_e( 'Product filters', 'agency-commerce' ); ?>">
+				<?php agency_commerce_render_shop_filters( 'sidebar' ); ?>
+			</aside>
+		<?php endif; ?>
 
 		<section class="ac-shop-archive__products" aria-label="<?php esc_attr_e( 'Products', 'agency-commerce' ); ?>">
 			<?php if ( woocommerce_product_loop() ) : ?>

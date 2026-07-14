@@ -16,7 +16,8 @@
     "env:cli": "wp-env run cli --",
     "env:setup": "wp-env run cli -- sh -c 'wp plugin is-installed woocommerce && wp plugin activate woocommerce || wp plugin install https://downloads.wordpress.org/plugin/woocommerce.10.9.4.zip --activate'",
     "build": "wp-scripts build --webpack-src-dir=tooling/assets --output-path=build",
-    "lint:js": "wp-scripts lint-js tooling/assets",
+    "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright",
+    "test:admin": "node tooling/playwright/admin-settings.js",
     "test": "npm run build"
   },
   "devDependencies": {

@@ -20,14 +20,24 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 	function agency_commerce_default_settings(): array {
 		$defaults = array(
 			'store_identity' => array(
-				'contact_email' => '',
-				'contact_phone' => '',
-				'address'       => '',
+				'logo_id'        => 0,
+				'mobile_logo_id' => 0,
+				'contact_email'  => '',
+				'contact_phone'  => '',
+				'address'        => '',
+				'support_hours'  => '',
 			),
 			'design'         => array(
 				'primary_color'       => '#115e59',
 				'secondary_color'     => '#1f2937',
 				'accent_color'        => '#f59e0b',
+				'text_color'          => '#111827',
+				'muted_color'         => '#6b7280',
+				'background_color'    => '#ffffff',
+				'surface_color'       => '#f9fafb',
+				'border_color'        => '#d1d5db',
+				'success_color'       => '#047857',
+				'error_color'         => '#b91c1c',
 				'body_font'           => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 				'heading_font'        => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 				'button_radius'       => '4px',
@@ -49,7 +59,6 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'variant'    => 'footer-columns',
 				'trust_text' => '',
 			),
-			'social'         => array(),
 			'shop'           => array(
 				'card_variant'        => 'product-card-classic',
 				'products_per_row'    => 4,
@@ -69,9 +78,22 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'show_categories' => true,
 				'show_tags'       => true,
 				'related_count'   => 4,
+				'sticky_summary'  => false,
 			),
-			'checkout'       => array(
-				'mode' => 'block',
+			'social'         => array(
+				'facebook'  => '',
+				'instagram' => '',
+				'tiktok'    => '',
+				'youtube'   => '',
+				'linkedin'  => '',
+				'x'         => '',
+				'pinterest' => '',
+			),
+			'performance'    => array(
+				'load_assets_conditionally' => true,
+			),
+			'developer'      => array(
+				'debug_labels' => false,
 			),
 		);
 

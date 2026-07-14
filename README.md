@@ -30,6 +30,14 @@ CP3 adds catalog and product experience:
 - `product-layout-standard` and `product-layout-sticky`
 - Product-aware native search and styled search results
 
+CP4A adds Commerce Framework settings infrastructure:
+
+- Professional `Commerce Framework` admin menu using the WordPress Settings API
+- Tabbed settings for store identity, header, shop, product page, footer, social links, design tokens, performance, and developer options
+- Sanitized, validated, memoized settings reads through the plugin compatibility layer
+- Settings-backed selectors for header, footer, product-card, and product-layout variants
+- Settings-backed sticky header, products-per-row, products-per-page, color tokens, font tokens, social links, and store identity values
+
 ## Requirements
 
 - Git
@@ -53,6 +61,9 @@ npm run env:cli -- wp menu location assign "CP2 Primary" primary
 npm run env:cli -- wp menu location assign "CP2 Footer" footer
 npm run env:stop
 npm run build
+npm run lint:js
+npm run test:admin
+npm test
 composer lint:php
 composer lint
 ```

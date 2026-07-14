@@ -68,6 +68,14 @@ Renders the selected single-product layout while preserving WooCommerce single-p
 
 Renders the registered WooCommerce filter widget area for sidebar or drawer contexts.
 
+### `agency_commerce_design_token_css(): string`
+
+Returns sanitized inline CSS custom-property overrides for CP4A color and font token settings.
+
+### `agency_commerce_sanitize_css_token_value( string $value ): string`
+
+Sanitizes a CSS custom-property value before the parent theme emits settings-backed design token overrides.
+
 ## Menu Locations
 
 - `primary`: desktop and mobile primary navigation.
@@ -83,13 +91,77 @@ Renders the registered WooCommerce filter widget area for sidebar or drawer cont
 
 Reads a plugin setting by dot notation from saved settings merged with defaults.
 
-### `agency_commerce_core_get_settings(): array`
+### `agency_commerce_core_get_settings( bool $refresh = false ): array`
 
-Returns the memoized settings array.
+Returns the memoized sanitized settings array. Pass `true` to refresh the request cache after programmatic option updates.
 
 ### `agency_commerce_core_defaults(): array`
 
 Returns plugin defaults after public default filters.
+
+### `agency_commerce_core_flush_settings_cache(): void`
+
+Flushes the memoized plugin settings cache.
+
+## Settings Keys
+
+CP4A exposes these public setting paths through `agency_commerce_get_setting()` and `agency_commerce_core_get_setting()`:
+
+- `store_identity.logo_id`
+- `store_identity.mobile_logo_id`
+- `store_identity.contact_email`
+- `store_identity.contact_phone`
+- `store_identity.address`
+- `store_identity.support_hours`
+- `header.variant`
+- `header.sticky`
+- `header.show_search`
+- `header.show_account`
+- `header.show_cart`
+- `header.show_cart_count`
+- `header.announcement_bar`
+- `header.announcement`
+- `header.announcement_link`
+- `shop.card_variant`
+- `shop.products_per_row`
+- `shop.products_per_page`
+- `shop.filter_layout`
+- `shop.show_product_cat`
+- `shop.show_rating`
+- `shop.show_quick_add`
+- `shop.enable_hover_image`
+- `shop.show_sale_badge`
+- `shop.show_stock_badge`
+- `shop.show_featured_badge`
+- `product_page.layout`
+- `product_page.sticky_summary`
+- `product_page.show_sku`
+- `product_page.show_categories`
+- `product_page.show_tags`
+- `product_page.related_count`
+- `footer.variant`
+- `footer.trust_text`
+- `social.facebook`
+- `social.instagram`
+- `social.tiktok`
+- `social.youtube`
+- `social.linkedin`
+- `social.x`
+- `social.pinterest`
+- `design.primary_color`
+- `design.secondary_color`
+- `design.accent_color`
+- `design.text_color`
+- `design.muted_color`
+- `design.background_color`
+- `design.surface_color`
+- `design.border_color`
+- `design.success_color`
+- `design.error_color`
+- `design.heading_font`
+- `design.body_font`
+- `performance.load_assets_conditionally`
+- `developer.debug_labels`
 
 ## Actions
 
