@@ -31,9 +31,11 @@ final class Registry {
 	public static function tabs(): array {
 		return array(
 			'store_identity' => __( 'Store Identity', 'agency-commerce-core' ),
+			'presets'        => __( 'Presets', 'agency-commerce-core' ),
 			'header'         => __( 'Header', 'agency-commerce-core' ),
 			'shop'           => __( 'Shop', 'agency-commerce-core' ),
 			'product_page'   => __( 'Product Page', 'agency-commerce-core' ),
+			'whatsapp'       => __( 'WhatsApp & Enquiries', 'agency-commerce-core' ),
 			'footer'         => __( 'Footer', 'agency-commerce-core' ),
 			'social'         => __( 'Social Links', 'agency-commerce-core' ),
 			'design'         => __( 'Design Tokens', 'agency-commerce-core' ),
@@ -91,9 +93,10 @@ final class Registry {
 					'title'  => __( 'Header', 'agency-commerce-core' ),
 					'fields' => array(
 						'header.variant'           => array(
-							'label'   => __( 'Header variant', 'agency-commerce-core' ),
-							'type'    => 'select',
-							'options' => self::header_variants(),
+							'label'         => __( 'Header variant', 'agency-commerce-core' ),
+							'type'          => 'select',
+							'options'       => self::header_variants(),
+							'preview_group' => 'header',
 						),
 						'header.sticky'            => array(
 							'label' => __( 'Sticky header', 'agency-commerce-core' ),
@@ -135,9 +138,10 @@ final class Registry {
 					'title'  => __( 'Shop', 'agency-commerce-core' ),
 					'fields' => array(
 						'shop.card_variant'        => array(
-							'label'   => __( 'Product-card variant', 'agency-commerce-core' ),
-							'type'    => 'select',
-							'options' => self::product_card_variants(),
+							'label'         => __( 'Product-card variant', 'agency-commerce-core' ),
+							'type'          => 'select',
+							'options'       => self::product_card_variants(),
+							'preview_group' => 'product-card',
 						),
 						'shop.products_per_row'    => array(
 							'label' => __( 'Products per row', 'agency-commerce-core' ),
@@ -194,28 +198,42 @@ final class Registry {
 				'product_page' => array(
 					'title'  => __( 'Product Page', 'agency-commerce-core' ),
 					'fields' => array(
-						'product_page.layout'          => array(
-							'label'   => __( 'Product layout', 'agency-commerce-core' ),
-							'type'    => 'select',
-							'options' => self::product_layout_variants(),
+						'product_page.layout'           => array(
+							'label'         => __( 'Product layout', 'agency-commerce-core' ),
+							'type'          => 'select',
+							'options'       => self::product_layout_variants(),
+							'preview_group' => 'product-layout',
 						),
-						'product_page.sticky_summary'  => array(
+						'product_page.sticky_summary'   => array(
 							'label' => __( 'Sticky summary', 'agency-commerce-core' ),
 							'type'  => 'checkbox',
 						),
-						'product_page.show_sku'        => array(
+						'product_page.show_delivery_message' => array(
+							'label' => __( 'Show delivery message', 'agency-commerce-core' ),
+							'type'  => 'checkbox',
+						),
+						'product_page.delivery_message' => array(
+							'label'       => __( 'Global delivery message', 'agency-commerce-core' ),
+							'type'        => 'textarea',
+							'description' => __( 'Displayed on product pages unless a product or category override is set.', 'agency-commerce-core' ),
+						),
+						'product_page.show_whatsapp_enquiry' => array(
+							'label' => __( 'Show WhatsApp enquiry button', 'agency-commerce-core' ),
+							'type'  => 'checkbox',
+						),
+						'product_page.show_sku'         => array(
 							'label' => __( 'Show SKU', 'agency-commerce-core' ),
 							'type'  => 'checkbox',
 						),
-						'product_page.show_categories' => array(
+						'product_page.show_categories'  => array(
 							'label' => __( 'Show categories', 'agency-commerce-core' ),
 							'type'  => 'checkbox',
 						),
-						'product_page.show_tags'       => array(
+						'product_page.show_tags'        => array(
 							'label' => __( 'Show tags', 'agency-commerce-core' ),
 							'type'  => 'checkbox',
 						),
-						'product_page.related_count'   => array(
+						'product_page.related_count'    => array(
 							'label' => __( 'Related products count', 'agency-commerce-core' ),
 							'type'  => 'number',
 							'min'   => 0,
@@ -229,13 +247,35 @@ final class Registry {
 					'title'  => __( 'Footer', 'agency-commerce-core' ),
 					'fields' => array(
 						'footer.variant'    => array(
-							'label'   => __( 'Footer variant', 'agency-commerce-core' ),
-							'type'    => 'select',
-							'options' => self::footer_variants(),
+							'label'         => __( 'Footer variant', 'agency-commerce-core' ),
+							'type'          => 'select',
+							'options'       => self::footer_variants(),
+							'preview_group' => 'footer',
 						),
 						'footer.trust_text' => array(
 							'label' => __( 'Trust text', 'agency-commerce-core' ),
 							'type'  => 'text',
+						),
+					),
+				),
+			),
+			'whatsapp'       => array(
+				'whatsapp' => array(
+					'title'  => __( 'WhatsApp Enquiry', 'agency-commerce-core' ),
+					'fields' => array(
+						'whatsapp.phone_number'     => array(
+							'label'       => __( 'Phone number', 'agency-commerce-core' ),
+							'type'        => 'text',
+							'description' => __( 'Use international format with country code. The button is hidden until a phone number is configured.', 'agency-commerce-core' ),
+						),
+						'whatsapp.button_text'      => array(
+							'label' => __( 'Button text', 'agency-commerce-core' ),
+							'type'  => 'text',
+						),
+						'whatsapp.message_template' => array(
+							'label'       => __( 'Message template', 'agency-commerce-core' ),
+							'type'        => 'textarea',
+							'description' => __( 'Available placeholders: {product_name}, {product_url}, {sku}, {variation}.', 'agency-commerce-core' ),
 						),
 					),
 				),
@@ -250,6 +290,54 @@ final class Registry {
 				'colors' => array(
 					'title'  => __( 'Color Tokens', 'agency-commerce-core' ),
 					'fields' => self::color_fields(),
+				),
+				'layout' => array(
+					'title'  => __( 'Layout Tokens', 'agency-commerce-core' ),
+					'fields' => array(
+						'design.container_width'        => array(
+							'label'       => __( 'Container width', 'agency-commerce-core' ),
+							'type'        => 'text',
+							'description' => __( 'CSS length value, for example 1200px.', 'agency-commerce-core' ),
+						),
+						'design.narrow_container_width' => array(
+							'label'       => __( 'Narrow container width', 'agency-commerce-core' ),
+							'type'        => 'text',
+							'description' => __( 'CSS length value, for example 760px.', 'agency-commerce-core' ),
+						),
+						'design.spacing_density'        => array(
+							'label'   => __( 'Spacing density', 'agency-commerce-core' ),
+							'type'    => 'select',
+							'options' => array(
+								'compact'     => __( 'Compact', 'agency-commerce-core' ),
+								'comfortable' => __( 'Comfortable', 'agency-commerce-core' ),
+								'airy'        => __( 'Airy', 'agency-commerce-core' ),
+							),
+						),
+						'design.shadow_level'           => array(
+							'label'   => __( 'Shadow level', 'agency-commerce-core' ),
+							'type'    => 'select',
+							'options' => array(
+								'soft'     => __( 'Soft', 'agency-commerce-core' ),
+								'balanced' => __( 'Balanced', 'agency-commerce-core' ),
+								'elevated' => __( 'Elevated', 'agency-commerce-core' ),
+							),
+						),
+						'design.button_radius'          => array(
+							'label'       => __( 'Button radius', 'agency-commerce-core' ),
+							'type'        => 'text',
+							'description' => __( 'CSS length value, for example 4px.', 'agency-commerce-core' ),
+						),
+						'design.card_radius'            => array(
+							'label'       => __( 'Card radius', 'agency-commerce-core' ),
+							'type'        => 'text',
+							'description' => __( 'CSS length value, for example 8px.', 'agency-commerce-core' ),
+						),
+						'design.product_image_ratio'    => array(
+							'label'       => __( 'Product image ratio', 'agency-commerce-core' ),
+							'type'        => 'text',
+							'description' => __( 'CSS aspect-ratio value, for example 1 / 1 or 4 / 5.', 'agency-commerce-core' ),
+						),
+					),
 				),
 				'fonts'  => array(
 					'title'  => __( 'Font Tokens', 'agency-commerce-core' ),

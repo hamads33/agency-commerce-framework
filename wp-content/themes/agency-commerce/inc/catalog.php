@@ -21,6 +21,98 @@ function agency_commerce_has_woocommerce(): bool {
 	return function_exists( 'WC' ) && class_exists( 'WooCommerce' );
 }
 
+if ( ! function_exists( 'agency_commerce_get_product_badges' ) ) {
+	/**
+	 * Returns product badges for the parent-theme fallback.
+	 *
+	 * @param WC_Product $product Product object.
+	 * @return array<int, array<string, string>>
+	 */
+	function agency_commerce_get_product_badges( WC_Product $product ): array {
+		$badges = array();
+
+		if ( (bool) agency_commerce_get_setting( 'shop.show_sale_badge', true ) && $product->is_on_sale() ) {
+			$badges[] = array(
+				'class' => 'is-sale',
+				'label' => esc_html__( 'Sale', 'agency-commerce' ),
+			);
+		}
+
+		if ( (bool) agency_commerce_get_setting( 'shop.show_stock_badge', true ) && ! $product->is_in_stock() ) {
+			$badges[] = array(
+				'class' => 'is-out-of-stock',
+				'label' => esc_html__( 'Out of stock', 'agency-commerce' ),
+			);
+		}
+
+		if ( (bool) agency_commerce_get_setting( 'shop.show_featured_badge', true ) && $product->is_featured() ) {
+			$badges[] = array(
+				'class' => 'is-featured',
+				'label' => esc_html__( 'Featured', 'agency-commerce' ),
+			);
+		}
+
+		return $badges;
+	}
+}
+
+if ( ! function_exists( 'agency_commerce_render_product_badges' ) ) {
+	/**
+	 * Renders product badges for the parent-theme fallback.
+	 *
+	 * @param array<int, array<string, string>> $badges Badge definitions.
+	 * @param string                            $wrapper_class Wrapper class.
+	 */
+	function agency_commerce_render_product_badges( array $badges, string $wrapper_class = 'ac-product-badges' ): void {
+		if ( empty( $badges ) ) {
+			return;
+		}
+
+		?>
+		<div class="<?php echo esc_attr( $wrapper_class ); ?>" aria-label="<?php esc_attr_e( 'Product badges', 'agency-commerce' ); ?>">
+			<?php foreach ( $badges as $badge ) : ?>
+				<span class="ac-product-badge <?php echo esc_attr( (string) $badge['class'] ); ?>"><?php echo esc_html( (string) $badge['label'] ); ?></span>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+}
+
+if ( ! function_exists( 'agency_commerce_render_delivery_message' ) ) {
+	/**
+	 * Parent-theme fallback for delivery messaging.
+	 *
+	 * @param WC_Product|null $product Product object.
+	 */
+	function agency_commerce_render_delivery_message( ?WC_Product $product = null ): void {
+		unset( $product );
+
+		$message = (string) agency_commerce_get_setting( 'product_page.delivery_message', '' );
+
+		if ( '' === trim( $message ) || ! (bool) agency_commerce_get_setting( 'product_page.show_delivery_message', true ) ) {
+			return;
+		}
+
+		?>
+		<div class="ac-product-delivery">
+			<p class="ac-product-delivery__label"><?php esc_html_e( 'Delivery', 'agency-commerce' ); ?></p>
+			<p class="ac-product-delivery__message"><?php echo esc_html( $message ); ?></p>
+		</div>
+		<?php
+	}
+}
+
+if ( ! function_exists( 'agency_commerce_render_whatsapp_enquiry_button' ) ) {
+	/**
+	 * Parent-theme fallback for WhatsApp enquiry rendering.
+	 *
+	 * @param WC_Product|null $product Product object.
+	 */
+	function agency_commerce_render_whatsapp_enquiry_button( ?WC_Product $product = null ): void {
+		unset( $product );
+	}
+}
+
 /**
  * Returns the configured product-card variant.
  */
@@ -146,28 +238,7 @@ function agency_commerce_prepare_product_card_data( WC_Product $product ): array
 		);
 	}
 
-	$badges = array();
-
-	if ( (bool) agency_commerce_get_setting( 'shop.show_sale_badge', true ) && $product->is_on_sale() ) {
-		$badges[] = array(
-			'class' => 'is-sale',
-			'label' => esc_html__( 'Sale', 'agency-commerce' ),
-		);
-	}
-
-	if ( (bool) agency_commerce_get_setting( 'shop.show_stock_badge', true ) && ! $product->is_in_stock() ) {
-		$badges[] = array(
-			'class' => 'is-out-of-stock',
-			'label' => esc_html__( 'Out of stock', 'agency-commerce' ),
-		);
-	}
-
-	if ( (bool) agency_commerce_get_setting( 'shop.show_featured_badge', true ) && $product->is_featured() ) {
-		$badges[] = array(
-			'class' => 'is-featured',
-			'label' => esc_html__( 'Featured', 'agency-commerce' ),
-		);
-	}
+	$badges = agency_commerce_get_product_badges( $product );
 
 	$can_quick_add = (bool) agency_commerce_get_setting( 'shop.show_quick_add', true )
 		&& $product->is_type( 'simple' )
@@ -249,17 +320,7 @@ function agency_commerce_render_product_card( ?WC_Product $product = null ): voi
  * @param array<int, array{class:string,label:string}> $badges Badge data.
  */
 function agency_commerce_render_product_card_badges( array $badges ): void {
-	if ( empty( $badges ) ) {
-		return;
-	}
-
-	?>
-	<div class="ac-product-card__badges" aria-label="<?php esc_attr_e( 'Product badges', 'agency-commerce' ); ?>">
-		<?php foreach ( $badges as $badge ) : ?>
-			<span class="ac-product-card__badge <?php echo esc_attr( $badge['class'] ); ?>"><?php echo esc_html( $badge['label'] ); ?></span>
-		<?php endforeach; ?>
-	</div>
-	<?php
+	agency_commerce_render_product_badges( $badges, 'ac-product-card__badges' );
 }
 
 /**

@@ -57,6 +57,7 @@ final class SettingsMigrationManager {
 	private function migrations(): array {
 		$migrations = array(
 			new Version1(),
+			new Version2(),
 		);
 
 		usort(

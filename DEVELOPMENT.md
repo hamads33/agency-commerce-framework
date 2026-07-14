@@ -130,6 +130,8 @@ npm audit --audit-level=high
 
 `npm run test:admin` runs the CP4A Playwright admin settings smoke test against the local `wp-env` site at `http://localhost:8888`. Override `WP_BASE_URL`, `WP_USERNAME`, or `WP_PASSWORD` if the local admin differs from the default `admin` / `password`.
 
+`npm run test:storefront` runs the CP4B storefront Playwright smoke test against the same local environment. It covers badges, delivery messaging, WhatsApp enquiries, social links, responsive breakpoints, and inactive-state fallbacks.
+
 `npm run visual:baseline` captures Playwright visual baselines under `tests/visual-baseline/`. `npm run visual:compare` compares the current site against those baselines. Override page URLs with `VISUAL_HOME_URL`, `VISUAL_SHOP_URL`, `VISUAL_CATEGORY_URL`, `VISUAL_SIMPLE_PRODUCT_URL`, `VISUAL_VARIABLE_PRODUCT_URL`, `VISUAL_CART_URL`, `VISUAL_CHECKOUT_URL`, and `VISUAL_MY_ACCOUNT_URL` when local slugs differ. Override the allowed diff ratio with `VISUAL_DIFF_THRESHOLD`; the default is `0.01`.
 
 `npm audit --audit-level=high` currently reports transitive development dependency advisories under `@wordpress/scripts`. Do not claim the audit passes unless those findings are actually resolved.
@@ -483,6 +485,38 @@ CP4A introduces only settings infrastructure:
 
 CP4A intentionally does not implement WhatsApp, product badges, delivery estimates, presets, checkout options, homepage blocks, cart drawer, recently viewed products, size guide, or product enquiries.
 
+## CP4B Core Commerce Features
+
+CP4B adds reusable commerce features on top of the existing settings infrastructure:
+
+- Framework-only presets for Minimal, Fashion, and Electronics with preview-before-apply and restore-previous behavior.
+- Reusable product badges with built-in and custom labels stored in product metadata.
+- Delivery estimate messaging with global, category, and product-level overrides.
+- WhatsApp enquiry support with configurable phone, button text, and message template placeholders.
+- Static admin preview thumbnails for header, footer, product-card, and product-layout variants.
+- Public helper, filter, action, and component-contract documentation for the new extension surface.
+
+CP4B does not implement homepage blocks, checkout customization, cart drawer, recently viewed products, size guide, wishlist, compare, My Account redesign, product recommendations, or AI features.
+
+## CP4B Test Evidence
+
+Use this verification set for CP4B:
+
+```sh
+git status --short
+composer dump-autoload
+composer lint:php
+composer lint
+npm run lint:js
+npm run build
+npm test
+npm run test:admin
+npm run test:storefront
+npm run env:cli -- wp option get agency_commerce_core_settings --format=json
+```
+
+The admin smoke test should confirm variant persistence after logout/login, preset preview thumbnails, preset apply/restore, and no PHP warnings or browser console errors. The storefront smoke test should confirm badge rendering, delivery overrides, WhatsApp URLs, variable-product variation handling, social links, responsive layouts, and inactive-state fallbacks.
+
 ## CP4A Test Evidence
 
 Use this verification set for CP4A:
@@ -571,7 +605,7 @@ The default diff threshold is `0.01`. Set `VISUAL_DIFF_THRESHOLD=0` for exact co
 
 ## Framework Quality Checkpoint
 
-This checkpoint is not CP4B and does not add commerce features. It introduces:
+This earlier checkpoint introduced the schema and visual quality infrastructure:
 
 - Settings schema versioning.
 - A no-op first settings migration.

@@ -263,12 +263,22 @@ function agency_commerce_render_social_links( array $social ): void {
 		return;
 	}
 
+	$labels = array(
+		'facebook'  => 'Facebook',
+		'instagram' => 'Instagram',
+		'linkedin'  => 'LinkedIn',
+		'tiktok'    => 'TikTok',
+		'x'         => 'X',
+		'pinterest' => 'Pinterest',
+		'youtube'   => 'YouTube',
+	);
+
 	?>
 	<ul class="ac-social-links">
 		<?php foreach ( $social as $network => $url ) : ?>
 			<li>
 				<a href="<?php echo esc_url( $url ); ?>" rel="me noopener noreferrer">
-					<?php echo esc_html( ucwords( str_replace( array( '_', '-' ), ' ', (string) $network ) ) ); ?>
+					<?php echo esc_html( $labels[ $network ] ?? ucwords( str_replace( array( '_', '-' ), ' ', (string) $network ) ) ); ?>
 				</a>
 			</li>
 		<?php endforeach; ?>

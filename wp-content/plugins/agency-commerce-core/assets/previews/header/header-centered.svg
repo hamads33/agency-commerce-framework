@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" rx="18" fill="#fff7fb"/>
+  <rect x="16" y="16" width="328" height="42" rx="10" fill="#7c3aed"/>
+  <rect x="28" y="28" width="44" height="18" rx="9" fill="#ffffff" opacity=".92"/>
+  <rect x="130" y="28" width="100" height="12" rx="6" fill="#ffffff" opacity=".92"/>
+  <rect x="246" y="28" width="88" height="12" rx="6" fill="#ffffff" opacity=".92"/>
+  <rect x="16" y="74" width="328" height="130" rx="16" fill="#ffffff" stroke="#e9d5ff"/>
+  <rect x="98" y="92" width="164" height="18" rx="9" fill="#e9d5ff"/>
+  <rect x="72" y="124" width="216" height="10" rx="5" fill="#e9d5ff"/>
+  <rect x="52" y="146" width="256" height="10" rx="5" fill="#e9d5ff"/>
+  <rect x="120" y="170" width="120" height="28" rx="18" fill="#ec4899"/>
+  <text x="180" y="208" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" fill="#0f172a">Centered Header</text>
+</svg>

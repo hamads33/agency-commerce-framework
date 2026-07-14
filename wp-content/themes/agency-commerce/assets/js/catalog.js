@@ -122,4 +122,87 @@
 
 		filterDrawer.addEventListener( 'keydown', trapDrawerFocus );
 	}
+
+	const whatsappButton = document.querySelector( '.ac-whatsapp-enquiry' );
+	const variationForm = document.querySelector( '.variations_form' );
+
+	const buildVariationLabel = ( form ) => {
+		if ( ! form ) {
+			return '';
+		}
+
+		const labels = Array.from( form.querySelectorAll( 'select[name^="attribute_"]' ) )
+			.map( ( select ) => {
+				const currentValue = select.value;
+				if ( ! currentValue ) {
+					return '';
+				}
+
+				const option = select.options[ select.selectedIndex ];
+				const fieldLabel = select
+					.closest( 'tr' )
+					?.querySelector( 'label' )
+					?.textContent?.trim()
+					?.replace( /:\s*$/, '' ) || select.name.replace( /^attribute_/, '' );
+				const optionLabel = option ? option.textContent.trim() : currentValue;
+
+				return `${ fieldLabel }: ${ optionLabel }`;
+			} )
+			.filter( Boolean );
+
+		return labels.join( ', ' );
+	};
+
+	const updateWhatsAppButton = ( forceDisable = false ) => {
+		if ( ! whatsappButton ) {
+			return;
+		}
+
+		const phone = ( whatsappButton.dataset.whatsappPhone || '' ).replace( /\D+/g, '' );
+
+		if ( ! phone ) {
+			return;
+		}
+
+		const template = whatsappButton.dataset.whatsappTemplate || '';
+		const productName = whatsappButton.dataset.productName || '';
+		const productUrl = whatsappButton.dataset.productUrl || window.location.href;
+		const sku = whatsappButton.dataset.productSku || '';
+		const variation = buildVariationLabel( variationForm );
+		const messageTemplate = template || 'Hello, I am interested in {product_name}.\nProduct: {product_url}\nSKU: {sku}\nVariation: {variation}';
+		const message = messageTemplate
+			.replace( /\{product_name\}/g, productName )
+			.replace( /\{product_url\}/g, productUrl )
+			.replace( /\{sku\}/g, sku )
+			.replace( /\{variation\}/g, variation || 'Not selected' );
+
+		if ( forceDisable || ( whatsappButton.dataset.whatsappNeedsVariation === 'true' && ! variation ) ) {
+			whatsappButton.href = '#';
+			whatsappButton.setAttribute( 'aria-disabled', 'true' );
+			whatsappButton.classList.add( 'is-variation-pending' );
+			return;
+		}
+
+		whatsappButton.href = `https://wa.me/${ encodeURIComponent( phone ) }?text=${ encodeURIComponent( message ) }`;
+		whatsappButton.removeAttribute( 'aria-disabled' );
+		whatsappButton.classList.remove( 'is-variation-pending' );
+	};
+
+	if ( whatsappButton ) {
+		updateWhatsAppButton();
+	}
+
+	if ( variationForm && whatsappButton ) {
+		variationForm.addEventListener( 'change', () => {
+			updateWhatsAppButton( false );
+		} );
+
+		const resetButton = variationForm.querySelector( '.reset_variations' );
+
+		if ( resetButton ) {
+			resetButton.addEventListener( 'click', () => {
+				updateWhatsAppButton( true );
+			} );
+		}
+	}
 } )();

@@ -14,6 +14,8 @@ Selected by `header.variant`.
 
 Selected by `footer.variant`.
 
+Both footer variants render the configured social links and automatically hide empty URLs.
+
 ## Product-Card Variants
 
 - `product-card-classic`
@@ -25,6 +27,37 @@ Selected by `shop.card_variant`.
 All product-card variants receive the shared presenter data from `agency_commerce_prepare_product_card_data()`. Variant templates must not recalculate product badges, price, stock, images, rating, category, or add-to-cart behavior.
 
 To add a future variant, add the component template, add the variant to the whitelist in `agency_commerce_get_product_card_variant()`, document it here, and add tests. Do not duplicate presenter logic in the template.
+
+## Product Extensions
+
+The selected single-product layout renders extension content through `agency_commerce_single_product_summary_extensions`.
+
+CP4B currently uses that contract for:
+
+- product badges,
+- delivery messaging, and
+- WhatsApp enquiry rendering.
+
+The shared extension markup uses:
+
+- `ac-product-badges`
+- `ac-product-delivery`
+- `ac-whatsapp-enquiry`
+
+Do not duplicate these blocks inside the product-layout variants or in downstream child themes. Add new product-extension output through the shared hook and helpers instead.
+
+## Preset Preview Assets
+
+The admin presets tab renders static preview thumbnails only.
+
+Supported preview groups:
+
+- `header`
+- `footer`
+- `product-card`
+- `product-layout`
+
+These thumbnails are generated from the preset and settings-variant slugs and are not used in live storefront rendering.
 
 ## Product-Page Layouts
 

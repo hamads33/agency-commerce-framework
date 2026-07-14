@@ -45,6 +45,16 @@ The framework quality checkpoint after CP4A adds:
 - Playwright visual baseline capture and comparison under `tests/visual-baseline/`
 - Visual coverage for homepage, shop, product category, simple product, variable product, cart, checkout, and My Account across desktop, tablet, and mobile
 
+CP4B adds reusable commerce features on top of that settings foundation:
+
+- Framework-only presets for Minimal, Fashion, and Electronics with preview and restore support
+- Reusable product badges with built-in and custom labels
+- Product-level, category-level, and global delivery messaging
+- Sanitized WhatsApp product enquiry links and variable-product support
+- Configured social link rendering with empty-link suppression
+- Static admin preview thumbnails for header, footer, product-card, and product-layout variants
+- Public helper, action, filter, and component-contract documentation in `HOOKS.md`, `ARCHITECTURE.md`, and `COMPONENTS.md`
+
 ## Requirements
 
 - Git

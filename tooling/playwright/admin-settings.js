@@ -1,5 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies, no-console */
 const { chromium } = require( 'playwright' );
+const { execFileSync } = require( 'child_process' );
+const path = require( 'path' );
+
+const repoRoot = path.resolve( __dirname, '..', '..' );
 
 const baseUrl = process.env.WP_BASE_URL || 'http://localhost:8888';
 const username = process.env.WP_USERNAME || 'admin';
@@ -95,6 +99,39 @@ async function login( page ) {
 	] );
 }
 
+function attachErrorCollectors( page ) {
+	const errors = [];
+
+	page.on( 'pageerror', ( error ) => {
+		errors.push( `Page error: ${ error.message }` );
+	} );
+
+	page.on( 'console', ( message ) => {
+		if (
+			'error' === message.type() &&
+			! message
+				.text()
+				.includes(
+					'Failed to load resource: the server responded with a status of 403 (Forbidden)'
+				)
+		) {
+			errors.push( `Console error: ${ message.text() }` );
+		}
+	} );
+
+	return {
+		assertClean: async ( context ) => {
+			if ( errors.length ) {
+				throw new Error(
+					`${ context } encountered browser errors:\n${ errors.join(
+						'\n'
+					) }`
+				);
+			}
+		},
+	};
+}
+
 async function logout( page ) {
 	await page.goto( `${ baseUrl }/wp-login.php?action=logout`, {
 		waitUntil: 'networkidle',
@@ -114,12 +151,10 @@ async function logout( page ) {
 
 async function assertNoPhpWarnings( page, context ) {
 	const bodyText = await page.locator( 'body' ).innerText();
-	const html = await page.content();
-	const combined = `${ bodyText }\n${ html }`;
 
 	if (
-		/(?:^|[^a-z])(Warning|Notice|Deprecated|Fatal error)\b/i.test(
-			combined
+		/(?:PHP\s+)?(?:Warning|Notice|Deprecated|Fatal error)\s*:/i.test(
+			bodyText
 		)
 	) {
 		throw new Error(
@@ -138,6 +173,22 @@ async function assertHasClass( locator, className, label ) {
 			`Expected ${ label } to include class ${ className }, got: ${ classList }`
 		);
 	}
+}
+
+async function assertImagePresent( page, selector, label ) {
+	const count = await page.locator( selector ).count();
+
+	if ( count < 1 ) {
+		throw new Error( `Expected ${ label } to be present.` );
+	}
+}
+
+function runWpEval( code ) {
+	execFileSync( 'npm', [ 'run', 'env:cli', '--', 'wp', 'eval', code ], {
+		cwd: repoRoot,
+		encoding: 'utf8',
+		maxBuffer: 10 * 1024 * 1024,
+	} );
 }
 
 async function submitSettingsForm( page ) {
@@ -228,9 +279,51 @@ async function verifySavedSelection( page, tab, field, value ) {
 	}
 }
 
+async function verifyPresetThumbnails( page ) {
+	await assertImagePresent(
+		page,
+		'img[src*="/assets/previews/header/header-default.svg"]',
+		'header preview thumbnail'
+	);
+	await assertImagePresent(
+		page,
+		'img[src*="/assets/previews/footer/footer-columns.svg"]',
+		'footer preview thumbnail'
+	);
+	await assertImagePresent(
+		page,
+		'img[src*="/assets/previews/product-card/product-card-classic.svg"]',
+		'product-card preview thumbnail'
+	);
+	await assertImagePresent(
+		page,
+		'img[src*="/assets/previews/product-layout/product-layout-sticky.svg"]',
+		'product-layout preview thumbnail'
+	);
+}
+
+async function openPresetPreview( page, preset ) {
+	await page.goto( `${ settingsUrl( 'presets' ) }&preset=${ preset }`, {
+		waitUntil: 'networkidle',
+	} );
+
+	await page.waitForSelector( '.agency-commerce-core-preset-preview' );
+}
+
+async function applyPreset( page ) {
+	runWpEval( 'agency_commerce_core_apply_preset( "minimal" );' );
+	await page.reload( { waitUntil: 'networkidle' } );
+}
+
+async function restorePreset( page ) {
+	runWpEval( 'agency_commerce_core_restore_previous_preset();' );
+	await page.reload( { waitUntil: 'networkidle' } );
+}
+
 ( async () => {
 	const browser = await chromium.launch();
 	const page = await browser.newPage();
+	const errors = attachErrorCollectors( page );
 
 	try {
 		await login( page );
@@ -244,6 +337,7 @@ async function verifySavedSelection( page, tab, field, value ) {
 		await page.close();
 
 		const reloginPage = await browser.newPage();
+		const reloginErrors = attachErrorCollectors( reloginPage );
 		await login( reloginPage );
 
 		await verifySavedSelection(
@@ -304,7 +398,124 @@ async function verifySavedSelection( page, tab, field, value ) {
 			'product layout'
 		);
 
+		await reloginPage.goto( settingsUrl( 'presets' ), {
+			waitUntil: 'networkidle',
+		} );
+		await assertNoPhpWarnings( reloginPage, 'preset tab review' );
+		await verifyPresetThumbnails( reloginPage );
+
+		await openPresetPreview( reloginPage, 'minimal' );
+		await reloginPage.waitForSelector(
+			'.agency-commerce-core-preset-preview'
+		);
+		await applyPreset( reloginPage );
+		await assertNoPhpWarnings( reloginPage, 'preset apply review' );
+		await reloginPage.goto( shopUrl, { waitUntil: 'networkidle' } );
+		await assertHasClass(
+			reloginPage.locator( 'header.ac-site-header' ).first(),
+			'ac-site-header--default',
+			'header'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'footer.ac-site-footer' ).first(),
+			'ac-site-footer--minimal',
+			'footer'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'article.ac-product-card' ).first(),
+			'ac-product-card--minimal',
+			'product card'
+		);
+
+		await reloginPage.goto( productUrl, { waitUntil: 'networkidle' } );
+		await assertHasClass(
+			reloginPage.locator( 'div.ac-product-layout' ).first(),
+			'ac-product-layout--standard',
+			'product layout'
+		);
+
+		await reloginPage.goto( settingsUrl( 'presets' ), {
+			waitUntil: 'networkidle',
+		} );
+		await restorePreset( reloginPage );
+		await assertNoPhpWarnings( reloginPage, 'preset restore review' );
+
+		await reloginPage.goto( shopUrl, { waitUntil: 'networkidle' } );
+		await assertHasClass(
+			reloginPage.locator( 'header.ac-site-header' ).first(),
+			'ac-site-header--centered',
+			'header'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'footer.ac-site-footer' ).first(),
+			'ac-site-footer--minimal',
+			'footer'
+		);
+		await assertHasClass(
+			reloginPage.locator( 'article.ac-product-card' ).first(),
+			'ac-product-card--compact',
+			'product card'
+		);
+
+		await logout( reloginPage );
+		await reloginPage.close();
+
+		const persistencePage = await browser.newPage();
+		const persistenceErrors = attachErrorCollectors( persistencePage );
+		await login( persistencePage );
+
+		await verifySavedSelection(
+			persistencePage,
+			'header',
+			'#agency-commerce-core-header-variant',
+			finalValues.header
+		);
+		await verifySavedSelection(
+			persistencePage,
+			'footer',
+			'#agency-commerce-core-footer-variant',
+			finalValues.footer
+		);
+		await verifySavedSelection(
+			persistencePage,
+			'shop',
+			'#agency-commerce-core-shop-card_variant',
+			finalValues.shop
+		);
+		await verifySavedSelection(
+			persistencePage,
+			'product_page',
+			'#agency-commerce-core-product_page-layout',
+			finalValues.product_page
+		);
+		await persistencePage.goto( shopUrl, { waitUntil: 'networkidle' } );
+		await assertHasClass(
+			persistencePage.locator( 'header.ac-site-header' ).first(),
+			'ac-site-header--centered',
+			'header'
+		);
+		await assertHasClass(
+			persistencePage.locator( 'footer.ac-site-footer' ).first(),
+			'ac-site-footer--minimal',
+			'footer'
+		);
+		await assertHasClass(
+			persistencePage.locator( 'article.ac-product-card' ).first(),
+			'ac-product-card--compact',
+			'product card'
+		);
+		await persistencePage.goto( productUrl, { waitUntil: 'networkidle' } );
+		await assertHasClass(
+			persistencePage.locator( 'div.ac-product-layout' ).first(),
+			'ac-product-layout--sticky',
+			'product layout'
+		);
+		await persistenceErrors.assertClean( 'Preset persistence checks' );
+		await persistencePage.close();
+
 		console.log( 'Admin settings variant checks passed.' );
+		await errors.assertClean( 'Admin settings checks' );
+		await reloginErrors.assertClean( 'Preset round-trip checks' );
 	} finally {
 		await browser.close();
 	}

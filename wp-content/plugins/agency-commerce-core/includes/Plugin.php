@@ -9,8 +9,10 @@ declare( strict_types=1 );
 
 namespace AgencyCommerceCore;
 
+use AgencyCommerceCore\Admin\PresetActions;
 use AgencyCommerceCore\Admin\SettingsPage;
 use AgencyCommerceCore\Migrations\SettingsMigrationManager;
+use AgencyCommerceCore\Products\FeatureManager;
 use AgencyCommerceCore\Settings\Defaults;
 
 /**
@@ -44,6 +46,8 @@ final class Plugin {
 		add_filter( 'agency_commerce_core_default_settings', array( Defaults::class, 'filter_defaults' ) );
 		( new SettingsMigrationManager() )->maybe_migrate();
 		( new SettingsPage() )->register();
+		( new PresetActions() )->register();
+		( new FeatureManager() )->register();
 
 		/**
 		 * Fires after the core plugin foundation has loaded.

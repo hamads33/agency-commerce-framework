@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" rx="18" fill="#fff7fb"/>
+  <rect x="18" y="18" width="324" height="188" rx="18" fill="#ffffff" stroke="#f3e8ff"/>
+  <rect x="36" y="36" width="112" height="112" rx="16" fill="#7c3aed"/>
+  <rect x="164" y="40" width="124" height="12" rx="6" fill="#e9d5ff"/>
+  <rect x="164" y="64" width="94" height="10" rx="5" fill="#e9d5ff"/>
+  <rect x="164" y="92" width="100" height="10" rx="5" fill="#e9d5ff"/>
+  <rect x="164" y="120" width="78" height="28" rx="14" fill="#ec4899"/>
+  <text x="180" y="206" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#0f172a">Minimal Product Card</text>
+</svg>

@@ -153,9 +153,24 @@ final class Sanitizer {
 				return substr( sanitize_text_field( (string) $raw ), 0, 160 );
 
 			case 'text':
+				if ( 'whatsapp.phone_number' === $path ) {
+					return self::sanitize_phone_number( (string) $raw );
+				}
+				return sanitize_text_field( (string) $raw );
+
 			default:
 				return sanitize_text_field( (string) $raw );
 		}
+	}
+
+	/**
+	 * Sanitizes a WhatsApp phone number.
+	 *
+	 * @param string $raw Raw phone number.
+	 * @return string
+	 */
+	private static function sanitize_phone_number( string $raw ): string {
+		return preg_replace( '/[^0-9+]/', '', $raw ) ? preg_replace( '/[^0-9+]/', '', $raw ) : '';
 	}
 
 	/**

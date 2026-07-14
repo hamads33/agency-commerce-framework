@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" rx="18" fill="#f8fafc"/>
+  <rect x="16" y="16" width="328" height="66" rx="14" fill="#ffffff" stroke="#d1d5db"/>
+  <rect x="28" y="28" width="64" height="16" rx="8" fill="#115e59"/>
+  <rect x="28" y="52" width="180" height="10" rx="5" fill="#d1d5db"/>
+  <rect x="16" y="100" width="328" height="46" rx="14" fill="#ffffff" stroke="#d1d5db"/>
+  <rect x="28" y="116" width="120" height="10" rx="5" fill="#d1d5db"/>
+  <rect x="28" y="130" width="160" height="10" rx="5" fill="#d1d5db"/>
+  <rect x="16" y="164" width="328" height="40" rx="12" fill="#1f2937"/>
+  <text x="180" y="189" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#ffffff">Footer Minimal</text>
+</svg>

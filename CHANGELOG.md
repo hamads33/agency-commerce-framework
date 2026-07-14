@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.2 - CP4B
+
+- Added a framework preset engine with Minimal, Fashion, and Electronics presets.
+- Added preset preview, application, snapshot, and restore support through the admin settings screen.
+- Added reusable WhatsApp product enquiry rendering with safe URL generation and variable-product support.
+- Added reusable product badges with built-in and custom labels stored in product metadata.
+- Added delivery estimate rendering with global, category, and product overrides.
+- Added storefront social-link rendering for the configured networks.
+- Added static admin preview assets for header, footer, product-card, and product-layout variants.
+- Added public helper, filter, action, and component-contract documentation for the new commerce extension surface.
+- Added storefront and admin Playwright coverage for the new CP4B behavior.
+
 ## 0.4.1 - Framework quality checkpoint
 
 - Added settings schema versioning with `AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION`.

@@ -18,6 +18,7 @@
     "build": "wp-scripts build --webpack-src-dir=tooling/assets --output-path=build",
     "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright tests/visual",
     "test:admin": "node tooling/playwright/admin-settings.js",
+    "test:storefront": "node tooling/playwright/storefront.js",
     "test:visual": "playwright test --config=tests/visual/playwright.config.js",
     "test:visual:update": "playwright test --config=tests/visual/playwright.config.js --update-snapshots",
     "visual:baseline": "npm run test:visual:update",
