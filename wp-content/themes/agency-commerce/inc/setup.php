@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'after_setup_theme', 'agency_commerce_setup' );
+add_action( 'widgets_init', 'agency_commerce_register_widget_areas' );
 
 /**
  * Registers CP1 theme support and foundational capabilities.
@@ -66,6 +67,23 @@ function agency_commerce_setup(): void {
 		array(
 			'primary' => esc_html__( 'Primary Menu', 'agency-commerce' ),
 			'footer'  => esc_html__( 'Footer Menu', 'agency-commerce' ),
+		)
+	);
+}
+
+/**
+ * Registers widget areas used by WooCommerce catalog templates.
+ */
+function agency_commerce_register_widget_areas(): void {
+	register_sidebar(
+		array(
+			'id'            => 'shop-filters',
+			'name'          => esc_html__( 'Shop Filters', 'agency-commerce' ),
+			'description'   => esc_html__( 'Add WooCommerce product filter widgets for shop and product-category archives.', 'agency-commerce' ),
+			'before_widget' => '<section id="%1$s" class="widget ac-filter-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h2 class="widget-title ac-filter-widget__title">',
+			'after_title'   => '</h2>',
 		)
 	);
 }

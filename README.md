@@ -23,6 +23,13 @@ CP2 adds storefront chrome:
 - Primary and footer menus
 - Announcement bar, search, account, cart count, responsive mobile menu, and sticky header support
 
+CP3 adds catalog and product experience:
+
+- Shared product-card presenter with `product-card-classic`, `product-card-minimal`, and `product-card-compact`
+- Shop and product-category archive structure with sorting, result count, pagination, filters, and empty states
+- `product-layout-standard` and `product-layout-sticky`
+- Product-aware native search and styled search results
+
 ## Requirements
 
 - Git
@@ -51,3 +58,5 @@ composer lint
 ```
 
 See `DEVELOPMENT.md` for pinned versions, WP-CLI commands, reset commands, and checkpoint test evidence. See `HOOKS.md` for the public API contract introduced so far.
+
+See `ARCHITECTURE.md` and `COMPONENTS.md` for the component contracts, WooCommerce integration points, and child-theme override strategy.

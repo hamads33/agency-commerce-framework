@@ -371,3 +371,89 @@ npm audit --audit-level=high
 ```
 
 The audit command still fails with the known transitive development dependency advisories under `@wordpress/scripts`: 28 total findings, 22 moderate and 6 high. No production runtime dependency was added in CP2.
+
+## CP3 Catalog And Product Experience
+
+CP3 introduces only catalog and product presentation:
+
+- Shared product-card presenter data from `agency_commerce_prepare_product_card_data()`.
+- `product-card-classic`, `product-card-minimal`, and `product-card-compact`.
+- Shop and product-category archive shells with breadcrumbs, result count, sorting, pagination, empty state, category banner support, and a standard WooCommerce filter widget area.
+- Accessible mobile product-filter drawer behavior in `assets/js/catalog.js`.
+- `product-layout-standard` and `product-layout-sticky`.
+- Product-aware native search through the WordPress main query and a product search form.
+- Catalog, product-card, filter, search, and single-product responsive styling.
+
+Variant selection still uses the safe settings helper layer:
+
+```php
+agency_commerce_get_setting( 'shop.card_variant', 'product-card-classic' );
+agency_commerce_get_setting( 'product_page.layout', 'product-layout-standard' );
+```
+
+Until the CP4 admin settings UI exists, variants can be selected through plugin defaults, theme fallback defaults, filters, or WP-CLI-managed `agency_commerce_core_settings` test values.
+
+CP3 intentionally does not implement admin settings screens, preset application UI, WhatsApp enquiry, product badge editing UI, delivery settings UI, homepage blocks, recently viewed products, cart drawer, checkout customization, My Account customization, wishlist, product comparison, advanced faceted search, custom inventory logic, or custom payment/shipping logic.
+
+## CP3 Test Evidence
+
+Passed:
+
+```sh
+composer dump-autoload
+composer lint:php
+composer lint
+npx wp-scripts lint-js wp-content/themes/agency-commerce/assets/js/catalog.js wp-content/themes/agency-commerce/assets/js/navigation.js
+npm run build
+npm test
+npm run env:start
+npm run env:setup
+npm run env:cli -- wp theme activate agency-commerce
+npm run env:cli -- wp theme activate agency-commerce-child
+npm run env:cli -- wp plugin activate agency-commerce-core woocommerce
+npm run env:cli -- wp plugin deactivate agency-commerce-core
+npm run env:cli -- wp plugin deactivate woocommerce
+curl http://localhost:8888/shop/
+curl http://localhost:8888/product-category/cp3-apparel/
+curl http://localhost:8888/product/cp3-simple-product/
+curl http://localhost:8888/product/cp3-variable-product/
+curl 'http://localhost:8888/?s=CP3&post_type=product'
+curl http://localhost:8888/wp-admin/
+```
+
+Browser checks passed with Playwright:
+
+- `product-card-classic` rendered.
+- `product-card-minimal` rendered.
+- `product-card-compact` rendered.
+- Simple, variable, sale, featured, and out-of-stock products rendered.
+- Sale, featured, and out-of-stock badges rendered.
+- Simple products used WooCommerce quick-add markup.
+- Variable and unsupported products used the view-product fallback.
+- Shop archive rendered result count, ordering, standard filter widget output, pagination, and product cards.
+- Product category archive rendered breadcrumb, category banner, description, and product cards.
+- Product search results rendered product cards through native WooCommerce search behavior.
+- Empty product search rendered the archive empty state.
+- Mobile filter drawer moved focus inside, trapped focus, closed on Escape, and restored focus to the trigger.
+- Standard product layout rendered gallery, summary, quantity, native add-to-cart, tabs, metadata, and related products.
+- Sticky product layout rendered and remained usable at desktop and mobile widths.
+- Variable product form rendered and accepted a variation selection.
+- Responsive passes ran at mobile `390px`, tablet `768px`, and desktop `1440px`.
+- Browser console produced no errors during the CP3 flow.
+
+Compatibility checks passed:
+
+- Parent theme served `200 OK`.
+- Parent theme served `200 OK` with the companion plugin inactive.
+- Parent theme served `200 OK` with WooCommerce inactive.
+- Child theme served `200 OK` with WooCommerce restored active.
+- `wp-admin` redirected to login and login returned `200 OK`.
+- A fresh `debug.log` check after compatibility requests showed no PHP warnings.
+
+Failed or warning-only:
+
+```sh
+npm audit --audit-level=high
+```
+
+The audit command still fails with the known transitive development dependency advisories under `@wordpress/scripts`: 28 total findings, 22 moderate and 6 high. No production runtime dependency was added in CP3.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 - CP3
+
+- Added a shared product-card presenter and the `product-card-classic`, `product-card-minimal`, and `product-card-compact` variants.
+- Added WooCommerce shop/category archive structure with breadcrumbs, result count, sorting, pagination, empty state, category banner support, and standard filter widget integration.
+- Added accessible mobile product-filter drawer JavaScript.
+- Added `product-layout-standard` and `product-layout-sticky` while preserving WooCommerce single-product hooks.
+- Added product-aware native search form and styled search results.
+- Added catalog, card, filter, search, and single-product responsive styling.
+- Added `ARCHITECTURE.md` and `COMPONENTS.md` documentation.
+
 ## 0.2.0 - CP2
 
 - Added `header-default` and `header-centered` variants with shared header data preparation.

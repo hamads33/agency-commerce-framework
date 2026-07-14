@@ -31,4 +31,14 @@ function agency_commerce_enqueue_assets(): void {
 		AGENCY_COMMERCE_VERSION,
 		true
 	);
+
+	if ( function_exists( 'agency_commerce_should_load_catalog_assets' ) && agency_commerce_should_load_catalog_assets() ) {
+		wp_enqueue_script(
+			'agency-commerce-catalog',
+			AGENCY_COMMERCE_THEME_URI . 'assets/js/catalog.js',
+			array(),
+			AGENCY_COMMERCE_VERSION,
+			true
+		);
+	}
 }

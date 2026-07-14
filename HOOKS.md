@@ -44,10 +44,38 @@ Returns the WooCommerce cart count when WooCommerce is active and the cart objec
 
 Returns escaped cart-count markup used by the header and WooCommerce fragments.
 
+### `agency_commerce_get_product_card_variant(): string`
+
+Returns the sanitized product-card variant. Supported values are `product-card-classic`, `product-card-minimal`, and `product-card-compact`.
+
+### `agency_commerce_prepare_product_card_data( WC_Product $product ): array`
+
+Returns the shared product-card presenter data consumed by every card variant.
+
+### `agency_commerce_render_product_card( ?WC_Product $product = null ): void`
+
+Renders the selected product-card variant for a WooCommerce product.
+
+### `agency_commerce_get_product_layout_variant(): string`
+
+Returns the sanitized single-product layout variant. Supported values are `product-layout-standard` and `product-layout-sticky`.
+
+### `agency_commerce_render_product_layout(): void`
+
+Renders the selected single-product layout while preserving WooCommerce single-product hooks.
+
+### `agency_commerce_render_shop_filters( string $context ): void`
+
+Renders the registered WooCommerce filter widget area for sidebar or drawer contexts.
+
 ## Menu Locations
 
 - `primary`: desktop and mobile primary navigation.
 - `footer`: footer navigation.
+
+## Widget Areas
+
+- `shop-filters`: standard WooCommerce product filter widgets for shop and product-category archives.
 
 ## Plugin Functions
 
@@ -69,6 +97,14 @@ Returns plugin defaults after public default filters.
 
 Fires after the core plugin foundation has loaded.
 
+### `agency_commerce_single_product_summary_extensions`
+
+Fires after WooCommerce's native single-product summary hook inside the selected product layout. Reserved for later delivery, enquiry, and size-guide extensions.
+
+### `agency_commerce_after_single_product_summary_extensions`
+
+Fires after WooCommerce's native after-summary hook inside the selected product layout. Reserved for later recently-viewed and related presentation extensions.
+
 ## Filters
 
 ### `agency_commerce_default_settings`
@@ -88,3 +124,11 @@ Filters the public plugin defaults array.
 ### `woocommerce_add_to_cart_fragments`
 
 The parent theme uses this supported WooCommerce filter to refresh `span.ac-cart-count` after add-to-cart events. It does not implement custom AJAX or custom cart state.
+
+### `loop_shop_columns`
+
+The parent theme uses this filter to apply the configured product grid column count.
+
+### `pre_get_posts`
+
+The parent theme uses this action to apply product-aware frontend search and configured products-per-page values without replacing WooCommerce query logic.
