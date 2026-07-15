@@ -1,8 +1,8 @@
 {
   "name": "agency-commerce/framework",
-  "description": "Development tooling for the agency-commerce reusable WooCommerce framework.",
+  "description": "Development tooling for the Agency Commerce reusable WooCommerce framework.",
   "type": "project",
-  "license": "proprietary",
+  "license": "GPL-2.0-or-later",
   "require": {},
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.1",

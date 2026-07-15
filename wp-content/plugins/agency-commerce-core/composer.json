@@ -2,7 +2,7 @@
   "name": "agency-commerce/core",
   "description": "Companion plugin for the Agency Commerce framework.",
   "type": "wordpress-plugin",
-  "license": "proprietary",
+  "license": "GPL-2.0-or-later",
   "autoload": {
     "psr-4": {
       "AgencyCommerceCore\\": "includes/"

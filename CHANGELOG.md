@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.0 - CP6.1 Release Candidate Preparation
+
+- Updated release metadata for the parent theme, child theme, companion plugin,
+  root npm package, plugin npm package, and Composer manifests.
+- Replaced public-looking `example.com` metadata URLs with reserved
+  `agency-commerce.invalid` internal placeholders because no public project URLs
+  exist yet.
+- Added GPLv2-or-later licensing files and third-party licensing documentation
+  for WordPress and WooCommerce compatibility.
+- Added `SECURITY_EXCEPTION.md` documenting accepted development-tool npm audit
+  risk and why no breaking toolchain upgrade is approved for CP6.1.
+- Added release installation, upgrade, and developer guides.
+- Added production packaging automation for the parent theme, companion plugin,
+  and child theme ZIPs.
+- Updated release checklist status tracking for CP6.1.
+
 ## 0.5.0 - CP5 Homepage And Commerce Flow
 
 - Added Gutenberg-editable homepage architecture with custom dynamic blocks for hero, category grid, promotional banner, image/text, trust bar, testimonials, brand logos, FAQ, newsletter wrapper, and recently viewed products.

@@ -1,13 +1,15 @@
 /*
 Theme Name: Agency Commerce Child
-Theme URI: https://example.com/agency-commerce-child
+Theme URI: https://agency-commerce.invalid/child-theme
 Author: Agency Commerce
-Author URI: https://example.com
+Author URI: https://agency-commerce.invalid
 Description: Minimal child theme foundation for Agency Commerce client storefronts.
-Version: 0.5.0
+Version: 1.0.0
 Requires at least: 7.0
 Requires PHP: 8.2
 Template: agency-commerce
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: agency-commerce-child
 Domain Path: /languages
 */

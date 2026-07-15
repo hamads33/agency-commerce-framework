@@ -1,86 +1,46 @@
 # Agency Commerce Framework
 
-Reusable WooCommerce framework for agency-built stores. The finished framework will consist of:
+Agency Commerce is a reusable WooCommerce framework for agency-built stores. It
+ships as a classic parent theme, a companion plugin, and an example child theme:
 
 - `agency-commerce`: parent theme for storefront presentation.
-- `agency-commerce-core`: companion plugin for reusable commerce functionality and settings.
-- `agency-commerce-child`: example child theme for per-client branding.
+- `agency-commerce-core`: companion plugin for settings, presets, homepage
+  blocks, checkout controls, product extensions, and framework integrations.
+- `agency-commerce-child`: starter child theme for client branding and safe
+  per-store overrides.
 
-CP0 establishes only the repository, tooling, and local WordPress/WooCommerce environment. Theme and plugin features begin in CP1.
-
-CP1 adds the activation-safe foundation:
-
-- Parent theme: `wp-content/themes/agency-commerce`
-- Companion plugin: `wp-content/plugins/agency-commerce-core`
-- Example child theme: `wp-content/themes/agency-commerce-child`
-
-The parent theme and plugin are intentionally minimal at this checkpoint. Storefront chrome, catalog layouts, settings screens, and checkout behavior begin in later checkpoints.
-
-CP2 adds storefront chrome:
-
-- `header-default` and `header-centered`
-- `footer-columns` and `footer-minimal`
-- Primary and footer menus
-- Announcement bar, search, account, cart count, responsive mobile menu, and sticky header support
-
-CP3 adds catalog and product experience:
-
-- Shared product-card presenter with `product-card-classic`, `product-card-minimal`, and `product-card-compact`
-- Shop and product-category archive structure with sorting, result count, pagination, filters, and empty states
-- `product-layout-standard` and `product-layout-sticky`
-- Product-aware native search and styled search results
-
-CP4A adds Commerce Framework settings infrastructure:
-
-- Professional `Commerce Framework` admin menu using the WordPress Settings API
-- Tabbed settings for store identity, header, shop, product page, footer, social links, design tokens, performance, and developer options
-- Sanitized, validated, memoized settings reads through the plugin compatibility layer
-- Settings-backed selectors for header, footer, product-card, and product-layout variants
-- Settings-backed sticky header, products-per-row, products-per-page, color tokens, font tokens, social links, and store identity values
-
-The framework quality checkpoint after CP4A adds:
-
-- Settings schema versioning with a stored schema version and migration manager
-- A no-op first migration that preserves existing CP4A settings unchanged
-- Playwright visual baseline capture and comparison under `tests/visual-baseline/`
-- Visual coverage for homepage, shop, product category, simple product, variable product, cart, checkout, and My Account across desktop, tablet, and mobile
-
-CP4B adds reusable commerce features on top of that settings foundation:
-
-- Framework-only presets for Minimal, Fashion, and Electronics with preview and restore support
-- Reusable product badges with built-in and custom labels
-- Product-level, category-level, and global delivery messaging
-- Sanitized WhatsApp product enquiry links and variable-product support
-- Configured social link rendering with empty-link suppression
-- Static admin preview thumbnails for header, footer, product-card, and product-layout variants
-- Public helper, action, filter, and component-contract documentation in `HOOKS.md`, `ARCHITECTURE.md`, and `COMPONENTS.md`
-
-CP4C resolves the high-priority architectural audit findings before CP5:
-
-- Custom badge metadata migration and legacy compatibility.
-- Plugin product features no longer depend on parent-theme helpers.
-- WooCommerce archive and loop hook compatibility is restored around framework templates.
-- Runtime frontend/catalog assets are built into the parent theme and admin assets into the plugin, each with generated asset metadata.
-- Normal WordPress search is preserved; product search remains available through `post_type=product`.
-- Framework version metadata is synchronized at `0.4.3`.
-
-CP5 adds homepage and purchase-flow architecture:
-
-- Gutenberg-editable homepage blocks and block patterns for Fashion, Electronics, and Minimal store starts
-- WooCommerce block Cart and Checkout as the default purchase path
-- Optional WooCommerce Mini-Cart block in the header with the existing cart link fallback
-- Safe, recoverable checkout mode switching between Block and Classic shortcode flows
-- Checkout support/trust messaging, optional-field controls, calculated-total minimum order, and COD controls
-- Privacy-conscious recently viewed products stored in the visitor browser only with bounded render requests
-- Scoped Cart, Checkout, Mini-Cart, My Account, and homepage-section styling
+CP6.1 prepares the framework as a `1.0.0` release candidate. It does not add new
+commerce functionality and does not begin CP7.
 
 ## Requirements
 
-- Git
-- Docker and Docker Compose
-- PHP 8.3+
-- Composer
-- Node.js 24.14.x and npm 11.9.x
+- WordPress `7.0.x`
+- WooCommerce `10.9.x`
+- PHP `8.2+`
+- Node.js `24.14.x` and npm `11.9.x` for development
+- Composer `2.9.x` for development
+- Docker and Docker Compose for the local `wp-env` workflow
+
+## Installation
+
+Install the generated packages:
+
+- `build/release/agency-commerce.zip`
+- `build/release/agency-commerce-core.zip`
+- `build/release/agency-commerce-child.zip`
+
+Recommended order:
+
+1. Install and activate WooCommerce.
+2. Install the parent theme.
+3. Install and activate the child theme for client stores.
+4. Install and activate the companion plugin.
+5. Configure `Commerce Framework` settings.
+6. Build the homepage with Agency Commerce patterns and WooCommerce blocks.
+7. Configure WooCommerce shipping, taxes, payment gateways, emails, and legal
+   pages.
+
+See `INSTALL.md` for full installation details.
 
 ## Development Commands
 
@@ -89,30 +49,80 @@ npm ci
 composer install
 npm run env:start
 npm run env:setup
-npm run env:cli -- wp core version
-npm run env:cli -- wp plugin activate agency-commerce-core
-npm run env:cli -- wp theme activate agency-commerce
-npm run env:cli -- wp theme activate agency-commerce-child
-npm run env:cli -- wp menu location assign "CP2 Primary" primary
-npm run env:cli -- wp menu location assign "CP2 Footer" footer
-npm run env:stop
 npm run build
-npm run lint:js
-npm run test:admin
-npm run test:homepage
-npm run test:cart-flow
-npm run test:checkout-block
-npm run test:checkout-classic
-npm run test:account
-npm run visual:baseline
-npm run visual:compare
-npm test
 composer lint:php
 composer lint
+npm run lint:js
+npm test
 ```
 
-Use `npm run visual:baseline` to refresh committed screenshots and `npm run visual:compare` to fail on visual differences above the configured threshold. The default threshold is `0.01`; override it with `VISUAL_DIFF_THRESHOLD`.
+Full release verification commands are listed in `DEVELOPER_GUIDE.md` and
+`RELEASE_CHECKLIST.md`.
 
-See `DEVELOPMENT.md` for pinned versions, WP-CLI commands, reset commands, and checkpoint test evidence. See `HOOKS.md` for the public API contract introduced so far.
+## Packaging
 
-See `ARCHITECTURE.md` and `COMPONENTS.md` for the component contracts, WooCommerce integration points, and child-theme override strategy.
+```sh
+npm run package
+```
+
+The packaging script creates production ZIPs under `build/release/` and excludes
+development dependencies, test artifacts, screenshots, caches, logs, editor
+folders, temporary files, and Git metadata.
+
+## Child Theme Workflow
+
+Client-specific changes belong in the child theme. Use settings and CSS custom
+properties first. If a template override is required, copy only the relevant
+component path into the child theme rather than copying the whole parent theme.
+
+## Preset Workflow
+
+The Minimal, Fashion, and Electronics presets write framework settings only.
+They do not delete products, pages, menus, media, widgets, users, orders, or
+client content.
+
+## Checkout
+
+Block checkout is the default and recommended path. Classic checkout is an
+explicit fallback for stores that need shortcode-based WooCommerce checkout
+customization. The framework does not replace WooCommerce payment, shipping,
+coupon, validation, cart, or order logic.
+
+## Supported Versions
+
+The CP6.1 release candidate is validated against the pinned local stack in
+`DEVELOPMENT.md`:
+
+- WordPress `7.0.1`
+- WooCommerce `10.9.4`
+- PHP `8.3`
+- Node.js `24.14.0`
+- npm `11.9.0`
+
+## Metadata URLs
+
+The project does not yet have public project pages. Theme, plugin, and author
+metadata use reserved `agency-commerce.invalid` URLs as private/internal
+placeholders. Replace them only when real public URLs exist.
+
+## Licensing
+
+Agency Commerce is licensed under GPLv2 or later for WordPress and WooCommerce
+compatibility. See `LICENSE`, `NOTICE`, and `THIRD_PARTY_LICENSES.md`.
+
+## Dependency Risk
+
+`npm audit --audit-level=high` reports development-tool vulnerabilities through
+the `@wordpress/scripts` toolchain. They are not shipped in production ZIPs and
+are accepted for CP6.1 rather than forcing a breaking toolchain change. See
+`SECURITY_EXCEPTION.md`.
+
+## Documentation
+
+- `INSTALL.md`: installation
+- `UPGRADE.md`: update and rollback workflow
+- `DEVELOPER_GUIDE.md`: development, testing, packaging, and extension rules
+- `ARCHITECTURE.md`: system architecture
+- `COMPONENTS.md`: component contracts
+- `HOOKS.md`: public API contract
+- `CHANGELOG.md`: release history

@@ -1,12 +1,15 @@
 <?php
 /**
  * Plugin Name: Agency Commerce Core
- * Plugin URI: https://example.com/agency-commerce-core
- * Description: Companion functionality layer for the Agency Commerce framework.
- * Version: 0.5.0
+ * Plugin URI: https://agency-commerce.invalid/core-plugin
+ * Description: Companion plugin for reusable Agency Commerce settings, blocks, presets, and WooCommerce integrations.
+ * Version: 1.0.0
  * Requires at least: 7.0
  * Requires PHP: 8.2
  * Author: Agency Commerce
+ * Author URI: https://agency-commerce.invalid
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: agency-commerce-core
  * Domain Path: /languages
  *
@@ -19,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AGENCY_COMMERCE_CORE_VERSION', '0.5.0' );
+define( 'AGENCY_COMMERCE_CORE_VERSION', '1.0.0' );
 define( 'AGENCY_COMMERCE_CORE_SETTINGS_SCHEMA_VERSION', 4 );
 define( 'AGENCY_COMMERCE_CORE_FILE', __FILE__ );
 define( 'AGENCY_COMMERCE_CORE_PATH', plugin_dir_path( __FILE__ ) );

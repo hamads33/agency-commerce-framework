@@ -1,13 +1,15 @@
 /*
 Theme Name: Agency Commerce
-Theme URI: https://example.com/agency-commerce
+Theme URI: https://agency-commerce.invalid/theme
 Author: Agency Commerce
-Author URI: https://example.com
-Description: Reusable classic parent theme foundation for WooCommerce storefronts.
-Version: 0.5.0
+Author URI: https://agency-commerce.invalid
+Description: Reusable classic parent theme for agency-built WooCommerce storefronts.
+Version: 1.0.0
 Requires at least: 7.0
 Tested up to: 7.0
 Requires PHP: 8.2
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: agency-commerce
 Domain Path: /languages
 Tags: e-commerce, custom-logo, editor-style, featured-images, wide-blocks

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AGENCY_COMMERCE_VERSION', '0.5.0' );
+define( 'AGENCY_COMMERCE_VERSION', '1.0.0' );
 define( 'AGENCY_COMMERCE_THEME_DIR', trailingslashit( get_template_directory() ) );
 define( 'AGENCY_COMMERCE_THEME_URI', trailingslashit( get_template_directory_uri() ) );
 
