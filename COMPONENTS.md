@@ -30,6 +30,12 @@ CP4C restores standard WooCommerce product-loop hook names around the card templ
 
 To add a future variant, add the component template, add the variant to the whitelist in `agency_commerce_get_product_card_variant()`, document it here, and add tests. Do not duplicate presenter logic in the template.
 
+CP7A upgrades the shared visual treatment for all product-card variants without
+changing their markup contract. Cards use the premium radius, elevation, motion,
+focus, badge, image-treatment, and spacing tokens from the parent stylesheet.
+Variant templates still receive only presenter data and must not hard-code brand
+colors, shadows, radii, or animation timings.
+
 ## Product Extensions
 
 The selected single-product layout renders extension content through `agency_commerce_single_product_summary_extensions`.
@@ -104,6 +110,31 @@ WooCommerce owns Cart, Checkout, Mini-Cart, Store API state, payment methods, sh
 Mini-Cart uses `woocommerce/mini-cart` when registered. The fallback is the existing `ac-cart-link` with CP2 cart-count fragments.
 
 Classic cart and checkout use `[woocommerce_cart]` and `[woocommerce_checkout]` shortcodes in Classic mode. The mode manager keeps persistent original and latest block-content backups so repeated Block/Classic switching is idempotent and recoverable.
+
+CP7A gives these surfaces the same premium design-system treatment as the
+storefront: token-derived panels, notices, form fields, focus states, button
+states, elevation, and spacing. It does not alter WooCommerce ownership of cart,
+checkout, payment, shipping, validation, coupon, or account behavior.
+
+## Premium Design System
+
+CP7A defines the shared visual language inherited by future storefronts:
+
+- typography scale, tight heading rhythm, and readable body rhythm;
+- responsive section spacing and density-aware spacing tokens;
+- base, button, card, and panel radius tokens;
+- extra-small through large elevation tokens;
+- primary, accent, success, error, soft-surface, overlay, and focus state tokens;
+- button, icon-button, form input, card, pagination, notice, drawer, and panel
+  treatments;
+- token-driven image treatments for product cards, category banners, and home
+  sections;
+- loading skeleton classes via `.ac-skeleton` and WooCommerce skeleton support;
+- tasteful hover/transition states with `prefers-reduced-motion` support.
+
+Component authors should consume the existing `--ac-*` tokens. Do not introduce
+hard-coded brand colors, CSS frameworks, Tailwind utilities, Bootstrap classes,
+jQuery-driven presentation, or component-specific animation systems.
 
 ## Recently Viewed
 

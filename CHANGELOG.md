@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased - CP7A Premium Design System
+
+- Added a premium storefront design-system layer without adding commerce
+  functionality or changing component architecture.
+- Expanded theme tokens for typography scale, responsive section spacing,
+  radius hierarchy, elevation hierarchy, focus rings, state colors, image
+  treatments, skeleton loading, and motion timing.
+- Upgraded buttons, icon controls, forms, product cards, pagination, drawers,
+  empty states, WooCommerce notices, checkout/cart panels, My Account panels,
+  homepage sections, and image treatments to consume the shared token system.
+- Replaced the hard-coded WhatsApp button colors with success-token driven
+  styling.
+- Added tasteful hover/focus/transition behavior while respecting
+  `prefers-reduced-motion`.
+- Updated design-system documentation in `ARCHITECTURE.md` and `COMPONENTS.md`.
+
 ## 1.0.0 - CP6.1 Release Candidate Preparation
 
 - Updated release metadata for the parent theme, child theme, companion plugin,

@@ -44,8 +44,8 @@ if ( ! function_exists( 'agency_commerce_default_settings' ) ) {
 				'shadow_level'           => 'balanced',
 				'body_font'              => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 				'heading_font'           => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-				'button_radius'          => '4px',
-				'card_radius'            => '8px',
+				'button_radius'          => '999px',
+				'card_radius'            => '18px',
 				'product_image_ratio'    => '1 / 1',
 			),
 			'header'          => array(

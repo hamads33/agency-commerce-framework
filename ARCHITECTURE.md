@@ -127,6 +127,25 @@ Child themes should prefer component overrides and CSS variable changes over cop
 
 CP4B extends the token flow with container width, spacing density, radius, shadow, and product-image-ratio tokens so presets can reshape the presentation without touching template code.
 
+CP7A adds the premium visual-system layer without changing the PHP component
+contracts. The parent stylesheet now derives semantic surface, state, focus,
+motion, radius, elevation, image, section-spacing, and skeleton tokens from the
+existing brand tokens. Runtime settings still write only framework design-token
+values, and the storefront consumes those values through CSS custom properties.
+No component variant, WooCommerce integration, checkout behavior, or content
+query is changed by CP7A.
+
+The premium layer is intentionally CSS-only:
+
+- typography scale and letter-spacing are tokenized;
+- spacing is fluid through `--ac-section-spacing` and density overrides;
+- buttons, forms, cards, drawers, notices, empty states, and WooCommerce block
+  surfaces use the shared radius/elevation/state tokens;
+- hover and focus states use token-derived colors and visible outlines;
+- skeleton/loading treatments use token-derived gradients;
+- transitions are bounded by motion tokens and disabled through
+  `prefers-reduced-motion`.
+
 ## Asset Loading Flow
 
 Runtime assets are built with `wp-scripts` from `tooling/assets/*`. Storefront entries are emitted to `wp-content/themes/agency-commerce/build`; admin entries are emitted to `wp-content/plugins/agency-commerce-core/build`. The parent theme reads generated `.asset.php` metadata for `frontend` and `catalog` entries and falls back to source CSS/JS when build artifacts are missing. Header/mobile navigation JavaScript is globally bundled in `frontend.js`. Catalog drawer and WhatsApp variation JavaScript are conditionally enqueued from `catalog.js` only on WooCommerce catalog, product, and search contexts through `agency_commerce_should_load_catalog_assets()`. The `performance.load_assets_conditionally` setting can disable conditional catalog loading for debugging or compatibility.
