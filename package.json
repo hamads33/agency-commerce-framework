@@ -30,6 +30,7 @@
     "test:showcase": "playwright test --config=tests/showcase/playwright.config.js",
     "test:showcase:update": "playwright test --config=tests/showcase/playwright.config.js --update-snapshots",
     "showcase:assets": "node scripts/generate-showcase-assets.js",
+    "marketing:assets": "node scripts/generate-marketing-assets.js",
     "visual:baseline": "npm run test:visual:update",
     "visual:compare": "npm run test:visual",
     "test": "npm run build",

@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased - CP7C Product Launch Collateral
+
+- Added product landing-page marketing assets, original framework branding,
+  OpenGraph/social preview images, feature graphics, screenshot sets, and
+  composite mockups generated from Agency Commerce showcase screenshots.
+- Added portfolio case studies for Fashion, Electronics, and Home showcase
+  storefronts.
+- Added agency sales, portfolio, feature-matrix, and competitor-comparison
+  documentation.
+- Added developer launch references for CLI usage, customization, theme
+  development, plugin development, hooks, blocks, and REST.
+- Added demo installer documentation and local demo setup tooling.
+- Added release notes, migration guidance, roadmap, known limitations, and a
+  2-3 minute portfolio walkthrough script.
+
 ## Unreleased - CP7B Premium Showcase Storefronts
 
 - Added three premium showcase child themes built on top of the parent
