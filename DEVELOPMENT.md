@@ -148,6 +148,7 @@ CP5 test scripts seed development-only fixtures through WP-CLI before browser ch
 - `npm run test:cart-flow`: verifies empty/populated cart surfaces and quantity controls.
 - `npm run test:checkout-block`: verifies Block Checkout mode and checkout support/trust messaging.
 - `npm run test:checkout-classic`: verifies shortcode switching, backup metadata, and classic cart/checkout surfaces.
+- `npm run test:cp5-audit`: verifies repeated checkout-mode switching, backup restoration safety, unauthorized and invalid mode handling, malformed/excessive/private recently viewed requests, WooCommerce-inactive recently viewed behavior, minimum-order rejection, and a local Classic COD order flow.
 - `npm run test:account`: verifies the native WooCommerce My Account surface.
 
 If `wp-env run cli` reports an initialized-container state issue while the generated Docker Compose services are already running, Playwright helpers support `WP_ENV_COMPOSE_FILE=/path/to/docker-compose.yml` as an explicit local fallback. Normal development should continue using `npm run env:cli`.
@@ -161,6 +162,8 @@ CP5 approved visual baseline updates only for:
 - My Account: now includes scoped WooCommerce account/login styling.
 
 Shop, category, simple product, and variable product baselines did not change in CP5.
+
+CP5 checkout-mode backups are intentionally persistent. `_agency_commerce_core_block_content_backup` stores the first original Cart/Checkout page content, `_agency_commerce_core_latest_block_content_backup` stores the latest block-mode restore point, and `_agency_commerce_core_classic_content_backup` stores non-shortcode manual Classic edits before restoration. These values let developers recover from interrupted switching or manual edits instead of silently losing page content.
 
 `npm audit --audit-level=high` currently reports transitive development dependency advisories under `@wordpress/scripts`. Do not claim the audit passes unless those findings are actually resolved.
 

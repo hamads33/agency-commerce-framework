@@ -23,6 +23,7 @@
     "test:cart-flow": "CP5_SUITE=cart node tooling/playwright/cp5-commerce.js",
     "test:checkout-block": "CP5_SUITE=checkout-block node tooling/playwright/cp5-commerce.js",
     "test:checkout-classic": "CP5_SUITE=checkout-classic node tooling/playwright/cp5-commerce.js",
+    "test:cp5-audit": "node tooling/playwright/cp5-audit.js",
     "test:account": "CP5_SUITE=account node tooling/playwright/cp5-commerce.js",
     "test:visual": "playwright test --config=tests/visual/playwright.config.js",
     "test:visual:update": "playwright test --config=tests/visual/playwright.config.js --update-snapshots",

@@ -15,7 +15,9 @@ use AgencyCommerceCore\Settings\Registry;
  * Safely switches WooCommerce Cart/Checkout pages between block and classic modes.
  */
 final class ModeManager {
-	private const BACKUP_META_KEY = '_agency_commerce_core_block_content_backup';
+	private const BACKUP_META_KEY  = '_agency_commerce_core_block_content_backup';
+	private const RESTORE_META_KEY = '_agency_commerce_core_latest_block_content_backup';
+	private const CLASSIC_META_KEY = '_agency_commerce_core_classic_content_backup';
 
 	/**
 	 * Registers hooks.
@@ -34,6 +36,8 @@ final class ModeManager {
 	public function maybe_switch_mode( $old_value, $new_value ): void {
 		$old_mode = is_array( $old_value ) ? (string) ( $old_value['checkout']['mode'] ?? 'block' ) : 'block';
 		$new_mode = is_array( $new_value ) ? (string) ( $new_value['checkout']['mode'] ?? 'block' ) : 'block';
+		$old_mode = $this->normalize_mode( $old_mode );
+		$new_mode = $this->normalize_mode( $new_mode );
 
 		if ( $old_mode === $new_mode ) {
 			return;
@@ -59,6 +63,8 @@ final class ModeManager {
 		if ( ! function_exists( 'wc_get_page_id' ) ) {
 			return;
 		}
+
+		$mode = $this->normalize_mode( $mode );
 
 		$pages = array(
 			'cart'     => array(
@@ -100,11 +106,17 @@ final class ModeManager {
 			return;
 		}
 
+		$current_content = (string) $post->post_content;
+
 		if ( ! get_post_meta( $page_id, self::BACKUP_META_KEY, true ) ) {
-			update_post_meta( $page_id, self::BACKUP_META_KEY, (string) $post->post_content );
+			update_post_meta( $page_id, self::BACKUP_META_KEY, $current_content );
 		}
 
-		if ( ! $force && trim( (string) $post->post_content ) === $shortcode ) {
+		if ( ! $this->contents_match( $current_content, $shortcode ) ) {
+			update_post_meta( $page_id, self::RESTORE_META_KEY, $current_content );
+		}
+
+		if ( ! $force && $this->contents_match( $current_content, $shortcode ) ) {
 			return;
 		}
 
@@ -123,7 +135,11 @@ final class ModeManager {
 	 * @param bool $force Whether to force update.
 	 */
 	private function restore_page_to_block( int $page_id, bool $force ): void {
-		$backup = get_post_meta( $page_id, self::BACKUP_META_KEY, true );
+		$backup = get_post_meta( $page_id, self::RESTORE_META_KEY, true );
+
+		if ( ! is_string( $backup ) || '' === trim( $backup ) ) {
+			$backup = get_post_meta( $page_id, self::BACKUP_META_KEY, true );
+		}
 
 		if ( ! is_string( $backup ) || '' === trim( $backup ) ) {
 			return;
@@ -131,7 +147,17 @@ final class ModeManager {
 
 		$post = get_post( $page_id );
 
-		if ( ! $post || ( ! $force && trim( (string) $post->post_content ) === trim( $backup ) ) ) {
+		if ( ! $post ) {
+			return;
+		}
+
+		$current_content = (string) $post->post_content;
+
+		if ( ! $this->contents_match( $current_content, $backup ) && ! $this->contains_woocommerce_shortcode( $current_content ) ) {
+			update_post_meta( $page_id, self::CLASSIC_META_KEY, $current_content );
+		}
+
+		if ( ! $force && $this->contents_match( $current_content, $backup ) ) {
 			return;
 		}
 
@@ -141,6 +167,33 @@ final class ModeManager {
 				'post_content' => $backup,
 			)
 		);
-		delete_post_meta( $page_id, self::BACKUP_META_KEY );
+	}
+
+	/**
+	 * Normalizes checkout modes.
+	 *
+	 * @param string $mode Mode.
+	 */
+	private function normalize_mode( string $mode ): string {
+		return 'classic' === $mode ? 'classic' : 'block';
+	}
+
+	/**
+	 * Compares post content without whitespace noise.
+	 *
+	 * @param string $left First content value.
+	 * @param string $right Second content value.
+	 */
+	private function contents_match( string $left, string $right ): bool {
+		return trim( $left ) === trim( $right );
+	}
+
+	/**
+	 * Detects WooCommerce shortcode page content.
+	 *
+	 * @param string $content Page content.
+	 */
+	private function contains_woocommerce_shortcode( string $content ): bool {
+		return has_shortcode( $content, 'woocommerce_cart' ) || has_shortcode( $content, 'woocommerce_checkout' );
 	}
 }

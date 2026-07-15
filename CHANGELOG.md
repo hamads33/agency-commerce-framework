@@ -7,10 +7,13 @@
 - Added WooCommerce block-first cart and checkout styling while preserving Store API behavior and WooCommerce cart/checkout state.
 - Added optional WooCommerce Mini-Cart block rendering in the header with the existing cart link/count fallback when disabled or unavailable.
 - Added safe Block/Classic checkout mode switching with non-destructive Cart and Checkout page content backups and restoration.
+- Hardened Block/Classic checkout mode switching so original backups remain recoverable, latest block edits are preserved across repeated cycles, invalid mode values are allowlisted, and missing WooCommerce page IDs are skipped safely.
 - Added checkout controls for support text, trust text, optional fields where WooCommerce allows them, minimum order amount, and COD availability/instructions.
+- Hardened checkout validation so minimum order uses WooCommerce's calculated cart total and disabled COD attempts are rejected server-side in the Store API path.
 - Added privacy-conscious recently viewed products using localStorage plus a public render endpoint; no personal browsing history is stored in the database.
+- Hardened recently viewed rendering by bounding localStorage IDs, rejecting malformed or excessive REST input, and excluding private, unpublished, deleted, unavailable, or invisible products.
 - Added scoped My Account styling while preserving native WooCommerce endpoints.
-- Added CP5 Playwright smoke suites for homepage, cart, block checkout, classic checkout, and My Account flows.
+- Added CP5 Playwright smoke suites for homepage, cart, block checkout, classic checkout, My Account, and focused audit flows.
 - Updated only the 12 affected visual baselines for homepage, cart, checkout, and My Account across desktop, tablet, and mobile after reviewing the intentional CP5 layout changes.
 - Updated framework version metadata to `0.5.0`.
 

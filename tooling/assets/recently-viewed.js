@@ -5,7 +5,11 @@
 	}
 
 	const key = 'agencyCommerceRecentlyViewed';
-	const limit = Number.parseInt( config.limit, 10 ) || 4;
+	const limit = Math.max(
+		1,
+		Math.min( 12, Number.parseInt( config.limit, 10 ) || 4 )
+	);
+	const requestLimit = 24;
 	const currentId = Number.parseInt( config.productId, 10 ) || 0;
 	let ids = [];
 
@@ -15,7 +19,13 @@
 		ids = [];
 	}
 
-	ids = ids.map( Number ).filter( Boolean );
+	ids = [
+		...new Set(
+			ids
+				.map( ( id ) => Number.parseInt( id, 10 ) )
+				.filter( ( id ) => Number.isInteger( id ) && id > 0 )
+		),
+	].slice( 0, requestLimit );
 
 	if ( currentId ) {
 		ids = [ currentId, ...ids.filter( ( id ) => id !== currentId ) ];

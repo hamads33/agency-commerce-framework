@@ -69,9 +69,9 @@ CP5 adds homepage and purchase-flow architecture:
 - Gutenberg-editable homepage blocks and block patterns for Fashion, Electronics, and Minimal store starts
 - WooCommerce block Cart and Checkout as the default purchase path
 - Optional WooCommerce Mini-Cart block in the header with the existing cart link fallback
-- Safe checkout mode switching between Block and Classic shortcode flows
-- Checkout support/trust messaging, optional-field controls, minimum order, and COD controls
-- Privacy-conscious recently viewed products stored in the visitor browser only
+- Safe, recoverable checkout mode switching between Block and Classic shortcode flows
+- Checkout support/trust messaging, optional-field controls, calculated-total minimum order, and COD controls
+- Privacy-conscious recently viewed products stored in the visitor browser only with bounded render requests
 - Scoped Cart, Checkout, Mini-Cart, My Account, and homepage-section styling
 
 ## Requirements

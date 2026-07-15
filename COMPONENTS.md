@@ -103,11 +103,11 @@ WooCommerce owns Cart, Checkout, Mini-Cart, Store API state, payment methods, sh
 
 Mini-Cart uses `woocommerce/mini-cart` when registered. The fallback is the existing `ac-cart-link` with CP2 cart-count fragments.
 
-Classic cart and checkout use `[woocommerce_cart]` and `[woocommerce_checkout]` shortcodes in Classic mode.
+Classic cart and checkout use `[woocommerce_cart]` and `[woocommerce_checkout]` shortcodes in Classic mode. The mode manager keeps persistent original and latest block-content backups so repeated Block/Classic switching is idempotent and recoverable.
 
 ## Recently Viewed
 
-Recently viewed product IDs are stored in browser `localStorage` under `agencyCommerceRecentlyViewed`. The plugin REST endpoint renders current visible products from submitted IDs and ignores deleted, unavailable, or invisible products.
+Recently viewed product IDs are stored in browser `localStorage` under `agencyCommerceRecentlyViewed`. The browser keeps IDs unique and bounded. The plugin REST endpoint accepts only a limited array of positive integers, renders current published visible products from submitted IDs, rejects malformed or excessive requests, and ignores deleted, unavailable, private, or invisible products.
 
 ## Child Overrides
 

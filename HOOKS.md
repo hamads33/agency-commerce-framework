@@ -284,7 +284,7 @@ WooCommerce Blocks hook used by CP5 to register `AgencyCommerceCore\Checkout\Blo
 
 ### `woocommerce_store_api_checkout_update_order_from_request`
 
-Used by CP5 checkout controls to validate the minimum order amount during block checkout.
+Used by CP5 checkout controls to validate the calculated minimum order total and reject disabled COD attempts during block checkout.
 
 ### `woocommerce_store_api_checkout_update_order_meta`
 
@@ -298,7 +298,7 @@ Used by CP5 checkout controls to apply COD availability and instruction settings
 
 ### `POST /wp-json/agency-commerce-core/v1/recently-viewed`
 
-Accepts an `ids` array of product IDs and returns rendered product-card HTML for visible products only. It does not store visitor history server-side.
+Accepts an `ids` array of up to 24 positive product IDs and returns rendered product-card HTML for published, visible products only. Duplicate IDs are deduplicated, output is bounded by the configured recently viewed count, malformed or excessive input returns `400`, and visitor history is not stored server-side.
 
 ## Blocks
 

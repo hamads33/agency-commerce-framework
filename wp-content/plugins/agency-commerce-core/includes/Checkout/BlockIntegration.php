@@ -47,7 +47,7 @@ final class BlockIntegration implements IntegrationInterface {
 	 * @return string[]
 	 */
 	public function get_script_handles(): array {
-		return array( 'agency-commerce-core-checkout-blocks' );
+		return wp_script_is( 'agency-commerce-core-checkout-blocks', 'registered' ) ? array( 'agency-commerce-core-checkout-blocks' ) : array();
 	}
 
 	/**
@@ -56,7 +56,7 @@ final class BlockIntegration implements IntegrationInterface {
 	 * @return string[]
 	 */
 	public function get_editor_script_handles(): array {
-		return array( 'agency-commerce-core-checkout-blocks' );
+		return $this->get_script_handles();
 	}
 
 	/**

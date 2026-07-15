@@ -103,7 +103,7 @@ final class BlockRegistrar {
 	 */
 	public function register_block_styles(): void {
 		foreach ( array( 'woocommerce/product-collection', 'woocommerce/product-best-sellers', 'woocommerce/product-new', 'woocommerce/product-on-sale', 'woocommerce/handpicked-products' ) as $block_name ) {
-			if ( function_exists( 'register_block_style' ) ) {
+			if ( function_exists( 'register_block_style' ) && $this->is_block_registered( $block_name ) ) {
 				register_block_style(
 					$block_name,
 					array(
@@ -358,20 +358,47 @@ final class BlockRegistrar {
 	 * Returns fashion pattern content.
 	 */
 	private function fashion_pattern(): string {
-		return '<!-- wp:agency-commerce/hero {"eyebrow":"New season","heading":"Editorial essentials for every day","description":"Curated pieces, clean styling, and confident details.","layout":"split"} /--><!-- wp:agency-commerce/trust-bar /--><!-- wp:woocommerce/product-new {"columns":4,"rows":1} /--><!-- wp:agency-commerce/category-grid {"heading":"Shop the edit","count":4} /--><!-- wp:agency-commerce/newsletter {"heading":"Style notes in your inbox","text":"Get launch updates and private offers."} /-->';
+		return '<!-- wp:agency-commerce/hero {"eyebrow":"New season","heading":"Editorial essentials for every day","description":"Curated pieces, clean styling, and confident details.","layout":"split"} /--><!-- wp:agency-commerce/trust-bar /-->' . $this->woo_block_markup( 'woocommerce/product-new', '{"columns":4,"rows":1}' ) . '<!-- wp:agency-commerce/category-grid {"heading":"Shop the edit","count":4} /--><!-- wp:agency-commerce/newsletter {"heading":"Style notes in your inbox","text":"Get launch updates and private offers."} /-->';
 	}
 
 	/**
 	 * Returns electronics pattern content.
 	 */
 	private function electronics_pattern(): string {
-		return '<!-- wp:agency-commerce/hero {"eyebrow":"Tech ready","heading":"Gear that keeps work moving","description":"Practical devices, sharp pricing, and reliable checkout.","layout":"fullwidth"} /--><!-- wp:agency-commerce/trust-bar {"items":["Warranty support","Secure checkout","Fast dispatch"]} /--><!-- wp:woocommerce/product-best-sellers {"columns":4,"rows":1} /--><!-- wp:woocommerce/product-on-sale {"columns":4,"rows":1} /--><!-- wp:agency-commerce/faq /-->';
+		return '<!-- wp:agency-commerce/hero {"eyebrow":"Tech ready","heading":"Gear that keeps work moving","description":"Practical devices, sharp pricing, and reliable checkout.","layout":"fullwidth"} /--><!-- wp:agency-commerce/trust-bar {"items":["Warranty support","Secure checkout","Fast dispatch"]} /-->' . $this->woo_block_markup( 'woocommerce/product-best-sellers', '{"columns":4,"rows":1}' ) . $this->woo_block_markup( 'woocommerce/product-on-sale', '{"columns":4,"rows":1}' ) . '<!-- wp:agency-commerce/faq /-->';
 	}
 
 	/**
 	 * Returns minimal pattern content.
 	 */
 	private function minimal_pattern(): string {
-		return '<!-- wp:agency-commerce/hero {"heading":"Simple commerce, clearly presented","description":"A clean starting point for focused stores."} /--><!-- wp:woocommerce/product-collection /--><!-- wp:agency-commerce/category-grid {"count":3} /--><!-- wp:agency-commerce/recently-viewed-products /-->';
+		return '<!-- wp:agency-commerce/hero {"heading":"Simple commerce, clearly presented","description":"A clean starting point for focused stores."} /-->' . $this->woo_block_markup( 'woocommerce/product-collection' ) . '<!-- wp:agency-commerce/category-grid {"count":3} /--><!-- wp:agency-commerce/recently-viewed-products /-->';
+	}
+
+	/**
+	 * Returns WooCommerce block markup only when the block is available.
+	 *
+	 * @param string $block_name Full block name.
+	 * @param string $attributes Encoded block attributes.
+	 */
+	private function woo_block_markup( string $block_name, string $attributes = '' ): string {
+		if ( ! $this->is_block_registered( $block_name ) ) {
+			return '';
+		}
+
+		return '<!-- wp:' . esc_html( $block_name ) . ( '' !== $attributes ? ' ' . $attributes : '' ) . ' /-->';
+	}
+
+	/**
+	 * Checks whether a block type is registered.
+	 *
+	 * @param string $block_name Full block name.
+	 */
+	private function is_block_registered( string $block_name ): bool {
+		if ( ! class_exists( '\WP_Block_Type_Registry' ) ) {
+			return false;
+		}
+
+		return \WP_Block_Type_Registry::get_instance()->is_registered( $block_name );
 	}
 }

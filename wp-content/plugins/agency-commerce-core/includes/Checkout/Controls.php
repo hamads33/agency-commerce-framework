@@ -28,7 +28,7 @@ final class Controls {
 		add_filter( 'woocommerce_available_payment_gateways', array( $this, 'filter_available_gateways' ) );
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'render_classic_checkout_messages' ), 5 );
 		add_action( 'woocommerce_checkout_process', array( $this, 'validate_classic_minimum_order' ) );
-		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'validate_block_minimum_order' ), 10, 2 );
+		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'validate_block_checkout_controls' ), 10, 2 );
 		add_action( 'woocommerce_store_api_checkout_update_order_meta', array( $this, 'persist_order_notes' ) );
 	}
 
@@ -147,14 +147,23 @@ final class Controls {
 	}
 
 	/**
-	 * Validates block checkout minimum order.
+	 * Validates block checkout controls.
 	 *
 	 * @param WC_Order        $order Order object.
 	 * @param WP_REST_Request $request Request object.
 	 * @throws Exception When minimum order is not met.
 	 */
-	public function validate_block_minimum_order( WC_Order $order, WP_REST_Request $request ): void {
-		unset( $order, $request );
+	public function validate_block_checkout_controls( WC_Order $order, WP_REST_Request $request ): void {
+		unset( $order );
+
+		$payment_method = sanitize_key( (string) $request->get_param( 'payment_method' ) );
+		if (
+			'cod' === $payment_method
+			&& (bool) agency_commerce_core_get_setting( 'checkout.enable_cod_controls', false )
+			&& ! (bool) agency_commerce_core_get_setting( 'checkout.cod_enabled', true )
+		) {
+			throw new Exception( esc_html__( 'Cash on Delivery is not available for this order.', 'agency-commerce-core' ) );
+		}
 
 		$message = $this->minimum_order_error_message();
 
@@ -191,14 +200,30 @@ final class Controls {
 
 		$minimum = (float) agency_commerce_core_get_setting( 'checkout.minimum_order_amount', 0 );
 
-		if ( $minimum <= 0 || (float) WC()->cart->get_subtotal() >= $minimum ) {
+		$minimum = (float) wc_format_decimal( $minimum, wc_get_price_decimals() );
+		$total   = $this->current_cart_total();
+
+		if ( $minimum <= 0 || $total >= $minimum ) {
 			return '';
 		}
 
 		return sprintf(
 			/* translators: %s: minimum order amount. */
-			__( 'The minimum order amount is %s before checkout can be completed.', 'agency-commerce-core' ),
+			__( 'The minimum order total is %s before checkout can be completed.', 'agency-commerce-core' ),
 			wp_strip_all_tags( wc_price( $minimum ) )
 		);
+	}
+
+	/**
+	 * Returns the current WooCommerce cart total after discounts, shipping, taxes, and fees.
+	 */
+	private function current_cart_total(): float {
+		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+			return 0.0;
+		}
+
+		WC()->cart->calculate_totals();
+
+		return (float) wc_format_decimal( WC()->cart->get_total( 'edit' ), wc_get_price_decimals() );
 	}
 }

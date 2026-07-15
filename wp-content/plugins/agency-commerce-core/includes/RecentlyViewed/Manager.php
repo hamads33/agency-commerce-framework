@@ -11,11 +11,14 @@ namespace AgencyCommerceCore\RecentlyViewed;
 
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_Error;
 
 /**
  * Registers privacy-conscious recently viewed product behavior.
  */
 final class Manager {
+	private const MAX_REQUEST_IDS = 24;
+
 	/**
 	 * Registers hooks.
 	 */
@@ -75,9 +78,10 @@ final class Manager {
 				'permission_callback' => '__return_true',
 				'args'                => array(
 					'ids' => array(
-						'type'    => 'array',
-						'items'   => array( 'type' => 'integer' ),
-						'default' => array(),
+						'type'              => 'array',
+						'items'             => array( 'type' => 'integer' ),
+						'default'           => array(),
+						'validate_callback' => array( $this, 'validate_ids_arg' ),
 					),
 				),
 			)
@@ -85,21 +89,53 @@ final class Manager {
 	}
 
 	/**
+	 * Validates recently viewed product IDs.
+	 *
+	 * @param mixed $ids Submitted IDs.
+	 */
+	public function validate_ids_arg( $ids ): bool {
+		if ( ! is_array( $ids ) || count( $ids ) > self::MAX_REQUEST_IDS ) {
+			return false;
+		}
+
+		foreach ( $ids as $id ) {
+			if ( false === filter_var( $id, FILTER_VALIDATE_INT ) || (int) $id <= 0 ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Returns product card markup for recently viewed product IDs.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 */
-	public function rest_recently_viewed( WP_REST_Request $request ): WP_REST_Response {
-		$ids   = array_map( 'absint', (array) $request->get_param( 'ids' ) );
+	public function rest_recently_viewed( WP_REST_Request $request ) {
+		$raw_ids = $request->get_param( 'ids' );
+
+		if ( ! $this->validate_ids_arg( $raw_ids ) ) {
+			return new WP_Error(
+				'agency_commerce_core_invalid_recently_viewed_ids',
+				__( 'Recently viewed product IDs must be positive integers and within the request limit.', 'agency-commerce-core' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		$ids   = array_map( 'absint', $raw_ids );
 		$limit = max( 1, min( 12, (int) agency_commerce_core_get_setting( 'recently_viewed.count', 4 ) ) );
 		$ids   = array_slice( array_values( array_unique( array_filter( $ids ) ) ), 0, $limit );
 		$html  = $this->render_product_cards( $ids );
 
-		return new WP_REST_Response(
+		$response = new WP_REST_Response(
 			array(
 				'html' => $html,
 			)
 		);
+		$response->header( 'Cache-Control', 'no-store, max-age=0' );
+
+		return $response;
 	}
 
 	/**
@@ -152,7 +188,7 @@ final class Manager {
 		foreach ( $ids as $product_id ) {
 			$product = wc_get_product( $product_id );
 
-			if ( ! $product || ! $product->is_visible() ) {
+			if ( ! $product || 'publish' !== get_post_status( $product_id ) || ! $product->is_visible() ) {
 				continue;
 			}
 
