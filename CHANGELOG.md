@@ -14,6 +14,7 @@
 - Hardened recently viewed rendering by bounding localStorage IDs, rejecting malformed or excessive REST input, and excluding private, unpublished, deleted, unavailable, or invisible products.
 - Added scoped My Account styling while preserving native WooCommerce endpoints.
 - Added CP5 Playwright smoke suites for homepage, cart, block checkout, classic checkout, My Account, and focused audit flows.
+- Fixed CP5 verification defects so Classic checkout persists framework order context, non-forced Block-mode alignment preserves manual block page content, and audit cleanup restores WooCommerce's canonical block Cart and Checkout page content.
 - Updated only the 12 affected visual baselines for homepage, cart, checkout, and My Account across desktop, tablet, and mobile after reviewing the intentional CP5 layout changes.
 - Updated framework version metadata to `0.5.0`.
 

@@ -28,6 +28,7 @@ final class Controls {
 		add_filter( 'woocommerce_available_payment_gateways', array( $this, 'filter_available_gateways' ) );
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'render_classic_checkout_messages' ), 5 );
 		add_action( 'woocommerce_checkout_process', array( $this, 'validate_classic_minimum_order' ) );
+		add_action( 'woocommerce_checkout_create_order', array( $this, 'persist_order_notes' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'validate_block_checkout_controls' ), 10, 2 );
 		add_action( 'woocommerce_store_api_checkout_update_order_meta', array( $this, 'persist_order_notes' ) );
 	}

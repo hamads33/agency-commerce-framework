@@ -153,6 +153,10 @@ final class ModeManager {
 
 		$current_content = (string) $post->post_content;
 
+		if ( ! $force && ! $this->contents_match( $current_content, $backup ) && ! $this->contains_woocommerce_shortcode( $current_content ) ) {
+			return;
+		}
+
 		if ( ! $this->contents_match( $current_content, $backup ) && ! $this->contains_woocommerce_shortcode( $current_content ) ) {
 			update_post_meta( $page_id, self::CLASSIC_META_KEY, $current_content );
 		}

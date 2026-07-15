@@ -164,8 +164,12 @@ function verifyCheckoutModeSafety() {
 			}
 			$cart = wc_get_page_id( 'cart' );
 			$checkout = wc_get_page_id( 'checkout' );
-			$original_cart = '<!-- wp:woocommerce/cart /-->';
-			$original_checkout = '<!-- wp:woocommerce/checkout /-->';
+			$cart_method = new ReflectionMethod( 'WC_Install', 'get_cart_block_content' );
+			$cart_method->setAccessible( true );
+			$checkout_method = new ReflectionMethod( 'WC_Install', 'get_checkout_block_content' );
+			$checkout_method->setAccessible( true );
+			$original_cart = $cart_method->invoke( null );
+			$original_checkout = $checkout_method->invoke( null );
 			foreach ( array( $cart => $original_cart, $checkout => $original_checkout ) as $page_id => $content ) {
 				wp_update_post( array( 'ID' => $page_id, 'post_content' => $content ) );
 				delete_post_meta( $page_id, '_agency_commerce_core_block_content_backup' );
@@ -182,6 +186,9 @@ function verifyCheckoutModeSafety() {
 			$manager->apply_mode( 'classic' );
 			$manager->apply_mode( 'block' );
 			$content_after_manual_restore = get_post_field( 'post_content', $checkout );
+			wp_update_post( array( 'ID' => $checkout, 'post_content' => $original_checkout ) );
+			$manager->ensure_configured_mode();
+			$non_forced_block_content_preserved = get_post_field( 'post_content', $checkout ) === $original_checkout;
 			$manager->apply_mode( 'invalid-mode' );
 
 			$option_before = get_option( 'agency_commerce_core_settings', array() );
@@ -212,6 +219,7 @@ function verifyCheckoutModeSafety() {
 			echo wp_json_encode( array(
 				'cartContent' => get_post_field( 'post_content', $cart ),
 				'checkoutManualRestored' => $content_after_manual_restore === $manual_checkout,
+				'nonForcedBlockContentPreserved' => $non_forced_block_content_preserved,
 				'cartOriginalBackup' => get_post_meta( $cart, '_agency_commerce_core_block_content_backup', true ) === $original_cart,
 				'checkoutOriginalBackup' => get_post_meta( $checkout, '_agency_commerce_core_block_content_backup', true ) === $original_checkout,
 				'checkoutLatestBackup' => get_post_meta( $checkout, '_agency_commerce_core_latest_block_content_backup', true ) === $manual_checkout,
@@ -226,6 +234,7 @@ function verifyCheckoutModeSafety() {
 		! result.checkoutOriginalBackup ||
 		! result.checkoutLatestBackup ||
 		! result.checkoutManualRestored ||
+		! result.nonForcedBlockContentPreserved ||
 		! result.unauthorizedPreserved ||
 		! result.invalidStoredModeFallback
 	) {
@@ -300,30 +309,9 @@ async function verifyRecentlyViewedEndpoint( request, fixtures ) {
 }
 
 async function addProductToCart( page, productId ) {
-	await page.goto( `${ baseUrl }/cart/`, { waitUntil: 'networkidle' } );
-	await page.evaluate( async ( id ) => {
-		const nonce = window.wcBlocksMiddlewareConfig?.storeApiNonce;
-		await window
-			.fetch( '/wp-json/wc/store/v1/cart/items', {
-				method: 'DELETE',
-				headers: { Nonce: nonce },
-			} )
-			.catch( () => {} );
-		const response = await window.fetch(
-			'/wp-json/wc/store/v1/cart/add-item',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Nonce: nonce,
-				},
-				body: JSON.stringify( { id, quantity: 1 } ),
-			}
-		);
-		if ( ! response.ok ) {
-			throw new Error( await response.text() );
-		}
-	}, productId );
+	await page.goto( `${ baseUrl }/?add-to-cart=${ productId }`, {
+		waitUntil: 'networkidle',
+	} );
 }
 
 async function verifyClassicCheckout( page, productId ) {
@@ -410,6 +398,32 @@ async function verifyClassicCheckout( page, productId ) {
 	updateSettings( { checkout: { mode: 'block', minimum_order_amount: 0 } } );
 }
 
+function restoreCheckoutPages() {
+	runWpEval(
+		`if ( function_exists( 'wc_get_page_id' ) ) {
+			$cart_content = '<!-- wp:woocommerce/cart /-->';
+			$checkout_content = '<!-- wp:woocommerce/checkout /-->';
+			if ( class_exists( 'WC_Install' ) ) {
+				$cart_method = new ReflectionMethod( 'WC_Install', 'get_cart_block_content' );
+				$cart_method->setAccessible( true );
+				$checkout_method = new ReflectionMethod( 'WC_Install', 'get_checkout_block_content' );
+				$checkout_method->setAccessible( true );
+				$cart_content = $cart_method->invoke( null );
+				$checkout_content = $checkout_method->invoke( null );
+			}
+			$cart = wc_get_page_id( 'cart' );
+			$checkout = wc_get_page_id( 'checkout' );
+			if ( $cart > 0 ) {
+				wp_update_post( array( 'ID' => $cart, 'post_content' => $cart_content ) );
+			}
+			if ( $checkout > 0 ) {
+				wp_update_post( array( 'ID' => $checkout, 'post_content' => $checkout_content ) );
+			}
+		}`
+	);
+	updateSettings( { checkout: { mode: 'block', minimum_order_amount: 0 } } );
+}
+
 async function main() {
 	const fixtures = seedAuditFixtures();
 	if ( fixtures.skipped ) {
@@ -429,6 +443,7 @@ async function main() {
 		console.log( 'CP5 audit checks passed.' );
 	} finally {
 		await browser.close();
+		restoreCheckoutPages();
 	}
 }
 
