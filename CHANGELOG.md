@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased - CP7B Premium Showcase Storefronts
+
+- Added three premium showcase child themes built on top of the parent
+  framework: `agency-commerce-fashion`, `agency-commerce-electronics`, and
+  `agency-commerce-home`.
+- Added unique child-theme homepage templates, token profiles, typography,
+  spacing, header/footer treatments, product-card presentation, category/shop
+  styling, cart/checkout styling, and My Account styling for each storefront.
+- Added original CSS-generated demo imagery and abstract visual treatments
+  without copying reference brand logos, photography, text, trademarks, or
+  pixel layouts.
+- Added a dedicated showcase Playwright visual-regression suite covering
+  homepage, category, shop, product, cart, checkout, and My Account across
+  desktop, tablet, and mobile.
+- Added a reproducible showcase asset generator for portfolio screenshots and
+  comparison boards.
+
 ## Unreleased - CP7A Premium Design System
 
 - Added a premium storefront design-system layer without adding commerce

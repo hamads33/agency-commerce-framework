@@ -1,0 +1,262 @@
+/*
+Theme Name: Agency Commerce Electronics
+Theme URI: https://agency-commerce.invalid/showcase-electronics
+Author: Agency Commerce
+Author URI: https://agency-commerce.invalid
+Description: Electronics showcase child theme for Agency Commerce.
+Version: 1.0.0
+Requires at least: 7.0
+Requires PHP: 8.2
+Template: agency-commerce
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: agency-commerce-electronics
+Domain Path: /languages
+*/
+
+:root {
+	--ac-color-primary: #f5f7fb;
+	--ac-color-secondary: #d6e2ff;
+	--ac-color-accent: #78ffdb;
+	--ac-color-text: #f5f7fb;
+	--ac-color-muted: #9aa7bb;
+	--ac-color-background: #05070b;
+	--ac-color-surface: #10151f;
+	--ac-color-border: #263142;
+	--ac-container-width: 1280px;
+	--ac-font-heading: "Aptos Display", "Segoe UI", system-ui, sans-serif;
+	--ac-font-body: "Aptos", "Segoe UI", system-ui, sans-serif;
+	--ac-radius-card: 24px;
+	--ac-radius-panel: 34px;
+	--ac-product-image-ratio: 1 / 1;
+}
+
+.ac-showcase-electronics {
+	background:
+		radial-gradient(circle at 78% 6%, rgba(120, 255, 219, 0.22), transparent 26rem),
+		linear-gradient(rgba(214, 226, 255, 0.055) 1px, transparent 1px) 0 0 / 100% 4rem,
+		linear-gradient(90deg, rgba(214, 226, 255, 0.055) 1px, transparent 1px) 0 0 / 4rem 100%,
+		var(--ac-color-background);
+}
+
+.ac-showcase-electronics .ac-announcement,
+.ac-showcase-electronics .ac-site-footer {
+	background: #0a0f18;
+	color: var(--ac-color-text);
+}
+
+.ac-showcase-electronics .ac-site-header {
+	background: rgba(5, 7, 11, 0.84);
+	backdrop-filter: blur(20px);
+	border-color: rgba(214, 226, 255, 0.14);
+}
+
+.ac-showcase-electronics .site-title,
+.ac-showcase-electronics .custom-logo-link {
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.ac-showcase-electronics .ac-menu {
+	font-family: var(--ac-font-body);
+	font-size: 0.82rem;
+	letter-spacing: 0.04em;
+}
+
+.ac-electronics-hero {
+	align-items: center;
+	display: grid;
+	gap: clamp(2rem, 6vw, 6rem);
+	grid-template-columns: minmax(0, 0.95fr) minmax(20rem, 1.05fr);
+	min-height: clamp(40rem, 72vw, 54rem);
+}
+
+.ac-showcase-kicker {
+	color: var(--ac-color-accent);
+	font-size: 0.78rem;
+	font-weight: 800;
+	letter-spacing: 0.18em;
+	margin: 0 0 var(--ac-spacing-4);
+	text-transform: uppercase;
+}
+
+.ac-electronics-hero h1,
+.ac-electronics-system h2 {
+	font-size: clamp(3.2rem, 7vw, 7.8rem);
+	font-weight: 800;
+	letter-spacing: -0.075em;
+	line-height: 0.92;
+	margin: 0 0 var(--ac-spacing-5);
+}
+
+.ac-electronics-hero p:not(.ac-showcase-kicker) {
+	color: var(--ac-color-muted);
+	font-size: clamp(1rem, 1.4vw, 1.22rem);
+	max-width: 43rem;
+}
+
+.ac-tech-button {
+	background: var(--ac-color-primary);
+	border: 1px solid var(--ac-color-primary);
+	border-radius: 999px;
+	color: #05070b;
+	display: inline-flex;
+	font-weight: 800;
+	margin-top: var(--ac-spacing-5);
+	padding: 0.95rem 1.35rem;
+	text-decoration: none;
+	transition: box-shadow var(--ac-transition-base), transform var(--ac-transition-base);
+}
+
+.ac-tech-button:hover,
+.ac-tech-button:focus-visible {
+	box-shadow: 0 0 0 7px rgba(120, 255, 219, 0.18), 0 22px 70px rgba(120, 255, 219, 0.22);
+	transform: translateY(-2px);
+}
+
+.ac-electronics-device {
+	aspect-ratio: 1 / 1;
+	background:
+		radial-gradient(circle at 50% 28%, rgba(120, 255, 219, 0.35), transparent 12rem),
+		linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.035));
+	border: 1px solid rgba(214, 226, 255, 0.22);
+	border-radius: 3rem;
+	box-shadow: 0 40px 120px rgba(0, 0, 0, 0.48);
+	display: grid;
+	padding: clamp(1.5rem, 4vw, 3rem);
+	position: relative;
+}
+
+.ac-electronics-device__screen {
+	background:
+		linear-gradient(135deg, rgba(120, 255, 219, 0.18), transparent),
+		#0b1018;
+	border: 1px solid rgba(214, 226, 255, 0.28);
+	border-radius: 2rem;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.ac-electronics-device__module {
+	background: var(--ac-color-accent);
+	border-radius: 999px;
+	height: 0.7rem;
+	position: absolute;
+	width: 7rem;
+}
+
+.ac-electronics-device__module--one {
+	left: 10%;
+	top: 16%;
+}
+
+.ac-electronics-device__module--two {
+	background: var(--ac-color-secondary);
+	bottom: 16%;
+	right: 10%;
+	width: 10rem;
+}
+
+.ac-electronics-specs {
+	display: grid;
+	gap: var(--ac-spacing-4);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	margin-block: var(--ac-section-spacing);
+}
+
+.ac-electronics-specs article,
+.ac-electronics-system__panel,
+.ac-showcase-electronics .ac-product-card,
+.ac-showcase-electronics .ac-cart-page,
+.ac-showcase-electronics .ac-checkout-page,
+.ac-showcase-electronics .woocommerce-account .woocommerce {
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
+	border: 1px solid rgba(214, 226, 255, 0.16);
+	box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+}
+
+.ac-electronics-specs article {
+	border-radius: var(--ac-radius-card);
+	padding: var(--ac-spacing-6);
+}
+
+.ac-electronics-specs strong {
+	color: var(--ac-color-accent);
+	display: block;
+	font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+	margin-bottom: var(--ac-spacing-8);
+}
+
+.ac-electronics-specs h2 {
+	font-size: 1.35rem;
+	margin: 0 0 var(--ac-spacing-3);
+}
+
+.ac-electronics-specs p {
+	color: var(--ac-color-muted);
+	margin: 0;
+}
+
+.ac-electronics-system {
+	align-items: center;
+	display: grid;
+	gap: var(--ac-spacing-8);
+	grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 1.1fr);
+	margin-bottom: var(--ac-section-spacing);
+}
+
+.ac-electronics-system__panel {
+	border-radius: var(--ac-radius-panel);
+	display: grid;
+	gap: var(--ac-spacing-3);
+	grid-template-columns: repeat(2, 1fr);
+	padding: var(--ac-spacing-6);
+}
+
+.ac-electronics-system__panel span {
+	aspect-ratio: 1.25 / 1;
+	background:
+		radial-gradient(circle at 65% 30%, rgba(120, 255, 219, 0.3), transparent 6rem),
+		linear-gradient(145deg, #161f2e, #070b11);
+	border: 1px solid rgba(214, 226, 255, 0.12);
+	border-radius: 1.3rem;
+}
+
+.ac-showcase-electronics .ac-product-card__media-wrap {
+	background:
+		radial-gradient(circle at 50% 38%, rgba(120, 255, 219, 0.22), transparent 8rem),
+		#080c12;
+}
+
+.ac-showcase-electronics .ac-product-card__title,
+.ac-showcase-electronics .woocommerce-loop-product__title {
+	font-weight: 800;
+	letter-spacing: -0.035em;
+}
+
+.ac-showcase-electronics input,
+.ac-showcase-electronics select,
+.ac-showcase-electronics textarea {
+	background: #080c12;
+	color: var(--ac-color-text);
+}
+
+@media (max-width: 900px) {
+	.ac-electronics-hero,
+	.ac-electronics-system,
+	.ac-electronics-specs {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 600px) {
+	.ac-electronics-device {
+		border-radius: 2rem;
+	}
+
+	.ac-electronics-hero h1,
+	.ac-electronics-system h2 {
+		font-size: clamp(2.8rem, 15vw, 4.8rem);
+	}
+}

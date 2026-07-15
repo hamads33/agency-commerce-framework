@@ -14,6 +14,9 @@
   "mappings": {
     "wp-content/plugins/agency-commerce-core": "./wp-content/plugins/agency-commerce-core",
     "wp-content/themes/agency-commerce": "./wp-content/themes/agency-commerce",
-    "wp-content/themes/agency-commerce-child": "./wp-content/themes/agency-commerce-child"
+    "wp-content/themes/agency-commerce-child": "./wp-content/themes/agency-commerce-child",
+    "wp-content/themes/agency-commerce-fashion": "./wp-content/themes/agency-commerce-fashion",
+    "wp-content/themes/agency-commerce-electronics": "./wp-content/themes/agency-commerce-electronics",
+    "wp-content/themes/agency-commerce-home": "./wp-content/themes/agency-commerce-home"
   }
 }

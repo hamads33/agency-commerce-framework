@@ -1,0 +1,278 @@
+/*
+Theme Name: Agency Commerce Home
+Theme URI: https://agency-commerce.invalid/showcase-home
+Author: Agency Commerce
+Author URI: https://agency-commerce.invalid
+Description: Furniture and home showcase child theme for Agency Commerce.
+Version: 1.0.0
+Requires at least: 7.0
+Requires PHP: 8.2
+Template: agency-commerce
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: agency-commerce-home
+Domain Path: /languages
+*/
+
+:root {
+	--ac-color-primary: #4a3528;
+	--ac-color-secondary: #7c5c45;
+	--ac-color-accent: #c9824a;
+	--ac-color-text: #2f261f;
+	--ac-color-muted: #7b6b5e;
+	--ac-color-background: #f3eadf;
+	--ac-color-surface: #fff8ef;
+	--ac-color-border: #d8c7b4;
+	--ac-container-width: 1320px;
+	--ac-container-narrow-width: 860px;
+	--ac-font-heading: Optima, "Gill Sans", "Trebuchet MS", sans-serif;
+	--ac-font-body: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+	--ac-radius-card: 30px;
+	--ac-radius-panel: 42px;
+	--ac-product-image-ratio: 5 / 4;
+	--ac-section-spacing: clamp(4rem, 8vw, 8rem);
+}
+
+.ac-showcase-home-store {
+	background:
+		radial-gradient(circle at 7% 8%, rgba(201, 130, 74, 0.18), transparent 24rem),
+		linear-gradient(180deg, #f3eadf, #eadccf 55%, #f3eadf);
+}
+
+.ac-showcase-home-store .ac-announcement {
+	background: var(--ac-color-secondary);
+	font-style: italic;
+}
+
+.ac-showcase-home-store .ac-site-header {
+	background: rgba(243, 234, 223, 0.9);
+	backdrop-filter: blur(18px);
+	border-color: rgba(74, 53, 40, 0.18);
+}
+
+.ac-showcase-home-store .site-title,
+.ac-showcase-home-store .custom-logo-link {
+	font-family: var(--ac-font-heading);
+	font-size: clamp(1.25rem, 2vw, 1.9rem);
+	font-weight: 500;
+	letter-spacing: 0.02em;
+}
+
+.ac-showcase-home-store .ac-menu {
+	font-family: var(--ac-font-heading);
+	font-size: 0.86rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.ac-home-hero {
+	align-items: center;
+	display: grid;
+	gap: clamp(2rem, 6vw, 6rem);
+	grid-template-columns: minmax(18rem, 1.1fr) minmax(0, 0.9fr);
+	min-height: clamp(38rem, 70vw, 54rem);
+}
+
+.ac-home-hero__image {
+	background:
+		linear-gradient(180deg, transparent 60%, rgba(74, 53, 40, 0.12) 60%),
+		linear-gradient(145deg, #d7b895, #fbf4ea 48%, #9b7658);
+	border-radius: var(--ac-radius-panel);
+	box-shadow: 0 34px 90px rgba(74, 53, 40, 0.22);
+	min-height: clamp(30rem, 58vw, 47rem);
+	overflow: hidden;
+	position: relative;
+}
+
+.ac-home-hero__image span {
+	background: rgba(255, 248, 239, 0.8);
+	border: 1px solid rgba(74, 53, 40, 0.13);
+	position: absolute;
+}
+
+.ac-home-hero__image span:first-child {
+	border-radius: 999px 999px 24px 24px;
+	bottom: 12%;
+	height: 36%;
+	left: 10%;
+	width: 34%;
+}
+
+.ac-home-hero__image span:nth-child(2) {
+	border-radius: 18px;
+	bottom: 14%;
+	height: 21%;
+	right: 13%;
+	width: 34%;
+}
+
+.ac-home-hero__image span:last-child {
+	background: rgba(74, 53, 40, 0.86);
+	border-radius: 999px;
+	height: 0.8rem;
+	left: 12%;
+	right: 12%;
+	top: 20%;
+}
+
+.ac-home-kicker {
+	color: var(--ac-color-secondary);
+	font-family: var(--ac-font-heading);
+	font-size: 0.78rem;
+	letter-spacing: 0.16em;
+	margin: 0 0 var(--ac-spacing-4);
+	text-transform: uppercase;
+}
+
+.ac-home-hero h1,
+.ac-home-journal h2 {
+	font-family: var(--ac-font-heading);
+	font-size: clamp(3rem, 6.6vw, 7rem);
+	font-weight: 500;
+	letter-spacing: -0.065em;
+	line-height: 0.98;
+	margin: 0 0 var(--ac-spacing-5);
+}
+
+.ac-home-hero p:not(.ac-home-kicker),
+.ac-home-journal p {
+	color: var(--ac-color-secondary);
+	font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+	line-height: 1.8;
+}
+
+.ac-home-button {
+	background: var(--ac-color-primary);
+	border-radius: 999px;
+	color: var(--ac-color-background);
+	display: inline-flex;
+	font-family: var(--ac-font-heading);
+	font-weight: 700;
+	margin-top: var(--ac-spacing-5);
+	padding: 0.95rem 1.35rem;
+	text-decoration: none;
+	transition: box-shadow var(--ac-transition-base), transform var(--ac-transition-base);
+}
+
+.ac-home-button:hover,
+.ac-home-button:focus-visible {
+	box-shadow: 0 18px 55px rgba(74, 53, 40, 0.25);
+	transform: translateY(-2px);
+}
+
+.ac-home-rooms {
+	display: grid;
+	gap: var(--ac-spacing-5);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	margin-block: var(--ac-section-spacing);
+}
+
+.ac-home-rooms article {
+	background: rgba(255, 248, 239, 0.78);
+	border: 1px solid rgba(74, 53, 40, 0.12);
+	border-radius: var(--ac-radius-card);
+	box-shadow: 0 22px 70px rgba(74, 53, 40, 0.12);
+	overflow: hidden;
+}
+
+.ac-home-rooms span {
+	background:
+		radial-gradient(circle at 60% 30%, rgba(255, 248, 239, 0.7), transparent 9rem),
+		linear-gradient(145deg, #c49a76, #f4e5d6);
+	display: block;
+	min-height: 18rem;
+}
+
+.ac-home-rooms article:nth-child(2) span {
+	background:
+		radial-gradient(circle at 35% 24%, rgba(74, 53, 40, 0.16), transparent 8rem),
+		linear-gradient(145deg, #ead0b4, #8f6448);
+}
+
+.ac-home-rooms article:nth-child(3) span {
+	background:
+		radial-gradient(circle at 74% 18%, rgba(255, 248, 239, 0.65), transparent 9rem),
+		linear-gradient(145deg, #b69a7d, #f7ebdd);
+}
+
+.ac-home-rooms h2,
+.ac-home-rooms p {
+	padding-inline: var(--ac-spacing-5);
+}
+
+.ac-home-rooms h2 {
+	font-family: var(--ac-font-heading);
+	font-size: 2rem;
+	font-weight: 500;
+	margin-bottom: 0;
+}
+
+.ac-home-rooms p {
+	color: var(--ac-color-muted);
+	margin-top: var(--ac-spacing-2);
+	padding-bottom: var(--ac-spacing-5);
+}
+
+.ac-home-journal {
+	background: rgba(255, 248, 239, 0.75);
+	border: 1px solid rgba(74, 53, 40, 0.12);
+	border-radius: var(--ac-radius-panel);
+	display: grid;
+	gap: var(--ac-spacing-8);
+	grid-template-columns: 1.05fr 0.95fr;
+	margin-bottom: var(--ac-section-spacing);
+	padding: clamp(2rem, 5vw, 5rem);
+}
+
+.ac-showcase-home-store .ac-product-card {
+	background: rgba(255, 248, 239, 0.84);
+	border-color: rgba(74, 53, 40, 0.12);
+	box-shadow: 0 20px 60px rgba(74, 53, 40, 0.12);
+}
+
+.ac-showcase-home-store .ac-product-card__media-wrap {
+	background:
+		radial-gradient(circle at 64% 18%, rgba(255, 248, 239, 0.58), transparent 8rem),
+		linear-gradient(145deg, #cba57e, #f1dfcb);
+}
+
+.ac-showcase-home-store .ac-product-card__title,
+.ac-showcase-home-store .woocommerce-loop-product__title {
+	font-family: var(--ac-font-heading);
+	font-size: 1.35rem;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+}
+
+.ac-showcase-home-store .ac-shop-archive__header,
+.ac-showcase-home-store .ac-cart-page,
+.ac-showcase-home-store .ac-checkout-page,
+.ac-showcase-home-store .woocommerce-account .woocommerce {
+	background: rgba(255, 248, 239, 0.78);
+	border-color: rgba(74, 53, 40, 0.12);
+	box-shadow: 0 24px 70px rgba(74, 53, 40, 0.12);
+}
+
+.ac-showcase-home-store .ac-site-footer {
+	background: #3d2c23;
+	color: var(--ac-color-background);
+}
+
+@media (max-width: 900px) {
+	.ac-home-hero,
+	.ac-home-rooms,
+	.ac-home-journal {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 600px) {
+	.ac-home-hero__image {
+		min-height: 26rem;
+	}
+
+	.ac-home-hero h1,
+	.ac-home-journal h2 {
+		font-size: clamp(2.7rem, 14vw, 4.5rem);
+	}
+}

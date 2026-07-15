@@ -1,0 +1,275 @@
+/*
+Theme Name: Agency Commerce Fashion
+Theme URI: https://agency-commerce.invalid/showcase-fashion
+Author: Agency Commerce
+Author URI: https://agency-commerce.invalid
+Description: Luxury fashion showcase child theme for Agency Commerce.
+Version: 1.0.0
+Requires at least: 7.0
+Requires PHP: 8.2
+Template: agency-commerce
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: agency-commerce-fashion
+Domain Path: /languages
+*/
+
+:root {
+	--ac-color-primary: #181614;
+	--ac-color-secondary: #3d3730;
+	--ac-color-accent: #a8855a;
+	--ac-color-text: #181614;
+	--ac-color-muted: #736b62;
+	--ac-color-background: #f7f2eb;
+	--ac-color-surface: #fffaf3;
+	--ac-color-border: #ded2c4;
+	--ac-container-width: 1360px;
+	--ac-container-narrow-width: 820px;
+	--ac-font-heading: Didot, "Bodoni 72", Georgia, serif;
+	--ac-font-body: Georgia, "Times New Roman", serif;
+	--ac-radius-button: 0;
+	--ac-radius-card: 2px;
+	--ac-radius-panel: 2px;
+	--ac-product-image-ratio: 4 / 5;
+	--ac-section-spacing: clamp(4rem, 9vw, 9rem);
+}
+
+.ac-showcase-fashion {
+	background:
+		linear-gradient(90deg, rgba(24, 22, 20, 0.035) 1px, transparent 1px) 0 0 / 12.5vw 100%,
+		var(--ac-color-background);
+}
+
+.ac-showcase-fashion .ac-announcement {
+	background: var(--ac-color-primary);
+	font-size: 0.75rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.ac-showcase-fashion .ac-site-header {
+	background: rgba(247, 242, 235, 0.92);
+	backdrop-filter: blur(18px);
+	border-color: rgba(24, 22, 20, 0.14);
+}
+
+.ac-showcase-fashion .ac-site-header__inner {
+	min-height: 6rem;
+}
+
+.ac-showcase-fashion .custom-logo-link,
+.ac-showcase-fashion .site-title {
+	font-family: var(--ac-font-heading);
+	font-size: clamp(1.5rem, 3vw, 2.6rem);
+	letter-spacing: -0.06em;
+	text-transform: none;
+}
+
+.ac-showcase-fashion .ac-menu {
+	font-size: 0.75rem;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.ac-fashion-hero {
+	display: grid;
+	gap: clamp(2rem, 6vw, 7rem);
+	grid-template-columns: minmax(0, 0.8fr) minmax(18rem, 1.2fr);
+	min-height: clamp(38rem, 74vw, 54rem);
+	padding-block: clamp(2rem, 6vw, 6rem);
+}
+
+.ac-fashion-hero__copy {
+	align-self: end;
+	max-width: 38rem;
+	padding-bottom: clamp(2rem, 8vw, 8rem);
+}
+
+.ac-showcase-eyebrow {
+	color: var(--ac-color-muted);
+	font-size: 0.72rem;
+	letter-spacing: 0.18em;
+	margin: 0 0 var(--ac-spacing-4);
+	text-transform: uppercase;
+}
+
+.ac-fashion-hero h1 {
+	font-size: clamp(3.5rem, 8vw, 8.8rem);
+	font-weight: 400;
+	letter-spacing: -0.075em;
+	line-height: 0.88;
+	margin: 0 0 var(--ac-spacing-6);
+}
+
+.ac-fashion-hero p:not(.ac-showcase-eyebrow),
+.ac-fashion-story p {
+	color: var(--ac-color-secondary);
+	font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+	line-height: 1.75;
+}
+
+.ac-showcase-button {
+	border: 1px solid currentColor;
+	color: var(--ac-color-primary);
+	display: inline-flex;
+	font-size: 0.78rem;
+	letter-spacing: 0.14em;
+	margin-top: var(--ac-spacing-5);
+	padding: 1rem 1.35rem;
+	text-decoration: none;
+	text-transform: uppercase;
+	transition: background var(--ac-transition-base), color var(--ac-transition-base), transform var(--ac-transition-base);
+}
+
+.ac-showcase-button:hover,
+.ac-showcase-button:focus-visible {
+	background: var(--ac-color-primary);
+	color: var(--ac-color-background);
+	transform: translateY(-2px);
+}
+
+.ac-fashion-hero__art {
+	display: grid;
+	gap: var(--ac-spacing-6);
+	grid-template-columns: 1fr 0.72fr;
+}
+
+.ac-fashion-hero__art span,
+.ac-fashion-editorial article:not(:first-child) {
+	background:
+		linear-gradient(160deg, rgba(255, 250, 243, 0), rgba(255, 250, 243, 0.55)),
+		radial-gradient(circle at 62% 24%, rgba(168, 133, 90, 0.28), transparent 18rem),
+		linear-gradient(145deg, #d8cab8, #f6eee3 42%, #7a7065);
+	min-height: 34rem;
+}
+
+.ac-fashion-hero__art span:first-child {
+	margin-top: clamp(2rem, 6vw, 7rem);
+}
+
+.ac-fashion-hero__art span:last-child {
+	background:
+		radial-gradient(circle at 45% 18%, rgba(24, 22, 20, 0.16), transparent 12rem),
+		linear-gradient(165deg, #eee5d9, #bba98e);
+	margin-bottom: clamp(3rem, 8vw, 9rem);
+}
+
+.ac-fashion-editorial {
+	display: grid;
+	gap: var(--ac-spacing-6);
+	grid-template-columns: 1.2fr 0.8fr 0.8fr;
+	margin-block: var(--ac-section-spacing);
+}
+
+.ac-fashion-editorial article:first-child {
+	align-self: end;
+	border-top: 1px solid var(--ac-color-border);
+	padding-top: var(--ac-spacing-8);
+}
+
+.ac-fashion-editorial h2,
+.ac-fashion-story h2 {
+	font-size: clamp(2.4rem, 5vw, 5.5rem);
+	font-weight: 400;
+	letter-spacing: -0.07em;
+	line-height: 0.96;
+	margin: 0;
+}
+
+.ac-fashion-editorial article:not(:first-child) {
+	align-items: end;
+	display: flex;
+	min-height: 30rem;
+	padding: var(--ac-spacing-5);
+}
+
+.ac-fashion-editorial article:last-child {
+	background:
+		radial-gradient(circle at 28% 22%, rgba(255, 250, 243, 0.5), transparent 14rem),
+		linear-gradient(150deg, #443d35, #b29b7c);
+}
+
+.ac-fashion-editorial article:not(:first-child) p {
+	background: rgba(247, 242, 235, 0.84);
+	margin: 0;
+	padding: var(--ac-spacing-3) var(--ac-spacing-4);
+}
+
+.ac-fashion-story {
+	border-block: 1px solid var(--ac-color-border);
+	display: grid;
+	gap: var(--ac-spacing-8);
+	grid-template-columns: 1fr 0.9fr;
+	padding-block: var(--ac-spacing-10);
+}
+
+.ac-showcase-fashion .ac-product-card {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.ac-showcase-fashion .ac-product-card__media-wrap {
+	background: linear-gradient(145deg, #f0e7dc, #c6b8a5);
+	border-radius: 0;
+}
+
+.ac-showcase-fashion .ac-product-card__body {
+	padding-inline: 0;
+}
+
+.ac-showcase-fashion .ac-product-card__title,
+.ac-showcase-fashion .woocommerce-loop-product__title {
+	font-family: var(--ac-font-heading);
+	font-size: 1.3rem;
+	font-weight: 400;
+	letter-spacing: -0.03em;
+}
+
+.ac-showcase-fashion .ac-product-card .button {
+	background: transparent;
+	border-color: var(--ac-color-primary);
+	color: var(--ac-color-primary);
+	width: 100%;
+}
+
+.ac-showcase-fashion .ac-shop-archive__header,
+.ac-showcase-fashion .ac-cart-page,
+.ac-showcase-fashion .ac-checkout-page,
+.ac-showcase-fashion .woocommerce-account .woocommerce {
+	background: rgba(255, 250, 243, 0.68);
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.ac-showcase-fashion .ac-site-footer {
+	background: var(--ac-color-primary);
+	color: var(--ac-color-background);
+}
+
+@media (max-width: 900px) {
+	.ac-fashion-hero,
+	.ac-fashion-editorial,
+	.ac-fashion-story {
+		grid-template-columns: 1fr;
+	}
+
+	.ac-fashion-hero__art {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 600px) {
+	.ac-fashion-hero h1 {
+		font-size: clamp(3rem, 17vw, 5.2rem);
+	}
+
+	.ac-fashion-hero__art {
+		grid-template-columns: 1fr;
+	}
+
+	.ac-fashion-hero__art span,
+	.ac-fashion-editorial article:not(:first-child) {
+		min-height: 22rem;
+	}
+}
