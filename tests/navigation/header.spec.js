@@ -217,7 +217,9 @@ for ( const theme of [ 'fashion', 'electronics' ] ) {
 			}
 
 			if ( [ 390, 768, 1440 ].includes( width ) ) {
-				await page.evaluate( () => document.activeElement.blur() );
+				await header.evaluate( ( element ) =>
+					element.ownerDocument.activeElement?.blur()
+				);
 				await header.screenshot( {
 					path: info.outputPath( `${ theme }-${ width }.png` ),
 				} );
