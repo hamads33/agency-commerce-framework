@@ -128,13 +128,24 @@ for ( const theme of [ 'fashion', 'electronics' ] ) {
 				await page
 					.locator( '#ac-search-panel input[name="s"]' )
 					.fill( 'CP3 Simple' );
-				await page
-					.locator( '#ac-search-panel input[name="s"]' )
-					.press( 'Enter' );
-				await expect( page ).toHaveURL( /[?&]post_type=product/ );
-				expect( new URL( page.url() ).searchParams.get( 's' ) ).toBe(
-					'CP3 Simple'
-				);
+				await Promise.all( [
+					page.waitForRequest( ( request ) => {
+						const url = new URL( request.url() );
+						return (
+							request.isNavigationRequest() &&
+							url.searchParams.get( 's' ) === 'CP3 Simple' &&
+							url.searchParams.get( 'post_type' ) === 'product'
+						);
+					} ),
+					page
+						.locator( '#ac-search-panel input[name="s"]' )
+						.press( 'Enter' ),
+				] );
+				await expect(
+					page
+						.getByRole( 'heading', { name: 'CP3 Simple Product' } )
+						.first()
+				).toBeVisible();
 				await page.goto( baseURL, { waitUntil: 'domcontentloaded' } );
 			}
 
