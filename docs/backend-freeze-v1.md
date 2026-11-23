@@ -1,6 +1,8 @@
 # BACKEND FREEZE v1 — BLOCKED
 
-Source baseline: `c010ffbfa44781a0edf98e7544c720858e0e25b1`. Audit branch: `audit/backend-freeze`. This document records candidate contracts. It does not certify a freeze or authorize a tag.
+Extended hardening is tracked on `hardening/architecture-production-readiness`. See [current readiness](production-readiness-report.md) for the outstanding freeze gates.
+
+Source baseline: `c010ffbfa44781a0edf98e7544c720858e0e25b1`. Audit branch: `audit/backend-freeze` in the original `agency-commerce-framework/` project folder. Run the gate from that folder. This document records candidate contracts. It does not certify a freeze or authorize a tag.
 
 | Contract | Behavior to preserve |
 | --- | --- |

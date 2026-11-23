@@ -7,4 +7,4 @@
 5. Review runtime and build-machine risks separately. Keep any exception time-bounded and scoped to named tooling.
 6. Complete frontend and customer acceptance before a production release. Record outcomes in the audit and release evidence.
 
-CI automates lint, build, archive verification and the two backend runs. Treat isolated ZIP installation and upgrade/rollback as explicit evidence gates until automated.
+CI automates lint, build, archive verification, clean ZIP installation and two isolated backend runs. Run `npm run test:release` locally for the ZIP smoke. Verify the supported upgrade and rollback paths separately.

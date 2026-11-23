@@ -138,13 +138,15 @@ final class ModeManager {
 	 * @param bool $force Whether to force update.
 	 */
 	private function restore_page_to_block( int $page_id, bool $force ): void {
-		$backup = get_post_meta( $page_id, self::RESTORE_META_KEY, true );
+		$key    = self::RESTORE_META_KEY;
+		$backup = get_post_meta( $page_id, $key, true );
 
-		if ( ! metadata_exists( 'post', $page_id, self::RESTORE_META_KEY ) ) {
-			$backup = get_post_meta( $page_id, self::BACKUP_META_KEY, true );
+		if ( ! is_string( $backup ) || ! metadata_exists( 'post', $page_id, $key ) ) {
+			$key    = self::BACKUP_META_KEY;
+			$backup = get_post_meta( $page_id, $key, true );
 		}
 
-		if ( ! is_string( $backup ) || ( ! metadata_exists( 'post', $page_id, self::RESTORE_META_KEY ) && ! metadata_exists( 'post', $page_id, self::BACKUP_META_KEY ) ) ) {
+		if ( ! is_string( $backup ) || ! metadata_exists( 'post', $page_id, $key ) ) {
 			return;
 		}
 

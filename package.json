@@ -35,7 +35,8 @@
     "visual:compare": "npm run test:visual",
     "test": "npm run build",
     "package": "bash scripts/package-release.sh",
-    "test:backend": "bash scripts/test-backend.sh"
+    "test:backend": "bash scripts/test-backend.sh",
+    "test:release": "bash scripts/test-release.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

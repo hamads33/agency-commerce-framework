@@ -1,6 +1,8 @@
 # Frontend boundary contract
 
-This is the source-reviewed boundary for planning. Frontend execution remains on hold pending the backend freeze.
+The [architecture component contracts](architecture/component-contracts.md) describe the hook and selector dependencies to carry into the rebuild.
+
+This is the source-reviewed boundary for planning. Frontend execution remains on hold until the [backend freeze gates](backend-freeze-v1.md) pass. Review the [readiness checklist](frontend-rebuild-readiness.md) before applying the presentation changes below.
 
 Paths below are relative to `wp-content/themes/agency-commerce/` unless otherwise stated.
 
