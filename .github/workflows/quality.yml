@@ -68,7 +68,9 @@ jobs:
         if: always()
         with:
           name: backend-logs-${{ matrix.clean-run }}
-          path: ~/.cache/agency-backend/run.*/*.log
+          path: |
+            ~/.cache/agency-backend/run.*/*.log
+            test-results/navigation/**/*.png
           if-no-files-found: ignore
 
   release-install:

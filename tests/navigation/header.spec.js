@@ -103,6 +103,11 @@ for ( const theme of [ 'fashion', 'electronics' ] ) {
 				header.locator( '.ac-site-branding a' )
 			).toBeVisible();
 			await expect( account ).toBeVisible();
+			await expect( account ).toHaveAttribute(
+				'href',
+				/\/my-account\/?$/
+			);
+			await expect( header.locator( '.ac-announcement' ) ).toBeVisible();
 			await expect( cart ).toBeVisible();
 			for ( const control of [ search, account, cart ] ) {
 				const bounds = await control.boundingBox();
@@ -118,15 +123,39 @@ for ( const theme of [ 'fashion', 'electronics' ] ) {
 			await page.keyboard.press( 'Escape' );
 			await expect( search ).toBeFocused();
 
+			if ( width === 1024 ) {
+				await search.click();
+				await page
+					.locator( '#ac-search-panel input[name="s"]' )
+					.fill( 'CP3 Simple' );
+				await page
+					.locator( '#ac-search-panel input[name="s"]' )
+					.press( 'Enter' );
+				await expect( page ).toHaveURL( /[?&]post_type=product/ );
+				expect( new URL( page.url() ).searchParams.get( 's' ) ).toBe(
+					'CP3 Simple'
+				);
+				await page.goto( baseURL, { waitUntil: 'domcontentloaded' } );
+			}
+
 			const desktop = width >= 1120;
 			if ( desktop ) {
 				await expect( menu ).toBeHidden();
 			} else {
+				if ( width === 430 ) {
+					await page.locator( 'html' ).evaluate( ( root ) => {
+						root.dir = 'rtl';
+					} );
+				}
 				await menu.click();
 				const drawer = page.getByRole( 'dialog', {
 					name: 'Mobile menu',
 				} );
 				await expect( drawer ).toBeVisible();
+				if ( width === 430 ) {
+					const bounds = await drawer.boundingBox();
+					expect( bounds.x + bounds.width ).toBeCloseTo( width, 0 );
+				}
 				await expect(
 					drawer.getByRole( 'button', { name: 'Close' } )
 				).toBeFocused();
@@ -152,6 +181,19 @@ for ( const theme of [ 'fashion', 'electronics' ] ) {
 			await expect(
 				nav.getByRole( 'link', { name: 'New arrivals' } )
 			).toBeVisible();
+			const longLabel = nav.getByRole( 'link', {
+				name: 'Collections and seasonal recommendations',
+			} );
+			const labelBounds = await longLabel.boundingBox();
+			expect( labelBounds.x ).toBeGreaterThanOrEqual( 0 );
+			expect( labelBounds.x + labelBounds.width ).toBeLessThanOrEqual(
+				width
+			);
+			if ( width === 1440 ) {
+				await page.screenshot( {
+					path: info.outputPath( theme + '-1440-dropdown.png' ),
+				} );
+			}
 			await page.keyboard.press( 'Escape' );
 			await expect( disclosure ).toBeFocused();
 			await expect(
@@ -164,6 +206,7 @@ for ( const theme of [ 'fashion', 'electronics' ] ) {
 			}
 
 			if ( [ 390, 768, 1440 ].includes( width ) ) {
+				await page.evaluate( () => document.activeElement.blur() );
 				await header.screenshot( {
 					path: info.outputPath( `${ theme }-${ width }.png` ),
 				} );

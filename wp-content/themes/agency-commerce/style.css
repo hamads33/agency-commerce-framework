@@ -1905,6 +1905,11 @@ ul.products.columns-6 {
 	align-self: center;
 }
 
+.ac-menu--desktop li:has(> .ac-submenu-toggle) {
+	column-gap: 0.25rem;
+	grid-template-columns: minmax(min-content, 1fr) auto;
+}
+
 .ac-site-header .wc-block-mini-cart__button:hover,
 .ac-site-header .wc-block-mini-cart__button:focus-visible {
 	background: var(--ac-color-primary-soft);
