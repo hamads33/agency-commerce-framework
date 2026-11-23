@@ -1,0 +1,194 @@
+/*
+Theme Name: Forge
+Description: An editorial child theme for premium product stores.
+Template: agency-commerce
+Version: 1.0.0
+Requires at least: 7.0
+Requires PHP: 8.2
+Text Domain: agency-commerce-forge
+License: GPL-2.0-or-later
+*/
+
+body {
+	--ac-color-background: #f7f3eb;
+	--ac-color-surface: #eee7dc;
+	--ac-color-text: #29231d;
+	--ac-color-muted: #62584e;
+	--ac-color-border: #d9d0c2;
+	--ac-color-primary: #715039;
+	--ac-color-secondary: #29231d;
+	--ac-color-accent: #bf9270;
+	--ac-font-heading: Georgia, "Times New Roman", serif;
+	--ac-container-width: 1344px;
+	--ac-radius-base: 2px;
+	--ac-radius-card: 2px;
+	--ac-radius-button: 2px;
+	--ac-product-image-ratio: 1 / 1;
+}
+
+body,
+html:has(body) {
+	overflow-x: visible;
+}
+
+.ac-site-header .ac-site-title {
+	font-size: clamp(1.4rem, 3vw, 2.15rem);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.ac-announcement {
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.11em;
+}
+
+.forge-section {
+	margin-inline: auto;
+	padding: clamp(2.75rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem);
+	max-inline-size: 88rem;
+}
+
+.forge-hero {
+	display: grid;
+	grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+	min-block-size: min(40rem, 68vh);
+	background: #eae1d4;
+}
+
+.forge-hero__copy {
+	align-self: center;
+	padding: clamp(2rem, 6vw, 7rem) clamp(1rem, 5vw, 6rem);
+}
+
+.forge-hero h1,
+.forge-section h2,
+.woocommerce .product_title,
+.ac-shop-archive__header h1 {
+	font-family: var(--ac-font-heading);
+	font-weight: 400;
+	letter-spacing: -0.045em;
+	line-height: 1.02;
+}
+
+.forge-hero h1 {
+	font-size: clamp(3rem, 6.5vw, 7.3rem);
+	margin: 0.25em 0;
+	max-inline-size: 10ch;
+}
+
+.forge-hero p,
+.forge-section p {
+	max-inline-size: 52ch;
+}
+
+.forge-kicker {
+	color: var(--ac-color-primary);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.forge-hero__image {
+	margin: 0;
+	min-inline-size: 0;
+}
+
+.forge-hero__image img {
+	block-size: 100%;
+	display: block;
+	inline-size: 100%;
+	object-fit: cover;
+}
+
+.forge-section h2 {
+	font-size: clamp(2rem, 4.5vw, 4.5rem);
+	margin: 0 0 1rem;
+}
+
+.forge-button {
+	background: var(--ac-color-secondary);
+	color: var(--ac-color-background);
+	display: inline-flex;
+	align-items: center;
+	min-block-size: 2.75rem;
+	padding: 0.65rem 1.25rem;
+	text-decoration: none;
+}
+
+.forge-button:hover,
+.forge-button:focus-visible {
+	background: var(--ac-color-primary);
+	color: var(--ac-color-background);
+}
+
+.forge-collections {
+	display: grid;
+	gap: clamp(0.75rem, 2vw, 1.5rem);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.forge-collection {
+	color: var(--ac-color-text);
+	display: block;
+	font-family: var(--ac-font-heading);
+	font-size: clamp(1.1rem, 2.5vw, 1.75rem);
+	text-decoration: none;
+}
+
+.forge-collection img {
+	aspect-ratio: 4 / 3;
+	display: block;
+	inline-size: 100%;
+	margin-block-end: 0.45rem;
+	object-fit: cover;
+}
+
+.forge-editorial {
+	background: var(--ac-color-surface);
+	display: grid;
+	gap: clamp(1rem, 5vw, 5rem);
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	align-items: center;
+}
+
+.forge-editorial img {
+	display: block;
+	inline-size: 100%;
+	object-fit: cover;
+}
+
+.forge-notes {
+	border-block-start: 1px solid var(--ac-color-border);
+}
+
+.ac-product-card {
+	box-shadow: none;
+	border-color: var(--ac-color-border);
+}
+
+.ac-product-layout__summary {
+	padding: clamp(1rem, 3vw, 3rem);
+}
+
+.woocommerce-product-gallery .woocommerce-product-gallery__image img {
+	background: var(--ac-color-surface);
+}
+
+@media (max-width: 47.99em) {
+	.forge-hero,
+	.forge-editorial {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.forge-hero__image img {
+		aspect-ratio: 3 / 2;
+		block-size: auto;
+	}
+
+	.forge-collections {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
