@@ -187,7 +187,8 @@ final class Manager {
 
 		foreach ( $ids as $product_id ) {
 			$post = get_post( $product_id );
-			if ( ! $post || 'publish' !== $post->post_status || '' !== $post->post_password ) {
+			if ( ! $post || 'publish' !== $post->post_status || '' !== $post->post_password
+				|| ( $post->post_parent && '' !== get_post_field( 'post_password', $post->post_parent ) ) ) {
 				continue;
 			}
 

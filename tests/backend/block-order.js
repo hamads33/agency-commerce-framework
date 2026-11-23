@@ -39,11 +39,11 @@ async function run() {
 			$coupon->set_amount( '5' );
 			$coupon->save();
 			$product = wc_get_product( get_page_by_path( 'cp3-variable-product', OBJECT, 'product' )->ID );
-			echo wp_json_encode( $product->get_children() );
+			echo wp_json_encode( array( $product->get_children()[0], wc_get_product_id_by_sku( 'CP3-SIMPLE' ) ) );
 		` )
 	);
-	const [ variationId ] = fixtures;
-	assert.ok( variationId > 0 );
+	const [ variationId, stockedProductId ] = fixtures;
+	assert.ok( variationId > 0 && stockedProductId > 0 );
 
 	let token;
 	async function request( path, body, status = 200 ) {
@@ -67,6 +67,16 @@ async function run() {
 
 	await request( 'cart' );
 	assert.ok( token, 'Guest cart token missing.' );
+	const excessiveQuantity = await request(
+		'cart/add-item',
+		{ id: stockedProductId, quantity: 999 },
+		400
+	);
+	assert.equal(
+		excessiveQuantity.code,
+		'woocommerce_rest_product_partially_out_of_stock'
+	);
+	assert.equal( ( await request( 'cart' ) ).items.length, 0 );
 	const added = await request(
 		'cart/add-item',
 		{ id: variationId, quantity: 1 },
@@ -97,6 +107,17 @@ async function run() {
 		email,
 		phone: '4155550100',
 	};
+	const invalid = await request(
+		'checkout',
+		{
+			billing_address: { ...billing, email: 'invalid-email' },
+			payment_method: 'cod',
+			payment_data: [],
+		},
+		400
+	);
+	assert.equal( invalid.code, 'rest_invalid_param' );
+	assert.match( JSON.stringify( invalid.data.details ), /email/i );
 	const checkout = await request(
 		'checkout',
 		{

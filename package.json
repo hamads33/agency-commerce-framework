@@ -16,7 +16,7 @@
     "env:cli": "wp-env run cli --",
     "env:setup": "wp-env run cli -- sh -c 'wp plugin is-installed woocommerce && wp plugin activate woocommerce || wp plugin install https://downloads.wordpress.org/plugin/woocommerce.10.9.4.zip --activate'",
     "build": "wp-scripts build tooling/assets/frontend.js tooling/assets/catalog.js tooling/assets/index.js --output-path=wp-content/themes/agency-commerce/build && wp-scripts build tooling/assets/admin.js tooling/assets/blocks.js tooling/assets/checkout.js tooling/assets/recently-viewed.js --output-path=wp-content/plugins/agency-commerce-core/build",
-    "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright tests/visual tests/showcase scripts",
+    "lint:js": "wp-scripts lint-js tooling/assets tooling/playwright tests/backend tests/visual tests/showcase scripts",
     "test:admin": "node tooling/playwright/admin-settings.js",
     "test:storefront": "node tooling/playwright/storefront.js",
     "test:homepage": "CP5_SUITE=homepage node tooling/playwright/cp5-commerce.js",

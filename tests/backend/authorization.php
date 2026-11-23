@@ -14,14 +14,16 @@ $order = wc_create_order( array( 'customer_id' => $owner ) );
 if ( is_wp_error( $order ) ) {
 	WP_CLI::error( $order->get_error_message() );
 }
+$path = '/wc/store/v1/order/' . $order->get_id();
 wp_set_current_user( $owner );
 $allowed = current_user_can( 'view_order', $order->get_id() );
+$owner_response = rest_do_request( new WP_REST_Request( 'GET', $path ) );
 wp_set_current_user( $other );
 $denied = ! current_user_can( 'view_order', $order->get_id() );
-$request = new WP_REST_Request( 'GET', '/wc/store/v1/order/' . $order->get_id() );
+$request = new WP_REST_Request( 'GET', $path );
 $request->set_param( 'key', $order->get_order_key() );
 $response = rest_do_request( $request );
-if ( ! $allowed || ! $denied || $response->get_status() < 400 ) {
+if ( ! $allowed || 200 !== $owner_response->get_status() || ! $denied || 403 !== $response->get_status() ) {
 	WP_CLI::error( 'Cross-customer order access contract failed.' );
 }
 
