@@ -27,5 +27,7 @@ final class Version4 implements SettingsMigrationInterface {
 	 * installations receive those keys from defaults, so no stored values are
 	 * rewritten here.
 	 */
-	public function run(): void {}
+	public function run(): bool {
+		return true;
+	}
 }

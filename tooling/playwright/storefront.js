@@ -242,7 +242,7 @@ function setSettingsPatch( patch ) {
 	);
 }
 
-function seedCommerceFeatures() {
+function seedCommerceFeatures( productId ) {
 	setSettingsPatch( {
 		shop: {
 			card_variant: 'product-card-compact',
@@ -273,20 +273,20 @@ function seedCommerceFeatures() {
 		},
 	} );
 
-	setPostDateNow( 14 );
-	setMeta( 14, '_manage_stock', true );
-	setMeta( 14, '_stock_status', 'instock' );
-	setMeta( 14, '_stock', 3 );
-	setMeta( 14, '_total_sales', 99 );
-	setMeta( 14, '_agency_commerce_badge_new', 'show' );
-	setMeta( 14, '_agency_commerce_badge_best_seller', 'show' );
-	setMeta( 14, '_agency_commerce_badge_limited', 'show' );
-	setMeta( 14, '_agency_commerce_badge_custom_labels', [
+	setPostDateNow( productId );
+	setMeta( productId, '_manage_stock', true );
+	setMeta( productId, '_stock_status', 'instock' );
+	setMeta( productId, '_stock', 3 );
+	setMeta( productId, '_total_sales', 99 );
+	setMeta( productId, '_agency_commerce_badge_new', 'show' );
+	setMeta( productId, '_agency_commerce_badge_best_seller', 'show' );
+	setMeta( productId, '_agency_commerce_badge_limited', 'show' );
+	setMeta( productId, '_agency_commerce_badge_custom_labels', [
 		'Editor pick',
 		'Limited run',
 	] );
 	setMeta(
-		14,
+		productId,
 		'_agency_commerce_delivery_message',
 		'Ships in 2-3 business days.'
 	);
@@ -408,9 +408,9 @@ async function verifyShopBadges( page ) {
 	);
 }
 
-async function verifyBadgeMigrationAndLegacyCompatibility( page ) {
+async function verifyBadgeMigrationAndLegacyCompatibility( page, productId ) {
 	const migrated = runWpEval(
-		`$value = get_post_meta( 14, '_agency_commerce_badge_custom_labels', true );
+		`$value = get_post_meta( ${ productId }, '_agency_commerce_badge_custom_labels', true );
 		echo wp_json_encode( array( 'is_array' => is_array( $value ), 'value' => $value ) );`
 	);
 	const migratedValue = parseJsonOutput( migrated );
@@ -424,7 +424,7 @@ async function verifyBadgeMigrationAndLegacyCompatibility( page ) {
 		);
 	}
 
-	setMeta( 14, '_agency_commerce_badge_custom_labels', [
+	setMeta( productId, '_agency_commerce_badge_custom_labels', [
 		'Legacy array badge',
 		'Legacy second badge',
 	] );
@@ -445,7 +445,7 @@ async function verifyBadgeMigrationAndLegacyCompatibility( page ) {
 	);
 
 	setMeta(
-		14,
+		productId,
 		'_agency_commerce_badge_custom_labels',
 		'Editor pick\nLimited run'
 	);
@@ -718,7 +718,18 @@ let browser;
 	setTheme( 'agency-commerce' );
 	setPluginState( 'activate', 'agency-commerce-core' );
 	setPluginState( 'activate', 'woocommerce' );
-	seedCommerceFeatures();
+	const productId = Number(
+		runWpEval(
+			'echo (int) ( get_page_by_path( "cp3-simple-product", OBJECT, "product" )->ID ?? 0 );'
+		)
+			.trim()
+			.split( /\r?\n/ )
+			.pop()
+	);
+	if ( ! Number.isInteger( productId ) || productId <= 0 ) {
+		throw new Error( 'Missing CP3 simple product fixture.' );
+	}
+	seedCommerceFeatures( productId );
 
 	browser = await chromium.launch();
 	const page = await browser.newPage();
@@ -729,7 +740,7 @@ let browser;
 		await verifySocialLinks( page );
 		await verifyBuiltAssets( page );
 		await verifyShopBadges( page );
-		await verifyBadgeMigrationAndLegacyCompatibility( page );
+		await verifyBadgeMigrationAndLegacyCompatibility( page, productId );
 		await verifySimpleProductExtensions( page );
 		await verifyVariableProductWhatsApp( page );
 		await verifySearchBehaviour( page );

@@ -19,7 +19,7 @@ interface SettingsMigrationInterface {
 	public function version(): int;
 
 	/**
-	 * Runs the migration.
+	 * Runs the migration and reports whether its data changes completed.
 	 */
-	public function run(): void;
+	public function run(): bool;
 }

@@ -27,5 +27,7 @@ final class Version1 implements SettingsMigrationInterface {
 	 * current settings option shape. Existing installations must keep their
 	 * option values untouched when schema versioning is introduced.
 	 */
-	public function run(): void {}
+	public function run(): bool {
+		return true;
+	}
 }

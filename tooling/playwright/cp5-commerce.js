@@ -2,6 +2,7 @@
 const { chromium } = require( 'playwright' );
 const { execFileSync } = require( 'child_process' );
 const path = require( 'path' );
+const { randomUUID } = require( 'node:crypto' );
 
 const repoRoot = path.resolve( __dirname, '..', '..' );
 const baseUrl = process.env.WP_BASE_URL || 'http://localhost:8888';
@@ -90,8 +91,9 @@ function updateSettings( patch ) {
 }
 
 function seedFixtures() {
-	runWpEval(
-		`$htaccess = ABSPATH . '.htaccess';
+	const productId = parseJsonOutput(
+		runWpEval(
+			`$htaccess = ABSPATH . '.htaccess';
 		if ( ! file_exists( $htaccess ) ) {
 			file_put_contents(
 				$htaccess,
@@ -178,7 +180,21 @@ function seedFixtures() {
 					),
 				) );
 			}
+			$product_id = wc_get_product_id_by_sku( 'agency-cp5-cart-fixture' );
+			if ( ! $product_id ) {
+				$product = new WC_Product_Simple();
+				$product->set_name( 'CP5 Cart Fixture' );
+				$product->set_sku( 'agency-cp5-cart-fixture' );
+				$product->set_regular_price( '25' );
+				$product->set_status( 'publish' );
+				$product->set_virtual( true );
+				$product_id = $product->save();
+			}
+			echo wp_json_encode( $product_id );
+		} else {
+			WP_CLI::error( 'WooCommerce must be active for CP5 commerce tests.' );
 		}`
+		)
 	);
 
 	updateSettings( {
@@ -205,6 +221,7 @@ function seedFixtures() {
 			count: 4,
 		},
 	} );
+	return productId;
 }
 
 function attachErrorCollectors( page ) {
@@ -306,10 +323,10 @@ async function verifyHomepage( page ) {
 	}
 }
 
-async function verifyCart( page ) {
+async function verifyCart( page, productId ) {
 	await load( page, `${ baseUrl }/cart/`, 'empty cart' );
 
-	await addProductToCart( page, 14 );
+	await addProductToCart( page, productId );
 	await load( page, `${ baseUrl }/cart/`, 'populated cart' );
 	await page.waitForSelector( '.wc-block-components-product-name' );
 	await page.waitForSelector(
@@ -333,9 +350,9 @@ async function verifyCart( page ) {
 	}
 }
 
-async function verifyCheckoutBlock( page ) {
+async function verifyCheckoutBlock( page, productId ) {
 	updateSettings( { checkout: { mode: 'block', minimum_order_amount: 0 } } );
-	await addProductToCart( page, 14 );
+	await addProductToCart( page, productId );
 	await load( page, `${ baseUrl }/checkout/`, 'block checkout' );
 	await page.waitForSelector( '.wp-block-woocommerce-checkout' );
 
@@ -391,10 +408,81 @@ async function verifyAccount( page ) {
 	if ( ! hasAccountSurface ) {
 		throw new Error( 'Expected WooCommerce My Account surface.' );
 	}
+
+	const registrationSettings = {
+		woocommerce_enable_myaccount_registration: 'yes',
+		woocommerce_registration_generate_username: 'yes',
+		woocommerce_registration_generate_password: 'no',
+	};
+	const previous = parseJsonOutput(
+		runWpEval( `$settings = json_decode( '${ JSON.stringify(
+			registrationSettings
+		) }', true );
+		$previous = array();
+		foreach ( $settings as $name => $value ) {
+			$previous[$name] = get_option( $name );
+			update_option( $name, $value );
+		}
+		echo wp_json_encode( $previous );` )
+	);
+	const email = `agency-account-${ randomUUID() }@example.test`;
+	const password = `LocalFixture!${ randomUUID() }`;
+	try {
+		await load( page, `${ baseUrl }/my-account/`, 'account registration' );
+		const register = page.locator( '.woocommerce-form-register' );
+		await register.locator( '[name="email"]' ).fill( email );
+		await register
+			.locator( '[name="password"]' )
+			.pressSequentially( password );
+		await register.locator( '[name="register"]' ).click();
+		await page
+			.locator( '.woocommerce-MyAccount-navigation, .woocommerce-error' )
+			.first()
+			.waitFor();
+		if ( await page.locator( '.woocommerce-error' ).count() ) {
+			throw new Error(
+				await page.locator( '.woocommerce-error' ).first().innerText()
+			);
+		}
+
+		const user = parseJsonOutput(
+			runWpEval( `$user = get_user_by( 'email', '${ email }' );
+			echo wp_json_encode( $user ? array( 'roles' => $user->roles, 'email' => $user->user_email ) : null );` )
+		);
+		if ( user?.email !== email || ! user.roles.includes( 'customer' ) ) {
+			throw new Error(
+				'Registration did not persist a WooCommerce customer.'
+			);
+		}
+
+		await page.context().clearCookies();
+		await load( page, `${ baseUrl }/my-account/`, 'customer login' );
+		const login = page.locator( '.woocommerce-form-login' );
+		await login.locator( '[name="username"]' ).fill( email );
+		await login.locator( '[name="password"]' ).fill( password );
+		await login.locator( '[name="login"]' ).click();
+		await page.locator( '.woocommerce-MyAccount-navigation' ).waitFor();
+	} finally {
+		runWpEval( `$settings = json_decode( '${ JSON.stringify(
+			previous
+		) }', true );
+		foreach ( $settings as $name => $value ) {
+			if ( false === $value ) {
+				delete_option( $name );
+			} else {
+				update_option( $name, $value );
+			}
+		}
+		$user = get_user_by( 'email', '${ email }' );
+		if ( $user ) {
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+			wp_delete_user( $user->ID );
+		}` );
+	}
 }
 
 async function main() {
-	seedFixtures();
+	const productId = seedFixtures();
 
 	const browser = await chromium.launch();
 	try {
@@ -406,9 +494,9 @@ async function main() {
 		if ( 'homepage' === suite ) {
 			await verifyHomepage( page );
 		} else if ( 'cart' === suite ) {
-			await verifyCart( page );
+			await verifyCart( page, productId );
 		} else if ( 'checkout-block' === suite ) {
-			await verifyCheckoutBlock( page );
+			await verifyCheckoutBlock( page, productId );
 		} else if ( 'checkout-classic' === suite ) {
 			await verifyCheckoutClassic( page );
 		} else if ( 'account' === suite ) {

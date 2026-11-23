@@ -25,7 +25,7 @@ final class Version3 implements SettingsMigrationInterface {
 	/**
 	 * Runs the migration.
 	 */
-	public function run(): void {
+	public function run(): bool {
 		$product_ids = get_posts(
 			array(
 				'fields'         => 'ids',
@@ -39,13 +39,17 @@ final class Version3 implements SettingsMigrationInterface {
 		foreach ( $product_ids as $product_id ) {
 			$raw = get_post_meta( (int) $product_id, BadgeManager::CUSTOM_BADGES_META_KEY, true );
 
-			if ( is_array( $raw ) ) {
-				update_post_meta(
-					(int) $product_id,
-					BadgeManager::CUSTOM_BADGES_META_KEY,
-					BadgeManager::sanitize_badge_labels_for_storage( $raw )
-				);
+			if ( ! is_array( $raw ) ) {
+				continue;
+			}
+
+			$expected = BadgeManager::sanitize_badge_labels_for_storage( $raw );
+			if ( ! update_post_meta( (int) $product_id, BadgeManager::CUSTOM_BADGES_META_KEY, wp_slash( $expected ) )
+				&& get_post_meta( (int) $product_id, BadgeManager::CUSTOM_BADGES_META_KEY, true ) !== $expected ) {
+				return false;
 			}
 		}
+
+		return true;
 	}
 }

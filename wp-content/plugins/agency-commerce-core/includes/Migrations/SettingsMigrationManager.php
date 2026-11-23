@@ -36,8 +36,13 @@ final class SettingsMigrationManager {
 				continue;
 			}
 
-			$migration->run();
-			update_option( self::OPTION_NAME, $version, false );
+			if ( ! $migration->run() ) {
+				return;
+			}
+
+			if ( ! update_option( self::OPTION_NAME, $version, false ) && $this->installed_version() < $version ) {
+				return;
+			}
 			agency_commerce_core_flush_settings_cache();
 		}
 	}

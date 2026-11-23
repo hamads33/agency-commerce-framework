@@ -28,5 +28,7 @@ final class Version2 implements SettingsMigrationInterface {
 	 * memoized settings helper layer. This migration therefore only marks the
 	 * new schema version.
 	 */
-	public function run(): void {}
+	public function run(): bool {
+		return true;
+	}
 }

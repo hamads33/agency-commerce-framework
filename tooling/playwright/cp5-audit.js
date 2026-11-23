@@ -370,23 +370,35 @@ async function verifyClassicCheckout( page, productId ) {
 
 	await page.locator( '#place_order' ).click();
 	await page.waitForURL( /order-received/, { timeout: 30000 } );
+	const orderId = Number(
+		new URL( page.url() ).pathname.match( /order-received\/(\d+)/ )?.[ 1 ]
+	);
+	if ( ! Number.isSafeInteger( orderId ) || orderId <= 0 ) {
+		throw new Error( 'Classic checkout did not return an order ID.' );
+	}
 
 	const order = parseJsonOutput(
 		runWpEval(
-			`$orders = wc_get_orders( array( 'limit' => 1, 'orderby' => 'date', 'order' => 'DESC' ) );
-			$order = $orders ? $orders[0] : null;
+			`$order = wc_get_order( ${ orderId } );
+			$items = $order ? array_values( $order->get_items() ) : array();
 			echo wp_json_encode( array(
 				'orderId' => $order ? $order->get_id() : 0,
 				'paymentMethod' => $order ? $order->get_payment_method() : '',
 				'supportMeta' => $order ? $order->get_meta( '_agency_commerce_checkout_support_text' ) : '',
+				'email' => $order ? $order->get_billing_email() : '',
+				'productId' => $items ? $items[0]->get_product_id() : 0,
+				'quantity' => $items ? $items[0]->get_quantity() : 0,
 			) );`
 		)
 	);
 
 	if (
-		! order.orderId ||
+		orderId !== order.orderId ||
 		'cod' !== order.paymentMethod ||
-		! order.supportMeta
+		'Audit support context.' !== order.supportMeta ||
+		'cp5-audit@example.test' !== order.email ||
+		productId !== order.productId ||
+		1 !== order.quantity
 	) {
 		throw new Error(
 			`Classic checkout order verification failed: ${ JSON.stringify(
