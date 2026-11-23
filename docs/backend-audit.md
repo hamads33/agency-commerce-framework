@@ -15,7 +15,7 @@ The raw command logs are in `/tmp/agency-backend-audit/`. Browser commands were 
 
 | Command | Recorded preflight outcome |
 | --- | --- |
-| `npm ci` | Engine warning and registry/audit-metadata delay. Original process was stopped and installation retried successfully (exit 0) from the same lockfile with `--no-audit --prefer-offline`. |
+| `npm ci` | Engine warning and registry/audit-metadata delay. Original process was stopped and installation retried successfully with `--no-audit --prefer-offline`. A fresh, separate dependency directory subsequently passed exact `npm ci` with Node 24.14.0 and npm 11.9.0. |
 | `composer install` | Host executable missing. Container retry with the WordPress PHP 8.3 image and its ZIP extension installed the locked packages. The generic PHP image lacked ZIP/unzip. |
 | `composer lint:php` | Passed inside PHP 8.3.33 for PHP under `wp-content`. |
 | `composer lint` | Passed inside the WordPress PHP 8.3 container after the locked Composer install. |
@@ -45,3 +45,31 @@ The raw command logs are in `/tmp/agency-backend-audit/`. Browser commands were 
 ## Isolated fallback
 
 A separate Docker Compose instance installed WordPress 7.0.1, activated WooCommerce 10.9.4 and Agency Commerce Core, and switched to the parent theme. It used PHP 8.3.36 and MariaDB 11.4.13 with a loopback-only HTTP binding. A pre-fixture SQL export was saved at `~/.cache/agency-backend-audit/fallback/before-fixtures.sql`. A second fallback used the same releases and a container volume for the WordPress files. It exported its own pre-fixture SQL to `~/.cache/agency-backend-audit/fallback/fast-before-fixtures.sql`. An early WooCommerce textdomain loading notice appeared during theme activation. The fallback uses the repository's WordPress and WooCommerce versions and different container wiring from wp-env.
+
+## Live fallback results
+
+The WordPress and WooCommerce releases matched the repository pins. The fallback MariaDB, Apache container and WP-CLI wiring differed from wp-env. Browser runs used the locked Playwright 1.61.1 and its Chromium headless shell revision 1228. Build and JavaScript lint also passed after provisioning the intended Node 24.14.0 and npm 11.9.0. PHP syntax lint and PHPCS passed after the migration fix.
+
+| Check | Result |
+| --- | --- |
+| `test:admin` | Partial evidence. Saved and rendered all nine header, footer, product-card and product-layout variants. The 210-second runner limit closed the browser during the later persistence pass, before preset apply/rollback validation. |
+| `test:storefront` | Partial evidence. Reached the inactive-state cleanup after social links, built assets, badges and legacy migration, delivery, variable WhatsApp, search, compatibility helpers and responsive checks. The 235-second runner limit interrupted theme restoration in the cleanup path. A second run hit its 210-second limit while opening the inactive-state browser context. The suite has no complete exit-zero run. |
+| `test:homepage` | PASS. Checked block/pattern registration and homepage rendering. |
+| `test:cart-flow` | PASS. Checked empty and populated cart and quantity controls. |
+| `test:checkout-block` | PASS after fixing the hard-coded product ID. Earlier attempts selected a variable parent or out-of-stock product and WooCommerce rejected the add. |
+| `test:checkout-classic` | PASS on the volume-backed fallback. Checked page switching, backup presence and rendering. A separate slower fallback attempt timed out. |
+| `test:account` | PASS after making the registration test emit the password input events WooCommerce listens for. Verified registration, stored customer role and login. |
+| `test:cp5-audit` | PASS on retry. Covered repeated mode switching and backup restore, unauthorized/invalid mode handling, recently viewed restrictions, Classic minimum-order rejection and a local COD order. Independent WooCommerce CRUD read of order 49 confirmed guest ownership, $25.00 total, one $25 line, zero shipping and tax, and framework support metadata. |
+| Store API COD order | PASS. Verified guest variation add/update/remove, coupon, exact total and persisted order. |
+| Parent theme inactive | PASS in a focused WordPress check. Core and WooCommerce stayed active under Twenty Twenty-Five, and recently viewed used its theme-independent renderer. The parent theme was restored afterward. |
+| Preset manager | PASS in a focused WordPress test. Preserved the complete settings snapshot and restored both effective settings and the previous active preset. This covers manager behavior, while the admin UI flow remains partial. |
+| Product metadata save | PASS. Rejected subscriber and invalid nonce writes. Persisted sanitized values for an administrator. |
+| Migration recovery | PASS after the backend fix. Fault injection rejected both badge data and schema-marker writes in separate runs. The previous marker was retained, retry completed and the saved settings fixture was preserved. |
+| Public recently viewed and admin authentication | PASS in a focused HTTP check. Valid request returned product markup with no-store caching. Invalid IDs and over-limit input returned 400. A guest settings POST redirected to WordPress login. Guest requests for the Classic order through the WooCommerce REST and Store APIs and for the REST customer collection returned 401 with no fixture personal data. |
+| Visual and showcase review | Discovery passed with 24 visual cases and 63 showcase cases. Screenshot assertions were outside the verified backend results. |
+
+Audit code commit: `2a7cda123cc781575d80b44c477e3d230fa4e134`. The source baseline remains `c010ffbfa44781a0edf98e7544c720858e0e25b1`. Persistent evidence is in `~/.cache/agency-backend-audit/logs/`. Neither commit was tagged as a verified freeze.
+
+## Freeze decision
+
+The isolated fallback verified both order paths and migration recovery. The repository wp-env gate is still unverified end to end. The admin and storefront suites have partial evidence and require complete runs. The remaining security gaps include authenticated cross-customer isolation and broader administrative authorization and sanitization cases. Keep frontend readiness on hold until these gates are closed.
