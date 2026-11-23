@@ -17,7 +17,15 @@ Baseline `c1bf9e0`. Earlier evidence is in [the Phase 1A audit](backend-audit.md
 | `npm run test:admin` on disposable Compose | Exit 0. Completed variant persistence and preset checks. |
 | `npm run test:storefront` on disposable Compose | Exit 0 on the packaged store. Exercised badge migration, delivery, variation enquiries, search, child theme and plugin fallbacks. |
 | GitHub wp-env matrix on `861dd18` | Both runs reached assertions. All backend fixtures and seven browser suites passed. Admin failed because the WooCommerce first-run wizard hid the admin bar on the initial login. The isolated test setup now disables only that automatic redirect. |
+| `npm run test:cp5-audit` on installed release ZIPs | Exit 0 with HPOS. Exercised Classic checkout, minimum-order rejection, mode transitions and a stored local COD order. |
+| Authenticated My Account browser check | Exit 0. A customer could open their own order. Another customer’s order showed the rejection and exposed none of its fixture billing data. |
 | Prior code regression and plugin ZIP upgrade/rollback | Prior code failed the checkout snapshot regression as expected. Reinstalled the hardened ZIP and verified schema 2-to-4 migration, legacy badge conversion, preserved settings and the existing HPOS order. Reinstalled the previous Git snapshot's ZIP and rechecked them. Both package manifests reported 1.0.0, so this was a code snapshot rehearsal. |
 | Bounded catalogue sample | Two fresh PHP processes each read 24 products in 8 queries. The cold rendering pass issued 26 queries and took 170–227 ms. The second pass within each process issued zero queries and took 105–136 ms. No persistent cache was introduced. |
 
 Repeat the performance sample on a disposable database containing 24 or more simple products with `wp eval-file` and [the sampler](../tests/backend/catalogue-performance.php). Log the product count, read and render queries and elapsed time together. CLI timings exclude full HTTP and browser rendering. Query traces attributed most cold render reads to WooCommerce’s custom metadata loader for badge overrides. Persistent caching was deferred to preserve WooCommerce CRUD and invalidation behavior.
+
+## Verified freeze evidence
+
+[GitHub Actions run 45112073102](https://github.com/hamads33/agency-commerce-framework/actions/runs/45112073102) concluded success on `6a9e9d7f7b98dd7c96b083ec4ce5150a83a2220b`. Both fresh wp-env jobs exited 0 and each reported all eight browser suites passing. The fast and clean ZIP installation jobs also exited 0. The hosted WordPress stack reported PHP 8.3.37, WordPress 7.0.1 and WooCommerce 10.9.4. Workflow logs and artifacts include the two isolated backend runs.
+
+The local native release runner reached image building but exited 124 at the diagnostic limit. The equivalent hosted release-install job passed. A local retry of the batched storefront suite timed out waiting for network idle, while the bundled-store run and both hosted storefront runs passed. The freeze uses the verified hosted runs.

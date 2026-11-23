@@ -1,8 +1,8 @@
-# BACKEND FREEZE v1 — BLOCKED
+# BACKEND FREEZE v1 — PASS
 
-Extended hardening is tracked on `hardening/architecture-production-readiness`. See [current readiness](production-readiness-report.md) for the outstanding freeze gates.
+Extended hardening is tracked on `hardening/architecture-production-readiness`. See [current readiness](production-readiness-report.md) for the production release gates.
 
-Source baseline: `c010ffbfa44781a0edf98e7544c720858e0e25b1`. Audit branch: `audit/backend-freeze` in the original `agency-commerce-framework/` project folder. Run the gate from that folder. This document records candidate contracts. It does not certify a freeze or authorize a tag.
+Source baseline: `c010ffbfa44781a0edf98e7544c720858e0e25b1`. Hardening branch: `hardening/architecture-production-readiness` in the original `agency-commerce-framework/` project folder. Run the gate from that folder. The `backend-freeze-v1` tag identifies verified commit `6a9e9d7f7b98dd7c96b083ec4ce5150a83a2220b`. Both clean wp-env jobs, fast checks and clean ZIP installation passed on [GitHub Actions](https://github.com/hamads33/agency-commerce-framework/actions/runs/45112073102). CI verified WordPress 7.0.1, WooCommerce 10.9.4, PHP 8.3.37, Node 24.14.0 and npm 11.9.0.
 
 | Contract | Behavior to preserve |
 | --- | --- |
