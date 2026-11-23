@@ -1,0 +1,62 @@
+name: Framework quality
+on:
+  pull_request:
+  push:
+    branches: [main, 'hardening/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fast:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+      - run: npm ci
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer lint:php && composer lint
+      - run: find tests/backend -name '*.php' -exec php -l '{}' +
+      - run: npm run lint:js
+      - run: npm run build
+      - run: git diff --exit-code -- wp-content
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wordpress-release-candidates
+          path: build/release/*.zip
+          if-no-files-found: error
+
+  backend:
+    needs: fast
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        clean-run: [1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run test:backend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-logs-${{ matrix.clean-run }}
+          path: ~/.cache/agency-backend/run.*/*.log
+          if-no-files-found: ignore
