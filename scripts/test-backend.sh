@@ -20,7 +20,7 @@ unset WP_ENV_MYSQL_PORT WP_ENV_PHPMYADMIN_PORT
 printf 'Backend run artifacts: %s\n' "$run_dir"
 
 trap 'npm run env:stop > "$run_dir/stop.log" 2>&1 || true' EXIT
-npm run env:start
+npm run env:start -- --debug --no-scripts 2>&1 | tee "$run_dir/start.log"
 wp() { npm run env:cli -- wp "$@"; }
 
 wp plugin activate woocommerce agency-commerce-core
@@ -41,10 +41,10 @@ wp eval "$(sed '1d' tests/backend/catalogue.php)"
 wp rewrite structure '/%postname%/' --hard
 
 status=0
-wp eval "$(sed '1d' tests/backend/product-settings.php)" > "$run_dir/product-settings.log" 2>&1 || status=1
-cat "$run_dir/product-settings.log"
-wp eval "$(sed '1d' tests/backend/migration-recovery.php)" > "$run_dir/migration.log" 2>&1 || status=1
-cat "$run_dir/migration.log"
+for fixture in product-settings migration-recovery page-and-catalogue-protection authorization; do
+	wp eval "$(sed '1d' "tests/backend/$fixture.php")" > "$run_dir/$fixture.log" 2>&1 || status=1
+	cat "$run_dir/$fixture.log"
+done
 node tests/backend/block-order.js > "$run_dir/block-order.log" 2>&1 || status=1
 cat "$run_dir/block-order.log"
 for suite in admin storefront homepage cart-flow checkout-block checkout-classic account cp5-audit; do

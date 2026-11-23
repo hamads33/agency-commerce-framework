@@ -108,15 +108,18 @@ final class ModeManager {
 
 		$current_content = (string) $post->post_content;
 
-		if ( ! get_post_meta( $page_id, self::BACKUP_META_KEY, true ) ) {
-			update_post_meta( $page_id, self::BACKUP_META_KEY, $current_content );
-		}
-
 		if ( ! $this->contents_match( $current_content, $shortcode ) ) {
-			update_post_meta( $page_id, self::RESTORE_META_KEY, $current_content );
-		}
+			if ( ! metadata_exists( 'post', $page_id, self::BACKUP_META_KEY ) ) {
+				add_post_meta( $page_id, self::BACKUP_META_KEY, wp_slash( $current_content ), true );
+				if ( ! metadata_exists( 'post', $page_id, self::BACKUP_META_KEY ) ) {
+					return;
+				}
+			}
 
-		if ( ! $force && $this->contents_match( $current_content, $shortcode ) ) {
+			if ( ! $this->store_page_content( $page_id, self::RESTORE_META_KEY, $current_content ) ) {
+				return;
+			}
+		} elseif ( ! $force ) {
 			return;
 		}
 
@@ -137,11 +140,11 @@ final class ModeManager {
 	private function restore_page_to_block( int $page_id, bool $force ): void {
 		$backup = get_post_meta( $page_id, self::RESTORE_META_KEY, true );
 
-		if ( ! is_string( $backup ) || '' === trim( $backup ) ) {
+		if ( ! metadata_exists( 'post', $page_id, self::RESTORE_META_KEY ) ) {
 			$backup = get_post_meta( $page_id, self::BACKUP_META_KEY, true );
 		}
 
-		if ( ! is_string( $backup ) || '' === trim( $backup ) ) {
+		if ( ! is_string( $backup ) || ( ! metadata_exists( 'post', $page_id, self::RESTORE_META_KEY ) && ! metadata_exists( 'post', $page_id, self::BACKUP_META_KEY ) ) ) {
 			return;
 		}
 
@@ -158,7 +161,9 @@ final class ModeManager {
 		}
 
 		if ( ! $this->contents_match( $current_content, $backup ) && ! $this->contains_woocommerce_shortcode( $current_content ) ) {
-			update_post_meta( $page_id, self::CLASSIC_META_KEY, $current_content );
+			if ( ! $this->store_page_content( $page_id, self::CLASSIC_META_KEY, $current_content ) ) {
+				return;
+			}
 		}
 
 		if ( ! $force && $this->contents_match( $current_content, $backup ) ) {
@@ -168,9 +173,21 @@ final class ModeManager {
 		wp_update_post(
 			array(
 				'ID'           => $page_id,
-				'post_content' => $backup,
+				'post_content' => wp_slash( $backup ),
 			)
 		);
+	}
+
+	/**
+	 * Confirms a recoverable snapshot before replacing a page's content.
+	 *
+	 * @param int    $page_id Configured WooCommerce page.
+	 * @param string $key Backup metadata key.
+	 * @param string $content Unslashed post content.
+	 */
+	private function store_page_content( int $page_id, string $key, string $content ): bool {
+		return update_post_meta( $page_id, $key, wp_slash( $content ) )
+			|| ( metadata_exists( 'post', $page_id, $key ) && get_post_meta( $page_id, $key, true ) === $content );
 	}
 
 	/**

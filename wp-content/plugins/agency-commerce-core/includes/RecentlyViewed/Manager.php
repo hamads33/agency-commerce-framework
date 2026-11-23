@@ -186,9 +186,13 @@ final class Manager {
 		echo '<ul class="products columns-' . esc_attr( (string) min( 4, max( 1, count( $ids ) ) ) ) . '">';
 
 		foreach ( $ids as $product_id ) {
-			$product = wc_get_product( $product_id );
+			$post = get_post( $product_id );
+			if ( ! $post || 'publish' !== $post->post_status || '' !== $post->post_password ) {
+				continue;
+			}
 
-			if ( ! $product || 'publish' !== get_post_status( $product_id ) || ! $product->is_visible() ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product || ! $product->is_visible() ) {
 				continue;
 			}
 

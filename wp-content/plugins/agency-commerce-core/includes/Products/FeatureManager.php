@@ -248,6 +248,10 @@ final class FeatureManager {
 			return;
 		}
 
+		if ( isset( $_POST[ self::DELIVERY_TERM_META_KEY ] ) && ! is_string( $_POST[ self::DELIVERY_TERM_META_KEY ] ) ) {
+			return;
+		}
+
 		$value = isset( $_POST[ self::DELIVERY_TERM_META_KEY ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ self::DELIVERY_TERM_META_KEY ] ) ) : '';
 
 		if ( '' === $value ) {
