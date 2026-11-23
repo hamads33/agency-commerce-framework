@@ -1,175 +1,153 @@
 ( () => {
-	'use strict';
-
-	const focusableSelector = [
-		'a[href]',
-		'button:not([disabled])',
-		'input:not([disabled])',
-		'select:not([disabled])',
-		'textarea:not([disabled])',
-		'[tabindex]:not([tabindex="-1"])',
-	].join( ',' );
-
+	const drawer = document.getElementById( 'ac-mobile-menu' );
 	const menuToggle = document.querySelector( '.ac-menu-toggle' );
-	const mobileMenu = document.getElementById( 'ac-mobile-menu' );
-	const mobileOverlay = document.querySelector( '.ac-mobile-overlay' );
-	const closeButtons = document.querySelectorAll(
-		'[data-mobile-menu-close]'
-	);
+	const search = document.getElementById( 'ac-search-panel' );
 	const searchToggle = document.querySelector( '.ac-search-toggle' );
-	const searchPanel = document.getElementById( 'ac-search-panel' );
-	const searchClose = document.querySelector( '.ac-search-close' );
-	let previousFocus = null;
 
-	const getFocusable = ( container ) => {
-		if ( ! container ) {
-			return [];
-		}
-
-		return Array.from(
-			container.querySelectorAll( focusableSelector )
-		).filter( ( element ) => {
-			return (
-				! element.hasAttribute( 'hidden' ) &&
-				element.offsetParent !== null
-			);
-		} );
-	};
-
-	const openMenu = () => {
-		if ( ! menuToggle || ! mobileMenu ) {
+	function closeSearch( restoreFocus = true ) {
+		if ( ! search || ! searchToggle || search.hidden ) {
 			return;
 		}
-
-		previousFocus = menuToggle.ownerDocument.activeElement;
-		menuToggle.setAttribute( 'aria-expanded', 'true' );
-		mobileMenu.hidden = false;
-		mobileMenu.setAttribute( 'aria-hidden', 'false' );
-
-		if ( mobileOverlay ) {
-			mobileOverlay.hidden = false;
-		}
-
-		document.documentElement.classList.add( 'has-mobile-menu-open' );
-
-		const focusable = getFocusable( mobileMenu );
-		if ( focusable.length ) {
-			focusable[ 0 ].focus();
-		}
-	};
-
-	const closeMenu = () => {
-		if ( ! menuToggle || ! mobileMenu ) {
-			return;
-		}
-
-		menuToggle.setAttribute( 'aria-expanded', 'false' );
-		mobileMenu.setAttribute( 'aria-hidden', 'true' );
-		mobileMenu.hidden = true;
-
-		if ( mobileOverlay ) {
-			mobileOverlay.hidden = true;
-		}
-
-		document.documentElement.classList.remove( 'has-mobile-menu-open' );
-
-		if ( previousFocus && typeof previousFocus.focus === 'function' ) {
-			previousFocus.focus();
-		}
-	};
-
-	const trapMenuFocus = ( event ) => {
-		if ( event.key !== 'Tab' || ! mobileMenu || mobileMenu.hidden ) {
-			return;
-		}
-
-		const focusable = getFocusable( mobileMenu );
-		if ( ! focusable.length ) {
-			return;
-		}
-
-		const first = focusable[ 0 ];
-		const last = focusable[ focusable.length - 1 ];
-
-		if (
-			event.shiftKey &&
-			mobileMenu.ownerDocument.activeElement === first
-		) {
-			event.preventDefault();
-			last.focus();
-		} else if (
-			! event.shiftKey &&
-			mobileMenu.ownerDocument.activeElement === last
-		) {
-			event.preventDefault();
-			first.focus();
-		}
-	};
-
-	const openSearch = () => {
-		if ( ! searchToggle || ! searchPanel ) {
-			return;
-		}
-
-		searchToggle.setAttribute( 'aria-expanded', 'true' );
-		searchPanel.hidden = false;
-		const input = searchPanel.querySelector(
-			'input[type="search"], input[name="s"]'
-		);
-		if ( input ) {
-			input.focus();
-		}
-	};
-
-	const closeSearch = () => {
-		if ( ! searchToggle || ! searchPanel ) {
-			return;
-		}
-
+		search.hidden = true;
 		searchToggle.setAttribute( 'aria-expanded', 'false' );
-		searchPanel.hidden = true;
-		searchToggle.focus();
-	};
-
-	if ( menuToggle && mobileMenu ) {
-		menuToggle.addEventListener( 'click', () => {
-			if ( mobileMenu.hidden ) {
-				openMenu();
-			} else {
-				closeMenu();
-			}
-		} );
-
-		closeButtons.forEach( ( button ) => {
-			button.addEventListener( 'click', closeMenu );
-		} );
-
-		document.addEventListener( 'keydown', ( event ) => {
-			if ( event.key === 'Escape' && ! mobileMenu.hidden ) {
-				closeMenu();
-			}
-		} );
-
-		mobileMenu.addEventListener( 'keydown', trapMenuFocus );
-	}
-
-	if ( searchToggle && searchPanel ) {
-		searchToggle.addEventListener( 'click', () => {
-			if ( searchPanel.hidden ) {
-				openSearch();
-			} else {
-				closeSearch();
-			}
-		} );
-
-		if ( searchClose ) {
-			searchClose.addEventListener( 'click', closeSearch );
+		if ( restoreFocus ) {
+			searchToggle.focus();
 		}
+	}
 
+	if ( drawer && menuToggle && typeof drawer.showModal === 'function' ) {
+		menuToggle.addEventListener( 'click', () => {
+			closeSearch( false );
+			drawer.showModal();
+			menuToggle.setAttribute( 'aria-expanded', 'true' );
+			document.documentElement.classList.add( 'has-mobile-menu-open' );
+		} );
+		drawer
+			.querySelector( '[data-mobile-menu-close]' )
+			?.addEventListener( 'click', () => drawer.close() );
+		drawer.addEventListener( 'click', ( event ) => {
+			const bounds = drawer.getBoundingClientRect();
+			if (
+				event.target === drawer &&
+				( event.clientX < bounds.left || event.clientX > bounds.right )
+			) {
+				drawer.close();
+			}
+		} );
+		drawer.addEventListener( 'keydown', ( event ) => {
+			if ( event.key !== 'Tab' ) {
+				return;
+			}
+			const links = Array.from(
+				drawer.querySelectorAll( 'a[href], button:not([disabled])' )
+			).filter( ( control ) => control.getClientRects().length );
+			const first = links[ 0 ];
+			const last = links.at( -1 );
+			if ( event.shiftKey && event.target === first ) {
+				event.preventDefault();
+				last.focus();
+			} else if ( ! event.shiftKey && event.target === last ) {
+				event.preventDefault();
+				first.focus();
+			}
+		} );
+		drawer.addEventListener( 'close', () => {
+			menuToggle.setAttribute( 'aria-expanded', 'false' );
+			document.documentElement.classList.remove( 'has-mobile-menu-open' );
+			const target = menuToggle.getClientRects().length
+				? menuToggle
+				: document.querySelector(
+						'.ac-primary-navigation a, .ac-site-branding a'
+				  );
+			target?.focus();
+		} );
+		window
+			.matchMedia( '(min-width: 70em)' )
+			.addEventListener( 'change', ( event ) => {
+				if ( event.matches && drawer.open ) {
+					drawer.close();
+				}
+			} );
+	}
+
+	if ( search && searchToggle ) {
+		searchToggle.closest( '.ac-site-header' )?.append( search );
+		searchToggle.addEventListener( 'click', () => {
+			if ( ! search.hidden ) {
+				closeSearch();
+				return;
+			}
+			search.hidden = false;
+			searchToggle.setAttribute( 'aria-expanded', 'true' );
+			search.querySelector( 'input[name="s"]' )?.focus();
+		} );
+		search
+			.querySelector( '.ac-search-close' )
+			?.addEventListener( 'click', () => closeSearch() );
 		document.addEventListener( 'keydown', ( event ) => {
-			if ( event.key === 'Escape' && ! searchPanel.hidden ) {
+			if (
+				event.key === 'Escape' &&
+				( search.contains( event.target ) ||
+					searchToggle === event.target )
+			) {
 				closeSearch();
 			}
 		} );
 	}
+
+	const disclosures = new Map();
+	document
+		.querySelectorAll( '.ac-menu--desktop, .ac-menu--mobile' )
+		.forEach( ( menu, menuIndex ) => {
+			menu.querySelectorAll( 'li' ).forEach( ( item, itemIndex ) => {
+				const submenu = item.querySelector( ':scope > ul' );
+				const link = item.querySelector( ':scope > a' );
+				if ( ! submenu || ! link ) {
+					return;
+				}
+				const toggle = document.createElement( 'button' );
+				toggle.type = 'button';
+				toggle.className = 'ac-submenu-toggle';
+				toggle.setAttribute( 'aria-label', link.textContent.trim() );
+				submenu.id ||= `ac-submenu-${ menuIndex }-${ itemIndex }`;
+				toggle.setAttribute( 'aria-controls', submenu.id );
+				item.insertBefore( toggle, submenu );
+				disclosures.set( toggle, submenu );
+				setExpanded( toggle, false );
+
+				toggle.addEventListener( 'click', () => {
+					const open = submenu.hidden;
+					disclosures.forEach( ( panel, control ) => {
+						if (
+							control !== toggle &&
+							! panel.contains( toggle )
+						) {
+							setExpanded( control, false );
+						}
+					} );
+					setExpanded( toggle, open );
+				} );
+				item.addEventListener( 'keydown', ( event ) => {
+					if ( event.key === 'Escape' && ! submenu.hidden ) {
+						event.preventDefault();
+						event.stopPropagation();
+						setExpanded( toggle, false );
+						toggle.focus();
+					}
+				} );
+			} );
+		} );
+
+	function setExpanded( toggle, open ) {
+		toggle.setAttribute( 'aria-expanded', String( open ) );
+		disclosures.get( toggle ).hidden = ! open;
+	}
+
+	document.addEventListener( 'click', ( event ) => {
+		disclosures.forEach( ( submenu, toggle ) => {
+			if ( ! toggle.parentElement.contains( event.target ) ) {
+				setExpanded( toggle, false );
+			}
+		} );
+	} );
 } )();

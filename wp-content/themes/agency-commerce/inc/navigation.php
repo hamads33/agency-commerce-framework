@@ -173,6 +173,25 @@ function agency_commerce_render_menu( string $location, string $menu_class ): vo
 }
 
 /**
+ * Renders a decorative icon for a labelled storefront control.
+ *
+ * @param string $name Icon name.
+ */
+function agency_commerce_header_icon( string $name ): void {
+	$paths = array(
+		'search'  => 'M15.5 15.5 21 21M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z',
+		'account' => 'M20 21v-2a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+		'cart'    => 'M4 8h16l1 13H3L4 8Zm4 1V6a4 4 0 0 1 8 0v3',
+		'menu'    => 'M3 6h18M3 12h18M3 18h18',
+		'close'   => 'm5 5 14 14M19 5 5 19',
+	);
+
+	if ( isset( $paths[ $name ] ) ) {
+		printf( '<svg class="ac-header-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="%s"/></svg>', esc_attr( $paths[ $name ] ) );
+	}
+}
+
+/**
  * Renders header controls shared by variants.
  *
  * @param array<string, mixed> $header Header data.
@@ -182,13 +201,15 @@ function agency_commerce_render_header_controls( array $header ): void {
 	<div class="ac-header-controls">
 		<?php if ( ! empty( $header['show_search'] ) ) : ?>
 			<button class="ac-icon-button ac-search-toggle" type="button" aria-expanded="false" aria-controls="ac-search-panel">
-				<span><?php esc_html_e( 'Search', 'agency-commerce' ); ?></span>
+				<?php agency_commerce_header_icon( 'search' ); ?>
+				<span class="screen-reader-text"><?php esc_html_e( 'Search', 'agency-commerce' ); ?></span>
 			</button>
 		<?php endif; ?>
 
 		<?php if ( ! empty( $header['show_account'] ) ) : ?>
 			<a class="ac-icon-button" href="<?php echo esc_url( (string) $header['account_url'] ); ?>">
-				<span><?php esc_html_e( 'Account', 'agency-commerce' ); ?></span>
+				<?php agency_commerce_header_icon( 'account' ); ?>
+				<span class="screen-reader-text"><?php esc_html_e( 'Account', 'agency-commerce' ); ?></span>
 			</a>
 		<?php endif; ?>
 
@@ -196,8 +217,9 @@ function agency_commerce_render_header_controls( array $header ): void {
 			<?php agency_commerce_render_cart_control( $header ); ?>
 		<?php endif; ?>
 
-		<button class="ac-icon-button ac-menu-toggle" type="button" aria-expanded="false" aria-controls="ac-mobile-menu">
-			<span><?php esc_html_e( 'Menu', 'agency-commerce' ); ?></span>
+		<button class="ac-icon-button ac-menu-toggle" type="button" aria-expanded="false" aria-controls="ac-mobile-menu" aria-haspopup="dialog">
+			<?php agency_commerce_header_icon( 'menu' ); ?>
+			<span class="screen-reader-text"><?php esc_html_e( 'Menu', 'agency-commerce' ); ?></span>
 		</button>
 	</div>
 	<?php
@@ -223,7 +245,8 @@ function agency_commerce_render_cart_control( array $header ): void {
 
 	?>
 	<a class="ac-icon-button ac-cart-link" href="<?php echo esc_url( (string) $header['cart_url'] ); ?>">
-		<span><?php esc_html_e( 'Cart', 'agency-commerce' ); ?></span>
+		<?php agency_commerce_header_icon( 'cart' ); ?>
+		<span class="screen-reader-text"><?php esc_html_e( 'Cart', 'agency-commerce' ); ?></span>
 		<?php
 		if ( ! empty( $header['show_cart_count'] ) && function_exists( 'agency_commerce_cart_count_markup' ) ) {
 			echo agency_commerce_cart_count_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped in helper.
@@ -237,6 +260,10 @@ function agency_commerce_render_cart_control( array $header ): void {
  * Renders the search panel.
  */
 function agency_commerce_render_search_panel(): void {
+	if ( empty( agency_commerce_get_header_data()['show_search'] ) ) {
+		return;
+	}
+
 	?>
 	<div id="ac-search-panel" class="ac-search-panel" hidden>
 		<div class="ac-container ac-search-panel__inner">
@@ -254,18 +281,18 @@ function agency_commerce_render_search_panel(): void {
  */
 function agency_commerce_render_mobile_menu(): void {
 	?>
-	<div class="ac-mobile-overlay" data-mobile-menu-close hidden></div>
-	<aside id="ac-mobile-menu" class="ac-mobile-menu" aria-label="<?php esc_attr_e( 'Mobile menu', 'agency-commerce' ); ?>" aria-hidden="true" hidden>
+	<dialog id="ac-mobile-menu" class="ac-mobile-menu" aria-label="<?php esc_attr_e( 'Mobile menu', 'agency-commerce' ); ?>">
 		<div class="ac-mobile-menu__header">
 			<?php agency_commerce_render_logo(); ?>
-			<button class="ac-icon-button ac-mobile-menu__close" type="button" data-mobile-menu-close>
-				<span><?php esc_html_e( 'Close', 'agency-commerce' ); ?></span>
+			<button class="ac-icon-button ac-mobile-menu__close" type="button" data-mobile-menu-close autofocus>
+				<?php agency_commerce_header_icon( 'close' ); ?>
+				<span class="screen-reader-text"><?php esc_html_e( 'Close', 'agency-commerce' ); ?></span>
 			</button>
 		</div>
 		<nav class="ac-mobile-navigation" aria-label="<?php esc_attr_e( 'Mobile primary menu', 'agency-commerce' ); ?>">
 			<?php agency_commerce_render_menu( 'primary', 'ac-menu ac-menu--mobile' ); ?>
 		</nav>
-	</aside>
+	</dialog>
 	<?php
 }
 

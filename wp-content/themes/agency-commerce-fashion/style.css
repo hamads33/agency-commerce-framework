@@ -43,7 +43,7 @@ Domain Path: /languages
 .ac-showcase-fashion .ac-announcement {
 	background: var(--ac-color-primary);
 	font-size: 0.75rem;
-	letter-spacing: 0.14em;
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
 }
 
@@ -51,10 +51,6 @@ Domain Path: /languages
 	background: rgba(247, 242, 235, 0.92);
 	backdrop-filter: blur(18px);
 	border-color: rgba(24, 22, 20, 0.14);
-}
-
-.ac-showcase-fashion .ac-site-header__inner {
-	min-height: 6rem;
 }
 
 .ac-showcase-fashion .custom-logo-link,

@@ -56,4 +56,8 @@ for suite in admin storefront homepage cart-flow checkout-block checkout-classic
 		status=1
 	fi
 done
+if [[ ${AGENCY_RUN_NAVIGATION:-0} == 1 ]]; then
+	AGENCY_NAVIGATION_FIXTURES=1 npm run test:navigation > "$run_dir/navigation.log" 2>&1 || status=1
+	cat "$run_dir/navigation.log"
+fi
 exit "$status"

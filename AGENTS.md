@@ -19,3 +19,5 @@ Follow WordPress coding standards, escape at render time and validate inputs by 
 Use ordered, retryable migrations with preserved data, and persist a schema marker only after the corresponding data operation succeeds. Keep existing public hooks, option keys, block attributes, checkout page metadata and selectors compatible or migrate consumers with regression evidence. Avoid touching customer databases, clearing existing volumes or force-upgrading tooling.
 
 Start new features in the owner listed above. For storefront work follow the [client model](docs/architecture/store-customization.md). For Gutenberg changes, update the metadata, editor source and server renderer together, then build and verify rendering with old and new saved markup. For releases follow the [release gates](docs/production/release-gates.md) and report commands, outcomes, and limitations.
+
+For storefront header changes, follow the [shared component contracts](docs/frontend/component-architecture.md). Use `AGENCY_RUN_NAVIGATION=1 npm run test:backend` to run responsive Chromium checks alongside backend coverage. Keep navigation behavior in the parent theme.
