@@ -35,7 +35,7 @@ npm run env:cli -- sh -c 'wp db export /tmp/agency-backend-before-fixtures.sql >
 	tr -d '\r' | sed -n 's/^AGENCY_DB_DUMP://p' | base64 -d > "$run_dir/before-fixtures.sql"
 test -s "$run_dir/before-fixtures.sql"
 
-wp eval 'wp_mkdir_p( WPMU_PLUGIN_DIR ); if ( false === file_put_contents( WPMU_PLUGIN_DIR . "/agency-test-safety.php", "<?php\nadd_filter( \"pre_wp_mail\", \"__return_true\" );\nadd_filter( \"pre_http_request\", static fn () => new WP_Error( \"test_http_disabled\" ) );\n" ) ) { WP_CLI::error( "Unable to install test safeguards." ); }'
+wp eval 'wp_mkdir_p( WPMU_PLUGIN_DIR ); if ( false === file_put_contents( WPMU_PLUGIN_DIR . "/agency-test-safety.php", "<?php\nadd_filter( \"pre_wp_mail\", \"__return_true\" );\nadd_filter( \"woocommerce_prevent_automatic_wizard_redirect\", \"__return_true\" );\nadd_filter( \"pre_http_request\", static fn () => new WP_Error( \"test_http_disabled\" ) );\n" ) ) { WP_CLI::error( "Unable to install test safeguards." ); }'
 wp eval 'WC_Install::create_pages();'
 wp eval "$(sed '1d' tests/backend/catalogue.php)"
 wp rewrite structure '/%postname%/' --hard

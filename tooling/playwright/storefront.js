@@ -120,15 +120,6 @@ function runWpEval( code ) {
 	return runWp( [ 'eval', code ] );
 }
 
-function setPostDateNow( postId ) {
-	runWp( [
-		'eval',
-		`wp_update_post( array( 'ID' => ${ Number(
-			postId
-		) }, 'post_date' => current_time( 'mysql' ), 'post_date_gmt' => current_time( 'mysql', true ) ) );`,
-	] );
-}
-
 function getActiveThemeStylesheet() {
 	const output = runWp( [ 'option', 'get', 'stylesheet' ] );
 	const lines = output
@@ -273,26 +264,24 @@ function seedCommerceFeatures( productId ) {
 		},
 	} );
 
-	setPostDateNow( productId );
-	setMeta( productId, '_manage_stock', true );
-	setMeta( productId, '_stock_status', 'instock' );
-	setMeta( productId, '_stock', 3 );
-	setMeta( productId, '_total_sales', 99 );
-	setMeta( productId, '_agency_commerce_badge_new', 'show' );
-	setMeta( productId, '_agency_commerce_badge_best_seller', 'show' );
-	setMeta( productId, '_agency_commerce_badge_limited', 'show' );
-	setMeta( productId, '_agency_commerce_badge_custom_labels', [
-		'Editor pick',
-		'Limited run',
-	] );
-	setMeta(
-		productId,
-		'_agency_commerce_delivery_message',
-		'Ships in 2-3 business days.'
-	);
-
 	runWpEval(
-		`$existing = get_posts( array(
+		`$product_id = ${ productId };
+		wp_update_post( array( 'ID' => $product_id, 'post_date' => current_time( 'mysql' ), 'post_date_gmt' => current_time( 'mysql', true ) ) );
+		$meta = array(
+			'_manage_stock' => true,
+			'_stock_status' => 'instock',
+			'_stock' => 3,
+			'_total_sales' => 99,
+			'_agency_commerce_badge_new' => 'show',
+			'_agency_commerce_badge_best_seller' => 'show',
+			'_agency_commerce_badge_limited' => 'show',
+			'_agency_commerce_badge_custom_labels' => array( 'Editor pick', 'Limited run' ),
+			'_agency_commerce_delivery_message' => 'Ships in 2-3 business days.',
+		);
+		foreach ( $meta as $key => $value ) {
+			update_post_meta( $product_id, $key, $value );
+		}
+		$existing = get_posts( array(
 			'post_type' => 'page',
 			'post_status' => 'any',
 			'title' => 'CP4C Search Page',
