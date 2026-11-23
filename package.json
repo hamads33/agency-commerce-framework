@@ -37,6 +37,7 @@
     "package": "bash scripts/package-release.sh",
     "test:backend": "bash scripts/test-backend.sh",
     "test:release": "bash scripts/test-release.sh",
+    "test:forge": "bash scripts/test-forge.sh",
     "test:navigation": "playwright test --config=tests/navigation/playwright.config.js"
   },
   "devDependencies": {

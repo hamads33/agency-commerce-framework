@@ -15,6 +15,7 @@ PACKAGES = {
         "style.css", "functions.php", "theme.json", "build/frontend.js",
         "build/catalog.js", "build/style-frontend.css",
     ),
+    "wp-content/themes/agency-commerce-forge": ("style.css", "functions.php"),
     "wp-content/themes/agency-commerce-child": ("style.css", "functions.php"),
 }
 RUNTIME_DIRS = {
@@ -63,7 +64,7 @@ def package(source, required, destination):
     version = header(manifest, "Version")
     if "readme.txt" in contents and header(contents["readme.txt"].read_text(), "Stable tag") != version:
         raise ValueError("Plugin version and stable tag differ")
-    if root.name.endswith("-child") and header(manifest, "Template") != "agency-commerce":
+    if root.name in {"agency-commerce-child", "agency-commerce-forge"} and header(manifest, "Template") != "agency-commerce":
         raise ValueError("Child theme declares an unexpected parent")
 
     archive = destination / f"{root.name}.zip"

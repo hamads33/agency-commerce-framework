@@ -17,6 +17,7 @@
     "wp-content/themes/agency-commerce-child": "./wp-content/themes/agency-commerce-child",
     "wp-content/themes/agency-commerce-fashion": "./wp-content/themes/agency-commerce-fashion",
     "wp-content/themes/agency-commerce-electronics": "./wp-content/themes/agency-commerce-electronics",
-    "wp-content/themes/agency-commerce-home": "./wp-content/themes/agency-commerce-home"
+    "wp-content/themes/agency-commerce-home": "./wp-content/themes/agency-commerce-home",
+    "wp-content/themes/agency-commerce-forge": "./wp-content/themes/agency-commerce-forge"
   }
 }
